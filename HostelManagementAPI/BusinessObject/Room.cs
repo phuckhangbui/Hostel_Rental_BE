@@ -10,6 +10,7 @@
         public string? Description { get; set; }
         public double? RoomFee { get; set; }
         public Hostel Hostel {  get; set; }
+        public int? HostelID { get; set; }
         public int Status { get; set; }
 
         public IEnumerable<RoomImage> RoomImages { get; set; }

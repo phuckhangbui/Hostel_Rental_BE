@@ -154,133 +154,133 @@ namespace DataAccess
             modelBuilder.Entity<Hostel>()
                 .HasOne(hostel => hostel.OwnerAccount)
                 .WithMany(a => a.Hostels)
-                .HasForeignKey(hostel => hostel.OwnerAccount.AccountID)
+                .HasForeignKey(hostel => hostel.AccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many membershipregister
             modelBuilder.Entity<MemberShipRegisterTransaction>()
                 .HasOne(membership => membership.OwnerAccount)
                 .WithMany(account => account.Memberships)
-                .HasForeignKey(membership => membership.OwnerAccount.AccountID)
+                .HasForeignKey(membership => membership.AccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many notice sent
             modelBuilder.Entity<Notice>()
                .HasOne(notice => notice.NoticeAccount)
                .WithMany(account => account.AccountNotice)
-               .HasForeignKey(notice => notice.NoticeAccount.AccountID)
+               .HasForeignKey(notice => notice.AccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many notice receive
             modelBuilder.Entity<Notice>()
                .HasOne(notice => notice.ReceiveAccount)
                .WithMany(account => account.AccountNoticeReceive)
-               .HasForeignKey(notice => notice.ReceiveAccount.AccountID)
+               .HasForeignKey(notice => notice.AccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract owner
             modelBuilder.Entity<Contract>()
                .HasOne(contract => contract.OwnerAccount)
                .WithMany(account => account.OwnerContract)
-               .HasForeignKey(contract => contract.OwnerAccount.AccountID)
+               .HasForeignKey(contract => contract.AccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract student
             modelBuilder.Entity<Contract>()
                .HasOne(contract => contract.StudentLeadAccount)
                .WithMany(account => account.StudentContract)
-               .HasForeignKey(contract => contract.StudentLeadAccount.AccountID)
+               .HasForeignKey(contract => contract.AccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract member
             modelBuilder.Entity<ContractMember>()
                .HasOne(contract => contract.Student)
                .WithMany(account => account.contractMembers)
-               .HasForeignKey(contract => contract.Student.AccountID)
+               .HasForeignKey(contract => contract.AccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             //one account have many complain
             modelBuilder.Entity<Complain>()
                 .HasOne(complain => complain.ComplainAccount)
                 .WithMany(account => account.AccountComplain)
-                .HasForeignKey(complain => complain.ComplainAccount.AccountID)
+                .HasForeignKey(complain => complain.AccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one bill have many bill detail
             modelBuilder.Entity<BillPaymentDetail>()
                .HasOne(billdetail => billdetail.BillPayment)
                .WithMany(bill => bill.Details)
-               .HasForeignKey(billdetail => billdetail.BillPayment.BillPaymentID)
+               .HasForeignKey(billdetail => billdetail.BillPaymentID)
                .OnDelete(DeleteBehavior.Restrict);
 
             //one contract have many member contract
             modelBuilder.Entity<ContractMember>()
                .HasOne(contractmember => contractmember.Contract)
                .WithMany(contract => contract.Members)
-               .HasForeignKey(contractmember => contractmember.Contract.ContractID)
+               .HasForeignKey(contractmember => contractmember.ContractID)
                .OnDelete(DeleteBehavior.Restrict);
 
             //one contract have many contract detail
             modelBuilder.Entity<ContractDetail>()
                .HasOne(contractdetail => contractdetail.Contract)
                .WithMany(contract => contract.ContractDetails)
-               .HasForeignKey(contractdetail => contractdetail.Contract.ContractID)
+               .HasForeignKey(contractdetail => contractdetail.ContractID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one hostel have many room
             modelBuilder.Entity<Room>()
                 .HasOne(room => room.Hostel)
                 .WithMany(hostel => hostel.Rooms)
-                .HasForeignKey(room => room.Hostel.HostelID)
+                .HasForeignKey(room => room.HostelID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // one membership have many membershipregister
             modelBuilder.Entity<MemberShipRegisterTransaction>()
                 .HasOne(membershipsRegisterTransaction => membershipsRegisterTransaction.MemberShip)
                 .WithMany(member => member.MemberShipRegisterTransactions)
-                .HasForeignKey(membershipsRegisterTransaction => membershipsRegisterTransaction.MemberShip.MemberShipID)
+                .HasForeignKey(membershipsRegisterTransaction => membershipsRegisterTransaction.MemberShipID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one room have many complain
             modelBuilder.Entity<Complain>()
                 .HasOne(complain => complain.Room)
                 .WithMany(room => room.Complains)
-                .HasForeignKey(complain => complain.Room.RoomID)
+                .HasForeignKey(complain => complain.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one room have many img
             modelBuilder.Entity<RoomImage>()
                 .HasOne(roomImg => roomImg.Room)
                 .WithMany(room => room.RoomImages)
-                .HasForeignKey(roomImg => roomImg.Room.RoomID)
+                .HasForeignKey(roomImg => roomImg.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one room have many contract
             modelBuilder.Entity<Contract>()
                 .HasOne(contract => contract.Room)
                 .WithMany(room => room.RoomContract)
-                .HasForeignKey(roomImg => roomImg.Room.RoomID)
+                .HasForeignKey(roomImg => roomImg.RoomID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one service have many bill detail
             modelBuilder.Entity<BillPaymentDetail>()
                 .HasOne(billdetail => billdetail.Service)
                 .WithMany(service => service.BillPaymentDetail)
-                .HasForeignKey(billdetail => billdetail.Service.ServiceID)
+                .HasForeignKey(billdetail => billdetail.ServiceID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one service have many contract detail
             modelBuilder.Entity<ContractDetail>()
                 .HasOne(contractdetail => contractdetail.Service)
                 .WithMany(service => service.ContractDetails)
-                .HasForeignKey(contractdetail => contractdetail.Service.ServiceID)
+                .HasForeignKey(contractdetail => contractdetail.ServiceID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one type service have many service
             modelBuilder.Entity<Service>()
                 .HasOne(service => service.TypeService)
                 .WithMany(typeservice => typeservice.Services)
-                .HasForeignKey(service => service.TypeService.TypeServiceID)
+                .HasForeignKey(service => service.TypeServiceID)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
