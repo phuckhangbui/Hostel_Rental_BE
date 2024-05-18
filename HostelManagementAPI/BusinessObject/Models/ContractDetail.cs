@@ -1,4 +1,4 @@
-﻿namespace BusinessObject
+﻿namespace BusinessObject.Models
 {
     public class ContractDetail
     {

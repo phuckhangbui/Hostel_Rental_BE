@@ -1,4 +1,4 @@
-﻿namespace BusinessObject
+﻿namespace BusinessObject.Models
 {
     public class Service
     {
@@ -9,6 +9,6 @@
         public double? ServicePrice { get; set; }
 
         public IEnumerable<BillPaymentDetail> BillPaymentDetail { get; set; }
-        public IEnumerable<ContractDetail> ContractDetails {  get; set; } 
+        public IEnumerable<ContractDetail> ContractDetails { get; set; }
     }
 }

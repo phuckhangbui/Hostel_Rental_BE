@@ -1,8 +1,8 @@
-﻿namespace BusinessObject
+﻿namespace BusinessObject.Models
 {
     public class Account
     {
-        public int AccountID {  get; set; }
+        public int AccountID { get; set; }
         public string? Email { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
@@ -13,6 +13,7 @@
         public byte[]? PasswordHash { get; set; }
         public int RoleID { get; set; }
         public int Status { get; set; }
+        public string? FirebaseToken { get; set; }
 
         public IEnumerable<Hostel> Hostels { get; set; }
         public IEnumerable<MemberShipRegisterTransaction> Memberships { get; set; }

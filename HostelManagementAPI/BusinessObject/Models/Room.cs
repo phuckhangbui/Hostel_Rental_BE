@@ -1,4 +1,4 @@
-﻿namespace BusinessObject
+﻿namespace BusinessObject.Models
 {
     public class Room
     {
@@ -9,7 +9,7 @@
         public double? Width { get; set; }
         public string? Description { get; set; }
         public double? RoomFee { get; set; }
-        public Hostel Hostel {  get; set; }
+        public Hostel Hostel { get; set; }
         public int? HostelID { get; set; }
         public int Status { get; set; }
 
