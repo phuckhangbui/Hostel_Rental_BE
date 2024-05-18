@@ -5,6 +5,10 @@ namespace DataAccess
 {
     public class HostelManagementDBContext : DbContext
     {
+        public HostelManagementDBContext()
+        {
+        }
+
         public HostelManagementDBContext(DbContextOptions<HostelManagementDBContext> options) : base(options)
         {
         }
