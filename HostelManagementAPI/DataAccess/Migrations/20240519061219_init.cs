@@ -25,8 +25,8 @@ namespace DataAccess.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    RoleID = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    FirebaseToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -110,6 +110,26 @@ namespace DataAccess.Migrations
                         principalTable: "Account",
                         principalColumn: "AccountID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permission",
+                columns: table => new
+                {
+                    PermissionID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountID = table.Column<int>(type: "int", nullable: false),
+                    RoleID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permission", x => x.PermissionID);
+                    table.ForeignKey(
+                        name: "FK_Permission_Account_AccountID",
+                        column: x => x.AccountID,
+                        principalTable: "Account",
+                        principalColumn: "AccountID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -468,6 +488,11 @@ namespace DataAccess.Migrations
                 column: "NoticeAccountAccountID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Permission_AccountID",
+                table: "Permission",
+                column: "AccountID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Room_HostelID",
                 table: "Room",
                 column: "HostelID");
@@ -503,6 +528,9 @@ namespace DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "Notice");
+
+            migrationBuilder.DropTable(
+                name: "Permission");
 
             migrationBuilder.DropTable(
                 name: "RoomsImage");

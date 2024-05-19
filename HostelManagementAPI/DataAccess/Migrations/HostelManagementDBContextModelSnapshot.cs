@@ -22,7 +22,7 @@ namespace DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BusinessObject.Account", b =>
+            modelBuilder.Entity("BusinessObject.Models.Account", b =>
                 {
                     b.Property<int>("AccountID")
                         .ValueGeneratedOnAdd()
@@ -39,6 +39,9 @@ namespace DataAccess.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirebaseToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -51,9 +54,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleID")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -65,7 +65,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Account");
                 });
 
-            modelBuilder.Entity("BusinessObject.BillPayment", b =>
+            modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
                 {
                     b.Property<int>("BillPaymentID")
                         .ValueGeneratedOnAdd()
@@ -101,7 +101,7 @@ namespace DataAccess.Migrations
                     b.ToTable("BillPayment");
                 });
 
-            modelBuilder.Entity("BusinessObject.BillPaymentDetail", b =>
+            modelBuilder.Entity("BusinessObject.Models.BillPaymentDetail", b =>
                 {
                     b.Property<int>("BillPaymentDetailID")
                         .ValueGeneratedOnAdd()
@@ -136,7 +136,7 @@ namespace DataAccess.Migrations
                     b.ToTable("BillPaymentDetail");
                 });
 
-            modelBuilder.Entity("BusinessObject.Complain", b =>
+            modelBuilder.Entity("BusinessObject.Models.Complain", b =>
                 {
                     b.Property<int>("ComplainID")
                         .ValueGeneratedOnAdd()
@@ -165,7 +165,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Complain");
                 });
 
-            modelBuilder.Entity("BusinessObject.Contract", b =>
+            modelBuilder.Entity("BusinessObject.Models.Contract", b =>
                 {
                     b.Property<int>("ContractID")
                         .ValueGeneratedOnAdd()
@@ -211,7 +211,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Contract");
                 });
 
-            modelBuilder.Entity("BusinessObject.ContractDetail", b =>
+            modelBuilder.Entity("BusinessObject.Models.ContractDetail", b =>
                 {
                     b.Property<int>("ContractDetailID")
                         .ValueGeneratedOnAdd()
@@ -234,7 +234,7 @@ namespace DataAccess.Migrations
                     b.ToTable("ContractDetail");
                 });
 
-            modelBuilder.Entity("BusinessObject.ContractMember", b =>
+            modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
                 {
                     b.Property<int>("ContractMemberD")
                         .ValueGeneratedOnAdd()
@@ -257,7 +257,7 @@ namespace DataAccess.Migrations
                     b.ToTable("ContractMember");
                 });
 
-            modelBuilder.Entity("BusinessObject.Hostel", b =>
+            modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
                 {
                     b.Property<int>("HostelID")
                         .ValueGeneratedOnAdd()
@@ -284,7 +284,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Hostel");
                 });
 
-            modelBuilder.Entity("BusinessObject.MemberShip", b =>
+            modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
                 {
                     b.Property<int>("MemberShipID")
                         .ValueGeneratedOnAdd()
@@ -309,7 +309,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Membership");
                 });
 
-            modelBuilder.Entity("BusinessObject.MemberShipRegisterTransaction", b =>
+            modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
                 {
                     b.Property<int>("MemberShipTransactionID")
                         .ValueGeneratedOnAdd()
@@ -341,7 +341,7 @@ namespace DataAccess.Migrations
                     b.ToTable("MembershipsRegisterTransaction");
                 });
 
-            modelBuilder.Entity("BusinessObject.Notice", b =>
+            modelBuilder.Entity("BusinessObject.Models.Notice", b =>
                 {
                     b.Property<int>("NoticeID")
                         .ValueGeneratedOnAdd()
@@ -370,7 +370,28 @@ namespace DataAccess.Migrations
                     b.ToTable("Notice");
                 });
 
-            modelBuilder.Entity("BusinessObject.Room", b =>
+            modelBuilder.Entity("BusinessObject.Models.Permission", b =>
+                {
+                    b.Property<int>("PermissionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionID"));
+
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleID")
+                        .HasColumnType("int");
+
+                    b.HasKey("PermissionID");
+
+                    b.HasIndex("AccountID");
+
+                    b.ToTable("Permission");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.Room", b =>
                 {
                     b.Property<int>("RoomID")
                         .ValueGeneratedOnAdd()
@@ -409,7 +430,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Room");
                 });
 
-            modelBuilder.Entity("BusinessObject.RoomImage", b =>
+            modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
                 {
                     b.Property<int>("RoomImgID")
                         .ValueGeneratedOnAdd()
@@ -430,7 +451,7 @@ namespace DataAccess.Migrations
                     b.ToTable("RoomsImage");
                 });
 
-            modelBuilder.Entity("BusinessObject.Service", b =>
+            modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.Property<int>("ServiceID")
                         .ValueGeneratedOnAdd()
@@ -454,7 +475,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Service");
                 });
 
-            modelBuilder.Entity("BusinessObject.TypeService", b =>
+            modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
                 {
                     b.Property<int>("TypeServiceID")
                         .ValueGeneratedOnAdd()
@@ -470,9 +491,9 @@ namespace DataAccess.Migrations
                     b.ToTable("TypeService");
                 });
 
-            modelBuilder.Entity("BusinessObject.BillPayment", b =>
+            modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
                 {
-                    b.HasOne("BusinessObject.Contract", "Contract")
+                    b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany()
                         .HasForeignKey("ContractID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -481,14 +502,14 @@ namespace DataAccess.Migrations
                     b.Navigation("Contract");
                 });
 
-            modelBuilder.Entity("BusinessObject.BillPaymentDetail", b =>
+            modelBuilder.Entity("BusinessObject.Models.BillPaymentDetail", b =>
                 {
-                    b.HasOne("BusinessObject.BillPayment", "BillPayment")
+                    b.HasOne("BusinessObject.Models.BillPayment", "BillPayment")
                         .WithMany("Details")
                         .HasForeignKey("BillPaymentID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Service", "Service")
+                    b.HasOne("BusinessObject.Models.Service", "Service")
                         .WithMany("BillPaymentDetail")
                         .HasForeignKey("ServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -498,14 +519,14 @@ namespace DataAccess.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("BusinessObject.Complain", b =>
+            modelBuilder.Entity("BusinessObject.Models.Complain", b =>
                 {
-                    b.HasOne("BusinessObject.Account", "ComplainAccount")
+                    b.HasOne("BusinessObject.Models.Account", "ComplainAccount")
                         .WithMany("AccountComplain")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Room", "Room")
+                    b.HasOne("BusinessObject.Models.Room", "Room")
                         .WithMany("Complains")
                         .HasForeignKey("RoomID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -515,20 +536,20 @@ namespace DataAccess.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("BusinessObject.Contract", b =>
+            modelBuilder.Entity("BusinessObject.Models.Contract", b =>
                 {
-                    b.HasOne("BusinessObject.Account", "StudentLeadAccount")
+                    b.HasOne("BusinessObject.Models.Account", "StudentLeadAccount")
                         .WithMany("StudentContract")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Account", "OwnerAccount")
+                    b.HasOne("BusinessObject.Models.Account", "OwnerAccount")
                         .WithMany("OwnerContract")
                         .HasForeignKey("OwnerAccountAccountID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObject.Room", "Room")
+                    b.HasOne("BusinessObject.Models.Room", "Room")
                         .WithMany("RoomContract")
                         .HasForeignKey("RoomID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -540,14 +561,14 @@ namespace DataAccess.Migrations
                     b.Navigation("StudentLeadAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.ContractDetail", b =>
+            modelBuilder.Entity("BusinessObject.Models.ContractDetail", b =>
                 {
-                    b.HasOne("BusinessObject.Contract", "Contract")
+                    b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany("ContractDetails")
                         .HasForeignKey("ContractID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Service", "Service")
+                    b.HasOne("BusinessObject.Models.Service", "Service")
                         .WithMany("ContractDetails")
                         .HasForeignKey("ServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -557,14 +578,14 @@ namespace DataAccess.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("BusinessObject.ContractMember", b =>
+            modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
                 {
-                    b.HasOne("BusinessObject.Account", "Student")
+                    b.HasOne("BusinessObject.Models.Account", "Student")
                         .WithMany("contractMembers")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Contract", "Contract")
+                    b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany("Members")
                         .HasForeignKey("ContractID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -574,9 +595,9 @@ namespace DataAccess.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("BusinessObject.Hostel", b =>
+            modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
                 {
-                    b.HasOne("BusinessObject.Account", "OwnerAccount")
+                    b.HasOne("BusinessObject.Models.Account", "OwnerAccount")
                         .WithMany("Hostels")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -584,14 +605,14 @@ namespace DataAccess.Migrations
                     b.Navigation("OwnerAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.MemberShipRegisterTransaction", b =>
+            modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
                 {
-                    b.HasOne("BusinessObject.Account", "OwnerAccount")
+                    b.HasOne("BusinessObject.Models.Account", "OwnerAccount")
                         .WithMany("Memberships")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.MemberShip", "MemberShip")
+                    b.HasOne("BusinessObject.Models.MemberShip", "MemberShip")
                         .WithMany("MemberShipRegisterTransactions")
                         .HasForeignKey("MemberShipID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -601,14 +622,14 @@ namespace DataAccess.Migrations
                     b.Navigation("OwnerAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.Notice", b =>
+            modelBuilder.Entity("BusinessObject.Models.Notice", b =>
                 {
-                    b.HasOne("BusinessObject.Account", "ReceiveAccount")
+                    b.HasOne("BusinessObject.Models.Account", "ReceiveAccount")
                         .WithMany("AccountNoticeReceive")
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Account", "NoticeAccount")
+                    b.HasOne("BusinessObject.Models.Account", "NoticeAccount")
                         .WithMany("AccountNotice")
                         .HasForeignKey("NoticeAccountAccountID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -619,9 +640,20 @@ namespace DataAccess.Migrations
                     b.Navigation("ReceiveAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.Room", b =>
+            modelBuilder.Entity("BusinessObject.Models.Permission", b =>
                 {
-                    b.HasOne("BusinessObject.Hostel", "Hostel")
+                    b.HasOne("BusinessObject.Models.Account", "Account")
+                        .WithMany("Permissions")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.Room", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Hostel", "Hostel")
                         .WithMany("Rooms")
                         .HasForeignKey("HostelID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -629,9 +661,9 @@ namespace DataAccess.Migrations
                     b.Navigation("Hostel");
                 });
 
-            modelBuilder.Entity("BusinessObject.RoomImage", b =>
+            modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
                 {
-                    b.HasOne("BusinessObject.Room", "Room")
+                    b.HasOne("BusinessObject.Models.Room", "Room")
                         .WithMany("RoomImages")
                         .HasForeignKey("RoomID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -639,9 +671,9 @@ namespace DataAccess.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("BusinessObject.Service", b =>
+            modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
-                    b.HasOne("BusinessObject.TypeService", "TypeService")
+                    b.HasOne("BusinessObject.Models.TypeService", "TypeService")
                         .WithMany("Services")
                         .HasForeignKey("TypeServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -649,7 +681,7 @@ namespace DataAccess.Migrations
                     b.Navigation("TypeService");
                 });
 
-            modelBuilder.Entity("BusinessObject.Account", b =>
+            modelBuilder.Entity("BusinessObject.Models.Account", b =>
                 {
                     b.Navigation("AccountComplain");
 
@@ -663,34 +695,36 @@ namespace DataAccess.Migrations
 
                     b.Navigation("OwnerContract");
 
+                    b.Navigation("Permissions");
+
                     b.Navigation("StudentContract");
 
                     b.Navigation("contractMembers");
                 });
 
-            modelBuilder.Entity("BusinessObject.BillPayment", b =>
+            modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
                 {
                     b.Navigation("Details");
                 });
 
-            modelBuilder.Entity("BusinessObject.Contract", b =>
+            modelBuilder.Entity("BusinessObject.Models.Contract", b =>
                 {
                     b.Navigation("ContractDetails");
 
                     b.Navigation("Members");
                 });
 
-            modelBuilder.Entity("BusinessObject.Hostel", b =>
+            modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
                 {
                     b.Navigation("Rooms");
                 });
 
-            modelBuilder.Entity("BusinessObject.MemberShip", b =>
+            modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
                 {
                     b.Navigation("MemberShipRegisterTransactions");
                 });
 
-            modelBuilder.Entity("BusinessObject.Room", b =>
+            modelBuilder.Entity("BusinessObject.Models.Room", b =>
                 {
                     b.Navigation("Complains");
 
@@ -699,14 +733,14 @@ namespace DataAccess.Migrations
                     b.Navigation("RoomImages");
                 });
 
-            modelBuilder.Entity("BusinessObject.Service", b =>
+            modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.Navigation("BillPaymentDetail");
 
                     b.Navigation("ContractDetails");
                 });
 
-            modelBuilder.Entity("BusinessObject.TypeService", b =>
+            modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
                 {
                     b.Navigation("Services");
                 });

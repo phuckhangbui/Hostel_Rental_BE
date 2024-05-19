@@ -24,7 +24,7 @@ namespace Service.Implement
             var claim = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.NameId, account.AccountID.ToString()),
-            new Claim("RoleId", account.RoleID.ToString()),
+            new Claim("RoleId", account.Permissions.Select(x => x.RoleID).ToString()),
             new Claim("AccountId", account.AccountID.ToString())
         };
 

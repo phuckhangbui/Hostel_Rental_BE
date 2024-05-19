@@ -11,7 +11,6 @@
         public string? Username { get; set; }
         public byte[]? PasswordSalt { get; set; }
         public byte[]? PasswordHash { get; set; }
-        public int RoleID { get; set; }
         public int Status { get; set; }
         public string? FirebaseToken { get; set; }
 
@@ -23,5 +22,6 @@
         public IEnumerable<Contract> OwnerContract { get; set; }
         public IEnumerable<Contract> StudentContract { get; set; }
         public IEnumerable<ContractMember> contractMembers { get; set; }
+        public IEnumerable<Permission> Permissions { get; set; }
     }
 }

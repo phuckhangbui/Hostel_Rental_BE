@@ -14,6 +14,7 @@ namespace DataAccess
         }
 
         public DbSet<Account> Account { get; set; }
+        public DbSet<Permission> Permission { get; set; }
         public DbSet<BillPayment> BillPayment { get; set; }
         public DbSet<BillPaymentDetail> BillPaymentDetail { get; set;}
         public DbSet<Complain> Complain { get; set; }
@@ -38,6 +39,14 @@ namespace DataAccess
 
             modelBuilder.Entity<Account>()
                 .Property(a => a.AccountID)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
+            modelBuilder.Entity<Permission>()
+                .HasKey(p => p.PermissionID);
+
+            modelBuilder.Entity<Permission>()
+                .Property(p => p.PermissionID)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
@@ -154,6 +163,13 @@ namespace DataAccess
                 .UseIdentityColumn();
 
             //relationship table
+
+            modelBuilder.Entity<Permission>()
+                .HasOne(p => p.Account)
+                .WithMany(a => a.Permissions)
+                .HasForeignKey(p => p.AccountID)
+                .OnDelete(DeleteBehavior.Restrict);
+
             //one account have many hostel
             modelBuilder.Entity<Hostel>()
                 .HasOne(hostel => hostel.OwnerAccount)

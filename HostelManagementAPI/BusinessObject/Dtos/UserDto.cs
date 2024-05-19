@@ -1,4 +1,6 @@
-﻿namespace BusinessObject.Dtos
+﻿using BusinessObject.Models;
+
+namespace BusinessObject.Dtos
 {
     public class UserDto
     {
@@ -6,7 +8,7 @@
         public string? Email { get; set; }
         public string? Username { get; set; }
         public string AccountName { get; set; }
-        public int RoleId { get; set; }
+        public IEnumerable<int> RoleID { get; set; }
         public string Token { get; set; }
         public bool isNewAccount { get; set; }
     }

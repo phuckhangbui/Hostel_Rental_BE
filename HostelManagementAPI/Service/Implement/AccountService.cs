@@ -59,7 +59,7 @@ namespace Service.Implement
                     Id = account.AccountID,
                     Email = account.Email,
                     Token = _tokenService.CreateToken(account),
-                    RoleId = account.RoleID,
+                    RoleID = account.Permissions.Select(x => x.RoleID),
                     AccountName = account.Name,
                     Username = account.Username,
                     isNewAccount = false

@@ -10,7 +10,7 @@ namespace Dao
 
         public async Task<Account> getAccountLoginByUsername(string username)
         {
-            return await _dbContext.Account.FirstOrDefaultAsync(x => x.Username == username);
+            return await _dbContext.Account.Include(p => p.Permissions).FirstOrDefaultAsync(x => x.Username == username);
         }
         public async Task<Account> FirebaseTokenExisted(string firebaseToken)
         {
