@@ -16,5 +16,10 @@ namespace Dao
         {
             return await _dbContext.Account.FirstOrDefaultAsync(x => x.FirebaseToken == firebaseToken);
         }
+
+        public override IEnumerable<Account> getListObject()
+        {
+            return _dbContext.Account.Include(p => p.Permissions).ToList();
+        }
     }
 }

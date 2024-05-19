@@ -26,7 +26,7 @@ namespace Dao
             }
         }
 
-        public IEnumerable<T> getListObject()
+        public virtual IEnumerable<T> getListObject()
         {
             return _context.Set<T>().ToList();
         }
