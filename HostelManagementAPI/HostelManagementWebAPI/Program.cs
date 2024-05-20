@@ -1,7 +1,8 @@
-using BusinessObject.Models;
-using DataAccess;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Repository.Implement;
+using Repository.Interface;
+using Service.Implement;
+using Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +12,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddDbContext<HostelManagementDBContext>(opt =>
-{
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -46,12 +47,12 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddCors(opt =>
  {
- opt.AddPolicy("CorsPolicy", policy =>
- {
-     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+     opt.AddPolicy("CorsPolicy", policy =>
+     {
+         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+     });
  });
-
- var app = builder.Build();
+var app = builder.Build();
 
 
 

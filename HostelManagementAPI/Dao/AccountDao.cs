@@ -1,25 +1,59 @@
 ﻿using BusinessObject.Models;
-using DataAccess;
 using Microsoft.EntityFrameworkCore;
-namespace Dao
+
+namespace DAO
 {
-    public class AccountDao : BaseDao<Account>
+    public class AccountDAO : BaseDAO<Account>
     {
-        private readonly HostelManagementDBContext _dbContext;
-        public AccountDao() { _dbContext = new HostelManagementDBContext(); }
+
+        private AccountDAO() { }
+
+        private static AccountDAO instance = null;
+        private static readonly object instancelock = new Object();
+
+        public static AccountDAO Instance
+        {
+            get
+            {
+                lock (instancelock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new AccountDAO();
+                    }
+                    return instance;
+                }
+            }
+        }
+
+        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
+        {
+            var context = new DataContext();
+            return await context.Account.FirstOrDefaultAsync(x => x.FirebaseToken == firebaseToken);
+        }
 
         public async Task<Account> getAccountLoginByUsername(string username)
         {
-            return await _dbContext.Account.Include(p => p.Permissions).FirstOrDefaultAsync(x => x.Username == username);
-        }
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
-        {
-            return await _dbContext.Account.FirstOrDefaultAsync(x => x.FirebaseToken == firebaseToken);
+            var context = new DataContext();
+
+            var list = await context.Account.ToListAsync();
+            var account = list.FirstOrDefault(x => x.Username == username);
+            return account;
         }
 
-        public override IEnumerable<Account> getListObject()
+        public async Task<bool> UpdateAsync(Account account)
         {
-            return _dbContext.Account.Include(p => p.Permissions).ToList();
+            var context = new DataContext();
+            try
+            {
+                context.Account.Update(account);
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

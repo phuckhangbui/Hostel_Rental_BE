@@ -1,65 +1,72 @@
-﻿using DataAccess;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Dao
+namespace DAO
 {
-    public class BaseDao<T> where T : class
+
+    public class BaseDAO<T> where T : class
     {
-
-        private static HostelManagementDBContext _context = null;
-        private static BaseDao<T> instance = null;
-
-        public BaseDao()
+        public async Task<IList<T>> GetAllAsync()
         {
-            _context = new HostelManagementDBContext();
-        }
-
-        public static BaseDao<T> Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    return instance = new BaseDao<T>();
-                }
-                else { return instance; }
-            }
-        }
-
-        public virtual IEnumerable<T> getListObject()
-        {
-            return _context.Set<T>().ToList();
-        }
-
-        public bool createObject(T entity)
-        {
+            List<T> list;
             try
             {
-                _context.Add(entity);
-                _context.SaveChanges();
-                return true;
+                var _context = new DataContext();
+                DbSet<T> _dbSet = _context.Set<T>();
+                list = await _dbSet.ToListAsync();
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
+
+            return list;
         }
 
-        public bool updateObject(T entity)
+        public async Task CreateAsync(T entity)
         {
             try
             {
-                _context.Set<T>().Attach(entity);
-                _context.Entry(entity).State = EntityState.Modified;
-                _context.SaveChanges();
-                return true;
+                var _context = new DataContext();
+                DbSet<T> _dbSet = _context.Set<T>();
+                _dbSet.Add(entity);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
 
+        public async Task UpdateAsync(T entity)
+        {
+            try
+            {
+                var _context = new DataContext();
+                DbSet<T> _dbSet = _context.Set<T>();
+                var tracker = _context.Attach(entity);
+                tracker.State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task RemoveAsync(T entity)
+        {
+            try
+            {
+                var _context = new DataContext();
+                DbSet<T> _dbSet = _context.Set<T>();
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
     }
 }

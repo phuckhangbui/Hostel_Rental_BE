@@ -11,6 +11,6 @@
         public double? TotalAmount { get; set; }
         public int? BillPaymentStatus { get; set; }
 
-        public IEnumerable<BillPaymentDetail> Details { get; set; }
+        public IList<BillPaymentDetail> Details { get; set; }
     }
 }

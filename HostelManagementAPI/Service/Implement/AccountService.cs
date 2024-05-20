@@ -23,7 +23,7 @@ namespace Service.Implement
 
         public async Task<UserDto> getAccountLogin(LoginDto loginDto)
         {
-           Account account =  await _accountRepository.getAccountLoginByUsername(loginDto.Username);
+            Account account = await _accountRepository.getAccountLoginByUsername(loginDto.Username);
             if (account == null || account.Status == 1) // status block
                 return null;
             else
@@ -59,7 +59,7 @@ namespace Service.Implement
                     Id = account.AccountID,
                     Email = account.Email,
                     Token = _tokenService.CreateToken(account),
-                    RoleID = account.Permissions.Select(x => x.RoleID),
+                    RoleId = (int)account.RoleId,
                     AccountName = account.Name,
                     Username = account.Username,
                     isNewAccount = false
@@ -71,6 +71,11 @@ namespace Service.Implement
         public async Task<Account> FirebaseTokenExisted(string firebaseToken)
         {
             return await _accountRepository.FirebaseTokenExisted(firebaseToken);
+        }
+
+        public Task<Account> GetAccountAsync(string username)
+        {
+            return _accountRepository.getAccountLoginByUsername(username);
         }
     }
 }

@@ -8,6 +8,6 @@
         public int? Month { get; set; }
         public double? MemberShipFee { get; set; }
 
-        public IEnumerable<MemberShipRegisterTransaction> MemberShipRegisterTransactions { get; set; }
+        public IList<MemberShipRegisterTransaction> MemberShipRegisterTransactions { get; set; }
     }
 }
