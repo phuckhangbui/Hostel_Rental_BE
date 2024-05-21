@@ -6,7 +6,8 @@ namespace Service.Interface
     public interface IAccountService
     {
         Task<Account> GetAccountAsync(string username);
-        Task<UserDto> getAccountLogin(LoginDto loginDto);
+        Task<UserDto> GetAccountLogin(LoginDto loginDto);
         Task<Account> FirebaseTokenExisted(string firebaseToken);
+        Task<IEnumerable<Account>> GetAllAccounts();
     }
 }

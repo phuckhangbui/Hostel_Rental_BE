@@ -32,15 +32,18 @@ namespace DAO
         }
 
 
-        private string GetConnectionString()
+        private static string GetConnectionString()
         {
-            IConfiguration config = new ConfigurationBuilder().
+            IConfigurationRoot config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
+
             var strConn = config["ConnectionStrings:SqlCloud"];
 
             return strConn;
         }
+        
 
         public DbSet<Account> Account { get; set; }
         public DbSet<BillPayment> BillPayment { get; set; }

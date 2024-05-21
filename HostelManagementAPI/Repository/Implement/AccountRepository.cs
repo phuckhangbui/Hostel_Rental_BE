@@ -37,10 +37,15 @@ namespace Repository.Implement
             return await AccountDAO.Instance.FirebaseTokenExisted(firebaseToken);
         }
 
-        public async Task<Account> getAccountLoginByUsername(string username)
+        public async Task<Account> GetAccountLoginByUsername(string username)
         {
             var account = await AccountDAO.Instance.getAccountLoginByUsername(username);
             return account;
+        }
+
+        public Task<IEnumerable<Account>> GetAllAsync()
+        {
+            return AccountDAO.Instance.GetAllAsync();
         }
 
         public async Task<bool> UpdateAsync(Account account)

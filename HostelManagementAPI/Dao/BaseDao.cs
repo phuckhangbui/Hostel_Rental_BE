@@ -5,9 +5,9 @@ namespace DAO
 
     public class BaseDAO<T> where T : class
     {
-        public async Task<IList<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            List<T> list;
+            IEnumerable<T> list;
             try
             {
                 var _context = new DataContext();
@@ -22,7 +22,7 @@ namespace DAO
             return list;
         }
 
-        public async Task CreateAsync(T entity)
+        public async Task<bool> CreateAsync(T entity)
         {
             try
             {
@@ -30,14 +30,15 @@ namespace DAO
                 DbSet<T> _dbSet = _context.Set<T>();
                 _dbSet.Add(entity);
                 await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return false;
             }
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<bool> UpdateAsync(T entity)
         {
             try
             {
@@ -46,10 +47,11 @@ namespace DAO
                 var tracker = _context.Attach(entity);
                 tracker.State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return false;
             }
         }
 

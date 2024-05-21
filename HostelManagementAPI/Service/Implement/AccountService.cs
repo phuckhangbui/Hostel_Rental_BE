@@ -21,9 +21,9 @@ namespace Service.Implement
             _accountRepository = new AccountRepository();
         }
 
-        public async Task<UserDto> getAccountLogin(LoginDto loginDto)
+        public async Task<UserDto> GetAccountLogin(LoginDto loginDto)
         {
-            Account account = await _accountRepository.getAccountLoginByUsername(loginDto.Username);
+            Account account = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
             if (account == null || account.Status == 1) // status block
                 return null;
             else
@@ -75,7 +75,12 @@ namespace Service.Implement
 
         public Task<Account> GetAccountAsync(string username)
         {
-            return _accountRepository.getAccountLoginByUsername(username);
+            return _accountRepository.GetAccountLoginByUsername(username);
+        }
+
+        public Task<IEnumerable<Account>> GetAllAccounts()
+        {
+            return _accountRepository.GetAllAsync();
         }
     }
 }
