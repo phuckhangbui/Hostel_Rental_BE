@@ -1,32 +1,63 @@
 ﻿using BusinessObject.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DAO
 {
-    public class HostelManagementDBContext : DbContext
+    public class DataContext : DbContext
     {
-        public HostelManagementDBContext()
+        public DataContext()
         {
         }
 
-        public HostelManagementDBContext(DbContextOptions<HostelManagementDBContext> options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
+
         }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        optionsBuilder.UseSqlServer("server=khang.systems; database=HostelManagement; uid=sa;pwd=server123@; TrustServerCertificate=True");
+        //    }
+        //}
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(GetConnectionString()).EnableSensitiveDataLogging();
+            }
+        }
+
+
+        private static string GetConnectionString()
+        {
+            IConfigurationRoot config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var strConn = config["ConnectionStrings:SqlCloud"];
+
+            return strConn;
+        }
+        
 
         public DbSet<Account> Account { get; set; }
-        public DbSet<Permission> Permission { get; set; }
         public DbSet<BillPayment> BillPayment { get; set; }
-        public DbSet<BillPaymentDetail> BillPaymentDetail { get; set;}
+        public DbSet<BillPaymentDetail> BillPaymentDetail { get; set; }
         public DbSet<Complain> Complain { get; set; }
         public DbSet<Contract> Contract { get; set; }
         public DbSet<ContractDetail> ContractDetail { get; set; }
         public DbSet<ContractMember> ContractMember { get; set; }
         public DbSet<Hostel> Hostel { get; set; }
         public DbSet<MemberShip> Membership { get; set; }
-        public DbSet<MemberShipRegisterTransaction> MembershipsRegisterTransaction { get; set;}
+        public DbSet<MemberShipRegisterTransaction> MembershipsRegisterTransaction { get; set; }
         public DbSet<Notice> Notice { get; set; }
         public DbSet<Room> Room { get; set; }
-        public DbSet<RoomImage> RoomsImage { get; set;}
+        public DbSet<RoomImage> RoomsImage { get; set; }
         public DbSet<Service> Service { get; set; }
         public DbSet<TypeService> TypeService { get; set; }
 
@@ -39,14 +70,6 @@ namespace DataAccess
 
             modelBuilder.Entity<Account>()
                 .Property(a => a.AccountID)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
-
-            modelBuilder.Entity<Permission>()
-                .HasKey(p => p.PermissionID);
-
-            modelBuilder.Entity<Permission>()
-                .Property(p => p.PermissionID)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
@@ -162,13 +185,6 @@ namespace DataAccess
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            //relationship table
-
-            modelBuilder.Entity<Permission>()
-                .HasOne(p => p.Account)
-                .WithMany(a => a.Permissions)
-                .HasForeignKey(p => p.AccountID)
-                .OnDelete(DeleteBehavior.Restrict);
 
             //one account have many hostel
             modelBuilder.Entity<Hostel>()

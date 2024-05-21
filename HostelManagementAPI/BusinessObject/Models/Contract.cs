@@ -15,7 +15,7 @@
         public DateTime? DateSign { get; set; }
         public int Status { get; set; }
 
-        public IEnumerable<ContractMember> Members { get; set; }
-        public IEnumerable<ContractDetail> ContractDetails { get; set; }
+        public IList<ContractMember> Members { get; set; }
+        public IList<ContractDetail> ContractDetails { get; set; }
     }
 }

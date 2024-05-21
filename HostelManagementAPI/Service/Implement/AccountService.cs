@@ -1,5 +1,5 @@
-﻿using BusinessObject.Dtos;
-using BusinessObject.Models;
+﻿using BusinessObject.Models;
+using DTOs;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Implement;
 using Repository.Interface;
@@ -21,9 +21,9 @@ namespace Service.Implement
             _accountRepository = new AccountRepository();
         }
 
-        public async Task<UserDto> getAccountLogin(LoginDto loginDto)
+        public async Task<UserDto> GetAccountLoginByUsername(LoginDto loginDto)
         {
-           Account account =  await _accountRepository.getAccountLoginByUsername(loginDto.Username);
+            Account account = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
             if (account == null || account.Status == 1) // status block
                 return null;
             else
@@ -38,28 +38,13 @@ namespace Service.Implement
                     }
                 }
 
-                if (loginDto.FirebaseRegisterToken.IsNullOrEmpty())
-                {
-
-                }
-                else if (!loginDto.FirebaseRegisterToken.Equals(account.FirebaseToken))
-                {
-                    var firebaseTokenExistedAccount = await _accountRepository.FirebaseTokenExisted(loginDto.FirebaseRegisterToken);
-                    if (firebaseTokenExistedAccount != null)
-                    {
-                        firebaseTokenExistedAccount.FirebaseToken = null;
-                        await _accountRepository.UpdateAsync(firebaseTokenExistedAccount);
-                    }
-                    account.FirebaseToken = loginDto.FirebaseRegisterToken;
-                    await _accountRepository.UpdateAsync(account);
-                }
 
                 return new UserDto
                 {
                     Id = account.AccountID,
                     Email = account.Email,
                     Token = _tokenService.CreateToken(account),
-                    RoleID = account.Permissions.Select(x => x.RoleID),
+                    RoleId = (int)account.RoleId,
                     AccountName = account.Name,
                     Username = account.Username,
                     isNewAccount = false
@@ -67,10 +52,9 @@ namespace Service.Implement
             }
         }
 
-
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
+        public async Task<IEnumerable<Account>> GetAllAccounts()
         {
-            return await _accountRepository.FirebaseTokenExisted(firebaseToken);
+            return await _accountRepository.GetAllAsync();
         }
     }
 }

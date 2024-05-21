@@ -9,6 +9,6 @@
         public int? AccountID { get; set; }
         public Account OwnerAccount { get; set; }
 
-        public IEnumerable<Room> Rooms { get; set; }
+        public IList<Room> Rooms { get; set; }
     }
 }

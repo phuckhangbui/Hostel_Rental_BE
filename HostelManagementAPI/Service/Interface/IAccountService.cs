@@ -1,11 +1,11 @@
-﻿using BusinessObject.Dtos;
-using BusinessObject.Models;
+﻿using BusinessObject.Models;
+using DTOs;
 
 namespace Service.Interface
 {
     public interface IAccountService
     {
-        Task<UserDto> getAccountLogin(LoginDto loginDto);
-        Task<Account> FirebaseTokenExisted(string firebaseToken);
+        Task<UserDto> GetAccountLoginByUsername(LoginDto loginDto);
+        Task<IEnumerable<Account>> GetAllAccounts();
     }
 }

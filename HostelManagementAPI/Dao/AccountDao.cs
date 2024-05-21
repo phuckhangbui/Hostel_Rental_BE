@@ -1,25 +1,38 @@
 ﻿using BusinessObject.Models;
-using DataAccess;
 using Microsoft.EntityFrameworkCore;
-namespace Dao
+
+namespace DAO
 {
-    public class AccountDao : BaseDao<Account>
+    public class AccountDAO : BaseDAO<Account>
     {
-        private readonly HostelManagementDBContext _dbContext;
-        public AccountDao() { _dbContext = new HostelManagementDBContext(); }
+        private static AccountDAO instance = null;
+        private readonly DataContext dataContext;
 
-        public async Task<Account> getAccountLoginByUsername(string username)
+        private AccountDAO() 
         {
-            return await _dbContext.Account.Include(p => p.Permissions).FirstOrDefaultAsync(x => x.Username == username);
-        }
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
-        {
-            return await _dbContext.Account.FirstOrDefaultAsync(x => x.FirebaseToken == firebaseToken);
+            dataContext = new DataContext();
         }
 
-        public override IEnumerable<Account> getListObject()
+        public static AccountDAO Instance
         {
-            return _dbContext.Account.Include(p => p.Permissions).ToList();
+            get
+            {
+                    if (instance == null)
+                    {
+                        instance = new AccountDAO();
+                    }
+                    return instance;
+            }
+        }
+
+        public async Task<Account> GetAccountLoginByUsername(string username)
+        {
+            return await dataContext.Account.FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public override async Task<IEnumerable<Account>> GetAllAsync()
+        {
+            return await dataContext.Account.Where(x => x.RoleId != 1).ToListAsync();
         }
     }
 }
