@@ -21,7 +21,7 @@ namespace Service.Implement
             _accountRepository = new AccountRepository();
         }
 
-        public async Task<UserDto> GetAccountLogin(LoginDto loginDto)
+        public async Task<UserDto> GetAccountLoginByUsername(LoginDto loginDto)
         {
             Account account = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
             if (account == null || account.Status == 1) // status block
@@ -38,21 +38,6 @@ namespace Service.Implement
                     }
                 }
 
-                if (loginDto.FirebaseRegisterToken.IsNullOrEmpty())
-                {
-
-                }
-                else if (!loginDto.FirebaseRegisterToken.Equals(account.FirebaseToken))
-                {
-                    var firebaseTokenExistedAccount = await _accountRepository.FirebaseTokenExisted(loginDto.FirebaseRegisterToken);
-                    if (firebaseTokenExistedAccount != null)
-                    {
-                        firebaseTokenExistedAccount.FirebaseToken = null;
-                        await _accountRepository.UpdateAsync(firebaseTokenExistedAccount);
-                    }
-                    account.FirebaseToken = loginDto.FirebaseRegisterToken;
-                    await _accountRepository.UpdateAsync(account);
-                }
 
                 return new UserDto
                 {
@@ -65,17 +50,6 @@ namespace Service.Implement
                     isNewAccount = false
                 };
             }
-        }
-
-
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
-        {
-            return await _accountRepository.FirebaseTokenExisted(firebaseToken);
-        }
-
-        public async Task<Account> GetAccountAsync(string username)
-        {
-            return await _accountRepository.GetAccountLoginByUsername(username);
         }
 
         public async Task<IEnumerable<Account>> GetAllAccounts()

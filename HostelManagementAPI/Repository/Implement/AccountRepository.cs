@@ -31,12 +31,6 @@ namespace Repository.Implement
 
     public class AccountRepository : IAccountRepository
     {
-
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
-        {
-            return await AccountDAO.Instance.FirebaseTokenExisted(firebaseToken);
-        }
-
         public async Task<Account> GetAccountLoginByUsername(string username)
         {
             var account = await AccountDAO.Instance.GetAccountLoginByUsername(username);

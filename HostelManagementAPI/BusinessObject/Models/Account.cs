@@ -13,7 +13,6 @@
         public byte[]? PasswordSalt { get; set; }
         public byte[]? PasswordHash { get; set; }
         public int Status { get; set; }
-        public string? FirebaseToken { get; set; }
 
         public IList<Hostel> Hostels { get; set; }
         public IList<MemberShipRegisterTransaction> Memberships { get; set; }

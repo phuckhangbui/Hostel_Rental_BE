@@ -25,11 +25,6 @@ namespace DAO
             }
         }
 
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
-        {
-            return await dataContext.Account.FirstOrDefaultAsync(x => x.FirebaseToken == firebaseToken);
-        }
-
         public async Task<Account> GetAccountLoginByUsername(string username)
         {
             return await dataContext.Account.FirstOrDefaultAsync(x => x.Username == username);
