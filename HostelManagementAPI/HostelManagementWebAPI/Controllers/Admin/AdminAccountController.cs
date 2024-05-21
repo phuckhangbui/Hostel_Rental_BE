@@ -4,10 +4,10 @@ using Service.Interface;
 
 namespace HostelManagementWebAPI.Controllers.Admin
 {
-    public class AccountController : BaseApiController
+    public class AdminAccountController : BaseApiController
     {
         private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        public AdminAccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }

@@ -8,7 +8,7 @@ namespace DAO
         private static AccountDAO instance = null;
         private readonly DataContext dataContext;
 
-        private AccountDAO() 
+        private AccountDAO()
         {
             dataContext = new DataContext();
         }
@@ -17,11 +17,11 @@ namespace DAO
         {
             get
             {
-                    if (instance == null)
-                    {
-                        instance = new AccountDAO();
-                    }
-                    return instance;
+                if (instance == null)
+                {
+                    instance = new AccountDAO();
+                }
+                return instance;
             }
         }
 
@@ -34,5 +34,12 @@ namespace DAO
         {
             return await dataContext.Account.Where(x => x.RoleId != 1).ToListAsync();
         }
+
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+            return await dataContext.Account.FirstOrDefaultAsync(x => x.Email.Equals(email));
+        }
+
+
     }
 }

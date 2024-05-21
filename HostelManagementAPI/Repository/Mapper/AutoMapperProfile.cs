@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObject.Models;
 
 namespace Repository.Mapper
 {
@@ -7,7 +8,7 @@ namespace Repository.Mapper
         public AutoMapperProfile()
         {
             //CreateMap<SendMessageDto, Message>();
-
+            CreateMap<Account, DTOs.AccountDto>().ReverseMap();
         }
     }
 }
