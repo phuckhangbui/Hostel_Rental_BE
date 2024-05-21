@@ -73,14 +73,14 @@ namespace Service.Implement
             return await _accountRepository.FirebaseTokenExisted(firebaseToken);
         }
 
-        public Task<Account> GetAccountAsync(string username)
+        public async Task<Account> GetAccountAsync(string username)
         {
-            return _accountRepository.GetAccountLoginByUsername(username);
+            return await _accountRepository.GetAccountLoginByUsername(username);
         }
 
-        public Task<IEnumerable<Account>> GetAllAccounts()
+        public async Task<IEnumerable<Account>> GetAllAccounts()
         {
-            return _accountRepository.GetAllAsync();
+            return await _accountRepository.GetAllAsync();
         }
     }
 }

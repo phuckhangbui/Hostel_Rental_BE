@@ -23,7 +23,7 @@ namespace HostelManagementWebAPI.Controllers
         [HttpGet("/name")]
         public async Task<ActionResult<Account>> GetAsync(string username)
         {
-            var account = await _accountRepository.getAccountLoginByUsername(username);
+            var account = await _accountRepository.GetAccountLoginByUsername(username);
             return Ok(account);
         }
     }

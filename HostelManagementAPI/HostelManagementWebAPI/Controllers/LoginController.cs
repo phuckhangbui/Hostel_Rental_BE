@@ -13,10 +13,10 @@ namespace HostelManagementWebAPI.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> LoginAdminOrStaff(LoginDto loginDto)
+        [HttpPost("api/login")]
+        public async Task<ActionResult<UserDto>> LoginAccountWithUsername(LoginDto loginDto)
         {
-            var accountLogin = await _accountService.getAccountLogin(loginDto);
+            var accountLogin = await _accountService.GetAccountLogin(loginDto);
             if (accountLogin != null)
             {
                 //HttpContext.Session.SetString("token", accountLogin.Token);

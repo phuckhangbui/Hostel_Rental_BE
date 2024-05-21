@@ -39,7 +39,7 @@ namespace Repository.Implement
 
         public async Task<Account> GetAccountLoginByUsername(string username)
         {
-            var account = await AccountDAO.Instance.getAccountLoginByUsername(username);
+            var account = await AccountDAO.Instance.GetAccountLoginByUsername(username);
             return account;
         }
 

@@ -30,9 +30,14 @@ namespace DAO
             return await dataContext.Account.FirstOrDefaultAsync(x => x.FirebaseToken == firebaseToken);
         }
 
-        public async Task<Account> getAccountLoginByUsername(string username)
+        public async Task<Account> GetAccountLoginByUsername(string username)
         {
             return await dataContext.Account.FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public override async Task<IEnumerable<Account>> GetAllAsync()
+        {
+            return await dataContext.Account.Where(x => x.RoleId != 1).ToListAsync();
         }
     }
 }

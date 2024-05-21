@@ -5,7 +5,7 @@ namespace DAO
 
     public class BaseDAO<T> where T : class
     {
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             IEnumerable<T> list;
             try
