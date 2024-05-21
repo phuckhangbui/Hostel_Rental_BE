@@ -1,5 +1,5 @@
-﻿using BusinessObject.Dtos;
-using BusinessObject.Models;
+﻿using BusinessObject.Models;
+using DTOs;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Implement;
 using Repository.Interface;

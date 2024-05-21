@@ -1,4 +1,4 @@
-﻿using BusinessObject.Dtos;
+﻿using DTOs;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;

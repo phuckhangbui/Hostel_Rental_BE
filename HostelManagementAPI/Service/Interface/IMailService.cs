@@ -1,10 +1,10 @@
-﻿using BusinessObject.Mail;
+﻿
+using Service.Mail;
 
 namespace Service.Interface
 {
     public interface IMailService
     {
-        void SendMailConfig(MailContent mailContent);
-        void SendMailToAuthencationOTP(string email);
+        void SendMail(MailContent mailContent);
     }
 }

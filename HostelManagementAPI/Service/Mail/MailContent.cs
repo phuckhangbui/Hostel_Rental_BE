@@ -1,4 +1,4 @@
-﻿namespace BusinessObject.Mail
+﻿namespace Service.Mail
 {
     public class MailContent
     {

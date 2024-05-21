@@ -1,4 +1,4 @@
-﻿namespace BusinessObject.Dtos
+﻿namespace DTOs
 {
     public class UserDto
     {

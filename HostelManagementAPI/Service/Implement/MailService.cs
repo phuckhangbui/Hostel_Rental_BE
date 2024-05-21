@@ -1,29 +1,24 @@
-﻿using BusinessObject.Mail;
-using MailKit.Security;
-using Microsoft.IdentityModel.Tokens;
+﻿using MailKit.Security;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using Service.Interface;
+using Service.Mail;
 
 namespace Service.Implement
 {
     public class MailService : IMailService
     {
-        private MailSetting setting { get; set; }
-        public MailService()
+        private MailSetting _mailSetting { get; set; }
+        public MailService(IOptions<MailSetting> options)
         {
-            setting.Mail = "reasspring2024@gmail.com";
-            setting.Host = "smtp.gmail.com";
-            setting.Port = 587;
-            setting.Passwork = "zgtj veex szof becd";
-            setting.DisplayName = "Hostel Management Platform";
+            _mailSetting = options.Value;
         }
 
-
-        public void SendMailConfig(MailContent mailContent)
+        public void SendMail(MailContent mailContent)
         {
             var email = new MimeMessage();
-            email.Sender = new MailboxAddress(setting.DisplayName, setting.Mail);
-            email.From.Add(new MailboxAddress(setting.DisplayName, setting.Mail));
+            email.Sender = new MailboxAddress(_mailSetting.DisplayName, _mailSetting.Mail);
+            email.From.Add(new MailboxAddress(_mailSetting.DisplayName, _mailSetting.Mail));
             email.To.Add(new MailboxAddress(mailContent.To, mailContent.To));
             email.Subject = mailContent.Subject;
             var builder = new BodyBuilder();
@@ -33,8 +28,8 @@ namespace Service.Implement
             using var smtpClient = new MailKit.Net.Smtp.SmtpClient();
             try
             {
-                smtpClient.Connect(setting.Host, setting.Port, SecureSocketOptions.StartTls);
-                smtpClient.Authenticate(setting.Mail, setting.Passwork);
+                smtpClient.Connect(_mailSetting.Host, _mailSetting.Port, SecureSocketOptions.StartTls);
+                smtpClient.Authenticate(_mailSetting.Mail, _mailSetting.Password);
                 smtpClient.Send(email);
             }
             catch (Exception ex)
@@ -45,13 +40,6 @@ namespace Service.Implement
             smtpClient.Disconnect(true);
         }
 
-        public void SendMailToAuthencationOTP(string email)
-        {
-            MailContent mailContent = new MailContent();
-            mailContent.To = email.ToString();
-            mailContent.Subject = $"AUTHENTICATION OTP";
-            mailContent.Body = "";
-            SendMailConfig(mailContent);
-        }
+
     }
 }
