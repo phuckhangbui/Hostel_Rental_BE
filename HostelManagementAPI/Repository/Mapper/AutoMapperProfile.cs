@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
+using DTOs.Room;
 
 namespace Repository.Mapper
 {
@@ -9,6 +10,11 @@ namespace Repository.Mapper
         {
             //CreateMap<SendMessageDto, Message>();
             CreateMap<Account, DTOs.AccountDto>().ReverseMap();
-        }
+			CreateMap<Room, RoomListResponseDto>()
+			    .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
+			CreateMap<Room, RoomDetailResponseDto>()
+			    .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
+			    .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore());
+		}
     }
 }
