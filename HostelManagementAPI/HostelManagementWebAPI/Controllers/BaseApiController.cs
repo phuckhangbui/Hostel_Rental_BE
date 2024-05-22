@@ -3,7 +3,7 @@
 namespace HostelManagementWebAPI.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
     {
         protected int GetLoginAccountId()

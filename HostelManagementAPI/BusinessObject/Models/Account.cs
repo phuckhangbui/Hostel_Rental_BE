@@ -12,7 +12,9 @@
         public string? Username { get; set; }
         public byte[]? PasswordSalt { get; set; }
         public byte[]? PasswordHash { get; set; }
-        public int Status { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public int? Status { get; set; }
+        public bool? IsLoginWithGmail { get; set; }
 
         public IList<Hostel> Hostels { get; set; }
         public IList<MemberShipRegisterTransaction> Memberships { get; set; }

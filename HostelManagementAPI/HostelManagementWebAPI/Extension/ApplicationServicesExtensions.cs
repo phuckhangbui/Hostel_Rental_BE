@@ -1,5 +1,6 @@
 ﻿using Repository.Implement;
 using Repository.Interface;
+using Service.Cloundinary;
 using Service.Implement;
 using Service.Interface;
 using Service.Mail;
@@ -16,8 +17,12 @@ namespace API.Extensions
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITokenService, TokenService>();
+			services.AddScoped<IRoomRepository, RoomRepository>();
+			services.AddScoped<IRoomService, RoomService>();
+			services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
+			services.AddScoped<ICloudinaryService, CloudinaryService>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
+			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
             services.AddCors(opt =>
             {
