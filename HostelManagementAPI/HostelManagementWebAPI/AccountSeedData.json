@@ -1,202 +1,62 @@
 ﻿[
   {
-    "Email": "soniagreen@insurity.com",
-    "Name": "Whitfield",
-    "Address": "332 Beaver Street, Masthope, Maryland, 4093",
-    "Phone": "(861) 445-3547",
-    "CitizenCard": "'745456789478'",
-    "Username": "Whitfield",
+    "Email": "sharppena@pharmacon.com",
+    "Name": "Irma",
+    "Address": "325 Veronica Place, Bethany, Maine",
+    "Phone": "(833) 561-3807",
+    "CitizenCard": "'171456789175'",
+    "Username": "Irma",
     "Status": 0,
-    "RoleId": 1
+    "RoleId": 1,
+    "CreatedDate": "2024-05-22",
+    "IsLoginWithGmail": false
   },
   {
-    "Email": "whitfieldgreen@insurity.com",
-    "Name": "Susanna",
-    "Address": "899 Willoughby Avenue, Emison, Virginia, 2817",
-    "Phone": "(817) 406-3997",
-    "CitizenCard": "'433456789781'",
-    "Username": "Susanna",
+    "Email": "irmapena@pharmacon.com",
+    "Name": "Francesca",
+    "Address": "512 Lynch Street, Greer, North Dakota",
+    "Phone": "(917) 578-2798",
+    "CitizenCard": "'435456789751'",
+    "Username": "Francesca",
     "Status": 0,
-    "RoleId": 1
+    "RoleId": 1,
+    "CreatedDate": "2024-02-10",
+    "IsLoginWithGmail": false
   },
   {
-    "Email": "susannagreen@insurity.com",
-    "Name": "Stanley",
-    "Address": "955 Gunnison Court, Mapletown, Alaska, 9607",
-    "Phone": "(825) 417-3982",
-    "CitizenCard": "'729456789714'",
-    "Username": "Stanley",
+    "Email": "francescapena@pharmacon.com",
+    "Name": "Mcgee",
+    "Address": "965 Richards Street, Ladera, Palau",
+    "Phone": "(804) 577-3755",
+    "CitizenCard": "'469456789168'",
+    "Username": "Mcgee",
     "Status": 0,
-    "RoleId": 2
+    "RoleId": 1,
+    "CreatedDate": "2024-04-28",
+    "IsLoginWithGmail": false
   },
   {
-    "Email": "stanleygreen@insurity.com",
-    "Name": "Good",
-    "Address": "984 Hill Street, Canby, American Samoa, 5245",
-    "Phone": "(947) 463-2737",
-    "CitizenCard": "'799456789972'",
-    "Username": "Good",
+    "Email": "mcgeepena@pharmacon.com",
+    "Name": "Haynes",
+    "Address": "780 Beaver Street, Adelino, Kentucky",
+    "Phone": "(956) 514-2350",
+    "CitizenCard": "'337456789780'",
+    "Username": "Haynes",
     "Status": 0,
-    "RoleId": 3
+    "RoleId": 1,
+    "CreatedDate": "2024-04-28",
+    "IsLoginWithGmail": false
   },
   {
-    "Email": "goodgreen@insurity.com",
-    "Name": "Cruz",
-    "Address": "902 Royce Place, Hiwasse, Nevada, 197",
-    "Phone": "(887) 540-3746",
-    "CitizenCard": "'870456789787'",
-    "Username": "Cruz",
+    "Email": "haynespena@pharmacon.com",
+    "Name": "Traci",
+    "Address": "604 Reeve Place, Vaughn, Pennsylvania",
+    "Phone": "(864) 578-2488",
+    "CitizenCard": "'340456789196'",
+    "Username": "Traci",
     "Status": 0,
-    "RoleId": 2
-  },
-  {
-    "Email": "cruzgreen@insurity.com",
-    "Name": "Reva",
-    "Address": "494 Fenimore Street, Kempton, Pennsylvania, 4437",
-    "Phone": "(888) 534-3623",
-    "CitizenCard": "'790456789590'",
-    "Username": "Reva",
-    "Status": 0,
-    "RoleId": 1
-  },
-  {
-    "Email": "revagreen@insurity.com",
-    "Name": "Cochran",
-    "Address": "683 Surf Avenue, Riceville, Georgia, 2578",
-    "Phone": "(876) 550-3065",
-    "CitizenCard": "'523456789462'",
-    "Username": "Cochran",
-    "Status": 0,
-    "RoleId": 3
-  },
-  {
-    "Email": "cochrangreen@insurity.com",
-    "Name": "Luella",
-    "Address": "514 Harden Street, Riner, Marshall Islands, 7557",
-    "Phone": "(804) 497-2257",
-    "CitizenCard": "'949456789199'",
-    "Username": "Luella",
-    "Status": 0,
-    "RoleId": 1
-  },
-  {
-    "Email": "luellagreen@insurity.com",
-    "Name": "French",
-    "Address": "202 Turnbull Avenue, Walton, New York, 6609",
-    "Phone": "(957) 484-2783",
-    "CitizenCard": "'390456789845'",
-    "Username": "French",
-    "Status": 0,
-    "RoleId": 1
-  },
-  {
-    "Email": "frenchgreen@insurity.com",
-    "Name": "Rhodes",
-    "Address": "429 Barlow Drive, Hillsboro, Minnesota, 750",
-    "Phone": "(829) 586-2739",
-    "CitizenCard": "'685456789855'",
-    "Username": "Rhodes",
-    "Status": 0,
-    "RoleId": 1
-  },
-  {
-    "Email": "rhodesgreen@insurity.com",
-    "Name": "Leblanc",
-    "Address": "756 Ridge Boulevard, Mulino, Idaho, 1471",
-    "Phone": "(927) 450-3746",
-    "CitizenCard": "'149456789644'",
-    "Username": "Leblanc",
-    "Status": 0,
-    "RoleId": 3
-  },
-  {
-    "Email": "leblancgreen@insurity.com",
-    "Name": "Knapp",
-    "Address": "155 Lincoln Place, Coinjock, Arizona, 720",
-    "Phone": "(873) 572-2038",
-    "CitizenCard": "'334456789133'",
-    "Username": "Knapp",
-    "Status": 0,
-    "RoleId": 1
-  },
-  {
-    "Email": "knappgreen@insurity.com",
-    "Name": "Beryl",
-    "Address": "207 Macdougal Street, Dante, Federated States Of Micronesia, 3346",
-    "Phone": "(858) 440-2479",
-    "CitizenCard": "'373456789724'",
-    "Username": "Beryl",
-    "Status": 0,
-    "RoleId": 2
-  },
-  {
-    "Email": "berylgreen@insurity.com",
-    "Name": "Henderson",
-    "Address": "898 Montague Terrace, Rosburg, Colorado, 9609",
-    "Phone": "(832) 487-3233",
-    "CitizenCard": "'724456789422'",
-    "Username": "Henderson",
-    "Status": 0,
-    "RoleId": 3
-  },
-  {
-    "Email": "hendersongreen@insurity.com",
-    "Name": "Susie",
-    "Address": "723 Aurelia Court, Enetai, Illinois, 6770",
-    "Phone": "(869) 422-3729",
-    "CitizenCard": "'168456789324'",
-    "Username": "Susie",
-    "Status": 0,
-    "RoleId": 3
-  },
-  {
-    "Email": "susiegreen@insurity.com",
-    "Name": "Leanne",
-    "Address": "885 Oakland Place, Belgreen, Montana, 6559",
-    "Phone": "(959) 558-3962",
-    "CitizenCard": "'388456789859'",
-    "Username": "Leanne",
-    "Status": 0,
-    "RoleId": 3
-  },
-  {
-    "Email": "leannegreen@insurity.com",
-    "Name": "Laurie",
-    "Address": "335 Dumont Avenue, Cascades, Arkansas, 2868",
-    "Phone": "(999) 527-2002",
-    "CitizenCard": "'718456789597'",
-    "Username": "Laurie",
-    "Status": 0,
-    "RoleId": 2
-  },
-  {
-    "Email": "lauriegreen@insurity.com",
-    "Name": "Kathie",
-    "Address": "646 Duryea Court, Sylvanite, Mississippi, 8902",
-    "Phone": "(854) 424-3622",
-    "CitizenCard": "'880456789648'",
-    "Username": "Kathie",
-    "Status": 0,
-    "RoleId": 2
-  },
-  {
-    "Email": "kathiegreen@insurity.com",
-    "Name": "Leola",
-    "Address": "587 Bayview Avenue, Ribera, Rhode Island, 6612",
-    "Phone": "(972) 491-2930",
-    "CitizenCard": "'577456789523'",
-    "Username": "Leola",
-    "Status": 0,
-    "RoleId": 3
-  },
-  {
-    "Email": "leolagreen@insurity.com",
-    "Name": "Marjorie",
-    "Address": "875 Quincy Street, Talpa, Oregon, 9502",
-    "Phone": "(917) 485-2588",
-    "CitizenCard": "'592456789952'",
-    "Username": "Marjorie",
-    "Status": 0,
-    "RoleId": 1
+    "RoleId": 1,
+    "CreatedDate": "2024-04-07",
+    "IsLoginWithGmail": false
   }
 ]

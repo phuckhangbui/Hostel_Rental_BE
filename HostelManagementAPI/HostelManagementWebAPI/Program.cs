@@ -16,8 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.IdentityServices(builder.Configuration);
 builder.Services.ApplicationServices(builder.Configuration);
 
-//builder.Services.AddDbContext<DataContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCloud")));
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCloud")));
 
 
 builder.Services.AddSwaggerGen(option =>

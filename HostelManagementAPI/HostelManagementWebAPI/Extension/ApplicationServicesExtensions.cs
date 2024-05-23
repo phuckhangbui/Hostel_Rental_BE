@@ -18,7 +18,9 @@ namespace API.Extensions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITokenService, TokenService>();
 			services.AddScoped<IRoomRepository, RoomRepository>();
+			services.AddScoped<IMemberShipRepository, MemberShipRepository>();
 			services.AddScoped<IRoomService, RoomService>();
+			services.AddScoped<IMemberShipService, MemberShipService>();
 			services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
 			services.AddScoped<ICloudinaryService, CloudinaryService>();
 
