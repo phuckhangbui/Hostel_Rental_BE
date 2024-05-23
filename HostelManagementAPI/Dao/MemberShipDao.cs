@@ -10,23 +10,36 @@ namespace DAO
     public class MemberShipDao : BaseDAO<MemberShip>
     {
         private static MemberShipDao instance = null;
-        private readonly DataContext dataContext;
+        private static readonly object instacelock = new object();
 
         public MemberShipDao()
         {
-            dataContext = new DataContext();
         }
 
         public static MemberShipDao Instance
         {
             get
             {
-                if (instance == null)
+                lock (instacelock)
                 {
-                    instance = new MemberShipDao();
+                    if (instance == null)
+                    {
+                        instance = new MemberShipDao();
+                    }
+                    return instance;
                 }
-                return instance;
+                
             }
+        }
+
+        public MemberShip GetMemberShipById(int id)
+        {
+            MemberShip memberShip = null;
+            using (var context = new DataContext())
+            {
+                memberShip = context.Membership.FirstOrDefault(x => x.MemberShipID == id);
+            }
+            return memberShip;
         }
     }
 }

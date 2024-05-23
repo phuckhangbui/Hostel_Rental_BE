@@ -1,14 +1,13 @@
-﻿using DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DTOs.Membership;
 
 namespace Service.Interface
 {
     public interface IMemberShipService
     {
         Task CreateMemberShip(CreateMemberShipDto createMemberShipDto);
+        Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive();
+        Task<IEnumerable<GetMemberShipDto>> GetMembershipsExpire();
+        Task<bool> DeactivateMembership(UpdateMembershipDto updateMembershipDto);
+        Task<bool> ActivateMembership(UpdateMembershipDto updateMembershipDto);
     }
 }

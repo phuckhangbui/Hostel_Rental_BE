@@ -1,4 +1,4 @@
-﻿using DTOs;
+﻿using DTOs.Membership;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -35,6 +35,102 @@ namespace HostelManagementWebAPI.Controllers
                 }
                 await _memberShipService.CreateMemberShip(createMembershipRequestDto);
                 return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("admin-get-memberships-active")]
+        public async Task<ActionResult> GetMemberships()
+        {
+            try
+            {
+                var memberships = await _memberShipService.GetMembershipsActive();
+                return Ok(memberships);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("admin-get-memberships-expire")]
+        public async Task<ActionResult> GetMembershipsExpire()
+        {
+            try
+            {
+                var memberships = await _memberShipService.GetMembershipsExpire();
+                return Ok(memberships);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPut("admin-deactivate-membership")]
+        public async Task<ActionResult> DeactivateMembership([FromBody] UpdateMembershipDto updateMembershipDto)
+        {
+            try
+            {
+                if (updateMembershipDto == null)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Invalid request."));
+                }
+                if (updateMembershipDto.MemberShipID <= 0)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Invalid MemberShipID"));
+                }
+                var result = await _memberShipService.DeactivateMembership(updateMembershipDto);
+                if (result)
+                {
+                    return Ok();
+                }
+                return BadRequest(new ApiResponseStatus(400, "Deactivate failed"));
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPut("admin-activate-membership")]
+        public async Task<ActionResult> ActivateMembership([FromBody] UpdateMembershipDto updateMembershipDto)
+        {
+            try
+            {
+                if (updateMembershipDto == null)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Invalid request."));
+                }
+                if (updateMembershipDto.MemberShipID <= 0)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Invalid MemberShipID"));
+                }
+                var result = await _memberShipService.ActivateMembership(updateMembershipDto);
+                if (result)
+                {
+                    return Ok();
+                }
+                return BadRequest(new ApiResponseStatus(400, "Deactivate failed"));
             }
             catch (ServiceException ex)
             {
