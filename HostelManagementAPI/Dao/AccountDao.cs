@@ -40,6 +40,10 @@ namespace DAO
             return await dataContext.Account.FirstOrDefaultAsync(x => x.Email.Equals(email));
         }
 
+        public async Task<Account> GetAccountById(int id)
+        {
+            return await dataContext.Account.FirstOrDefaultAsync(x => x.AccountID.Equals(id));
+        }
 
     }
 }
