@@ -1,5 +1,6 @@
 ﻿using DTOs.Membership;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -16,6 +17,7 @@ namespace HostelManagementWebAPI.Controllers
             _memberShipService = memberShipService;
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpPost("admin-create-membership")]
         public async Task<ActionResult> CreateMembership([FromBody] CreateMemberShipDto createMembershipRequestDto)
         {
@@ -46,6 +48,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpGet("admin-get-memberships-active")]
         public async Task<ActionResult> GetMemberships()
         {
@@ -64,6 +67,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpGet("admin-get-memberships-expire")]
         public async Task<ActionResult> GetMembershipsExpire()
         {
@@ -82,6 +86,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpPut("admin-deactivate-membership")]
         public async Task<ActionResult> DeactivateMembership([FromBody] UpdateMembershipDto updateMembershipDto)
         {
@@ -112,6 +117,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpPut("admin-activate-membership")]
         public async Task<ActionResult> ActivateMembership([FromBody] UpdateMembershipDto updateMembershipDto)
         {

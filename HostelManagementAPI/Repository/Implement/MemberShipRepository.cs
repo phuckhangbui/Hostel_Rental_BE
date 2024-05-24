@@ -14,11 +14,6 @@ namespace Repository.Implement
 {
     public class MemberShipRepository : IMemberShipRepository
     {
-        private readonly DataContext dataContext;
-        public MemberShipRepository(DataContext dataContext)
-        {
-            this.dataContext = dataContext;
-        }
         public async Task<bool> CreateMemberShip(MemberShip memberShip)
         {
             return await MemberShipDao.Instance.CreateAsync(memberShip);
@@ -30,31 +25,10 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive()
         {
-            var query = dataContext.Membership.AsQueryable();
+            var memberShips = await MemberShipDao.Instance.GetAllAsync();
+            var activeMemberShips = memberShips.Where(x => x.Status == 0);
 
-            query = query.Where(x => x.Status == 0);
-
-            var result = query.Select(x => new GetMemberShipDto
-            {
-                MemberShipID = x.MemberShipID,
-                MemberShipName = x.MemberShipName,
-                CapacityHostel = x.CapacityHostel,
-                Month = x.Month,
-                MemberShipFee = x.MemberShipFee,
-                Status = x.Status
-            });;
-
-            result = result.OrderBy(x => x.MemberShipFee);
-            return await result.ToListAsync();
-        }
-
-        public async Task<IEnumerable<GetMemberShipDto>> GetMembershipExpire()
-        {
-            var query = dataContext.Membership.AsQueryable();
-
-            query = query.Where(x => x.Status == 1);
-
-            var result = query.Select(x => new GetMemberShipDto
+            var result = activeMemberShips.Select(x => new GetMemberShipDto
             {
                 MemberShipID = x.MemberShipID,
                 MemberShipName = x.MemberShipName,
@@ -65,7 +39,26 @@ namespace Repository.Implement
             }); ;
 
             result = result.OrderBy(x => x.MemberShipFee);
-            return await result.ToListAsync();
+            return result.ToList();
+        }
+
+        public async Task<IEnumerable<GetMemberShipDto>> GetMembershipExpire()
+        {
+            var memberShips = await MemberShipDao.Instance.GetAllAsync();
+            var activeMemberShips = memberShips.Where(x => x.Status == 1);
+
+            var result = activeMemberShips.Select(x => new GetMemberShipDto
+            {
+                MemberShipID = x.MemberShipID,
+                MemberShipName = x.MemberShipName,
+                CapacityHostel = x.CapacityHostel,
+                Month = x.Month,
+                MemberShipFee = x.MemberShipFee,
+                Status = x.Status
+            }); ;
+
+            result = result.OrderBy(x => x.MemberShipFee);
+            return result.ToList();
         }
 
         public async Task<bool> UpdateMembershipStatus(MemberShip memberShip)
