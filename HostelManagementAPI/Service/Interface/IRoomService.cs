@@ -10,5 +10,6 @@ namespace Service.Interface
 		Task <IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId);
 		Task <RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId);
 		Task ChangeRoomStatus(int roomId, int status);
+		Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto);
 	}
 }

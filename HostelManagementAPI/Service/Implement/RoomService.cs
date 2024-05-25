@@ -12,6 +12,7 @@ namespace Service.Implement
     public class RoomService : IRoomService
 	{
 		private readonly IRoomRepository _roomRepository;
+		private readonly IHostelRepository _hostelRepository;
 		private readonly ICloudinaryService _cloudinaryService;
 		private readonly IMapper _mapper;
 
@@ -21,9 +22,14 @@ namespace Service.Implement
 			return _mapper.Map<IEnumerable<RoomListResponseDto>>(rooms);
 		}
 
-		public RoomService(IRoomRepository roomRepository, ICloudinaryService cloudinaryService, IMapper mapper)
+		public RoomService(
+			IRoomRepository roomRepository, 
+			IHostelRepository hostelRepository,
+			ICloudinaryService cloudinaryService, 
+			IMapper mapper)
 		{
 			_roomRepository = roomRepository;
+			_hostelRepository = hostelRepository;
 			_mapper = mapper;
 			_cloudinaryService = cloudinaryService;
 		}
@@ -62,18 +68,24 @@ namespace Service.Implement
 
 		public async Task CreateRoom(CreateRoomRequestDto createRoomRequestDto)
 		{
+			var hostel = await _hostelRepository.GetHostelById(createRoomRequestDto.HostelID);
+			if (hostel == null)
+			{
+				throw new ServiceException("Hostel not found with this ID");
+			}
+
 			Room room = new Room
 			{
 				RoomName = createRoomRequestDto.RoomName,
 				Capacity = createRoomRequestDto.Capacity,
-				Lenght = createRoomRequestDto.Lenght,
+				Lenght = createRoomRequestDto.Length,
 				Width = createRoomRequestDto.Width,
 				Description = createRoomRequestDto.Description,
 				RoomFee = createRoomRequestDto.RoomFee,
 				HostelID = createRoomRequestDto.HostelID,
 				Status = (int)RoomEnum.Available,
 				RoomImages = new List<RoomImage>(),
-		};
+			};
 
 			await _roomRepository.CreateRoom(room);
 		}
@@ -102,14 +114,14 @@ namespace Service.Implement
 						var roomImage = new RoomImage
 						{
 							RoomUrl = imageUrl,
-							RoomID = room.RoomID 
+							RoomID = room.RoomID
 						};
 
 						room.RoomImages.Add(roomImage);
 					}
 
 					await _roomRepository.UpdateRoom(room);
-				} 
+				}
 				catch (Exception ex)
 				{
 					throw new ServiceException("Upload room image fail with error", ex);
@@ -119,6 +131,24 @@ namespace Service.Implement
 			{
 				throw new ServiceException("Room not found with this ID");
 			}
+		}
+
+		public async Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto)
+		{
+			var room = await _roomRepository.GetRoomDetailById(roomId);
+			if (room == null)
+			{
+				throw new ServiceException("Room not found with this ID");
+			}
+
+			room.RoomName = updateRoomRequestDto.RoomName;
+			room.Capacity = updateRoomRequestDto.Capacity;
+			room.Lenght = updateRoomRequestDto.Length;
+			room.Width = updateRoomRequestDto.Width;
+			room.Description = updateRoomRequestDto.Description;
+			room.RoomFee = updateRoomRequestDto.RoomFee;
+
+			await _roomRepository.UpdateRoom(room);
 		}
 	}
 }

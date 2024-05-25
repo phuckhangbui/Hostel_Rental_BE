@@ -1,0 +1,41 @@
+﻿using BusinessObject.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace DAO
+{
+	public class HostelDao : BaseDAO<Hostel>
+	{
+		private static HostelDao instance = null;
+		private readonly DataContext dataContext;
+
+		private HostelDao()
+		{
+			dataContext = new DataContext();
+		}
+
+		public static HostelDao Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new HostelDao();
+				}
+				return instance;
+			}
+		}
+
+		public async Task<Hostel> GetHostelById(int id)
+		{
+			return await dataContext.Hostel.FirstOrDefaultAsync(h => h.HostelID == id);
+		}
+
+		public async Task<IEnumerable<Hostel>> GetAllHostelsAsync()
+		{
+			return await dataContext.Hostel
+				.Include(h => h.OwnerAccount)
+				.Include(h => h.Rooms)
+				.ToListAsync();
+		}
+	}
+}
