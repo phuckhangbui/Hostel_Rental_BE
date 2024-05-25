@@ -1,6 +1,6 @@
-﻿namespace BusinessObject.Models
+﻿namespace DTOs.Membership
 {
-    public class MemberShip
+    public class GetMemberShipDto
     {
         public int MemberShipID { get; set; }
         public string? MemberShipName { get; set; }
@@ -8,7 +8,5 @@
         public int? Month { get; set; }
         public double? MemberShipFee { get; set; }
         public int? Status { get; set; }
-
-        public IList<MemberShipRegisterTransaction> MemberShipRegisterTransactions { get; set; }
     }
 }
