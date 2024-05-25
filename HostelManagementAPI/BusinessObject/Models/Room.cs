@@ -16,6 +16,5 @@
         public IList<RoomImage> RoomImages { get; set; }
         public IList<Complain> Complains { get; set; }
         public IList<Contract> RoomContract { get; set; }
-        public IList<RoomService> RoomServices { get; set; }
     }
 }

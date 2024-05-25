@@ -3,11 +3,9 @@ using BusinessObject.Models;
 using DTOs.Account;
 using DTOs.Room;
 
-namespace Repository.Mapper;
-
-public class AutoMapperProfile : Profile
+namespace Repository.Mapper
 {
-    public AutoMapperProfile()
+    public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
         {

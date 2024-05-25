@@ -10,6 +10,5 @@
 
         public IList<BillPaymentDetail> BillPaymentDetail { get; set; }
         public IList<ContractDetail> ContractDetails { get; set; }
-        public IList<RoomService> RoomServices { get; set; }
     }
 }

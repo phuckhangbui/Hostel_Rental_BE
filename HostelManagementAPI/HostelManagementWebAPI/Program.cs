@@ -1,7 +1,5 @@
 using API.Extensions;
-using DAO;
 using HostelManagementWebAPI.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,8 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.IdentityServices(builder.Configuration);
 builder.Services.ApplicationServices(builder.Configuration);
 
-//builder.Services.AddDbContext<DataContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCloud")));
+
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -65,19 +62,6 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 
 app.UseAuthorization();
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-try
-{
-    var context = services.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync();
-    await SeedData.SeedAccount(context);
-}
-catch (Exception ex)
-{
-    var logger = services.GetService<ILogger<Program>>();
-    logger.LogError(ex, "An error occured during migration");
-}
 
 app.MapControllers();
 

@@ -1,12 +1,10 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace HostelManagementWebAPI.Extensions;
-
 public static class IdentityServiceExtension
 {
-
     const string ADMIN_ID = "1";
     const string OWNER_ID = "2";
     const string MEMBER_ID = "3";
@@ -42,4 +40,5 @@ public static class IdentityServiceExtension
         });
         return services;
     }
+
 }
