@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
+using DTOs;
 
-namespace Repository.Mapper
+namespace Repository.Mapper;
+
+public class AutoMapperProfile : Profile
 {
-    public class AutoMapperProfile : Profile
+    public AutoMapperProfile()
     {
-        public AutoMapperProfile()
-        {
-            //CreateMap<SendMessageDto, Message>();
-            CreateMap<Account, DTOs.AccountDto>().ReverseMap();
-        }
+        //CreateMap<SendMessageDto, Message>();
+        CreateMap<Account, AccountDto>().ReverseMap();
     }
 }

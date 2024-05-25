@@ -4,10 +4,10 @@ namespace Repository.Interface
 {
     public interface ITypeServiceRepository
     {
-        Task CreateTypeService(TypeService typeService);
-        Task UpdateTypeService(TypeService typeService);
+        Task<bool> CreateTypeService(TypeService typeService);
+        Task<bool> UpdateTypeService(TypeService typeService);
         Task DeleteTypeService(int id);
-        Task<TypeService> GetTypeServiceById(int id);
-        Task<List<TypeService>> GetTypeServices();
+        TypeService GetTypeServiceById(int id);
+        Task<IEnumerable<TypeService>> GetTypeServices();
     }
 }

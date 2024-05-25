@@ -3,11 +3,6 @@ using BusinessObject.Models;
 using DTOs.Membership;
 using Repository.Interface;
 using Service.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Implement
 {
@@ -19,6 +14,7 @@ namespace Service.Implement
         {
             this.memberShipRepository = memberShipRepository;
         }
+
         public async Task CreateMemberShip(CreateMemberShipDto createMemberShipDto)
         {
             MemberShip memberShip = new MemberShip
@@ -49,11 +45,9 @@ namespace Service.Implement
             {
                 return false;
             }
-            else
-            {
-                memberShip.Status = (int)MemberShipEnum.Expire;
-                return await memberShipRepository.UpdateMembershipStatus(memberShip);
-            }            
+
+            memberShip.Status = (int)MemberShipEnum.Expire;
+            return await memberShipRepository.UpdateMembershipStatus(memberShip);
         }
 
         public async Task<bool> ActivateMembership(UpdateMembershipDto updateMembershipDto)
