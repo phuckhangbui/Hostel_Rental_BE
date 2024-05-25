@@ -4,10 +4,9 @@ namespace Repository.Interface
 {
     public interface IServiceRepository
     {
-        Task CreateService(Service service);
-        Task UpdateService(Service service);
-        Task DeleteService(int id);
-        Task<Service> GetServiceById(int id);
-        Task<List<Service>> GetServices();
+        Task<bool> CreateService(Services service);
+        Task<bool> UpdateService(Services service);
+        Task<Services> GetServiceById(int id);
+        Task<List<Services>> GetServices();
     }
 }

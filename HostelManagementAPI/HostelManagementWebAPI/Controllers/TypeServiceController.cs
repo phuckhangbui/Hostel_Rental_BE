@@ -67,7 +67,8 @@ namespace HostelManagementWebAPI.Controllers
         {
             try
             {
-                if (!_typeServiceService.CheckExistTypeService(typeService.TypeServiceID))
+                var checkTypeService = await _typeServiceService.CheckExistTypeService(typeService.TypeServiceID);
+                if (!checkTypeService)
                 {
                     return BadRequest(new ApiResponseStatus(400, "Can't found type service"));
                 }

@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,12 +33,12 @@ namespace DAO
             }
         }
 
-        public TypeService GetTypeServiceById(int id)
+        public async Task<TypeService> GetTypeServiceById(int id)
         {
             TypeService typeService = null;
             using (var context = new DataContext())
             {
-                typeService = context.TypeService.FirstOrDefault(x => x.TypeServiceID == id);
+                typeService = await context.TypeService.FirstOrDefaultAsync(x => x.TypeServiceID == id);
             }
             return typeService;
         }

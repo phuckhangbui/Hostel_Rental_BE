@@ -30,7 +30,7 @@ namespace Service.Implement
 
         public async Task<bool> UpdateTypeServiceName(UpdateTypeServiceDto updateTypeServiceDto)
         {
-            var typeService = typeServiceRepository.GetTypeServiceById(updateTypeServiceDto.TypeServiceID);
+            var typeService = await typeServiceRepository.GetTypeServiceById(updateTypeServiceDto.TypeServiceID);
             if (typeService == null)
             {
                 return false;
@@ -40,9 +40,9 @@ namespace Service.Implement
             return await typeServiceRepository.UpdateTypeService(typeService);
         }
 
-        public bool CheckExistTypeService(int TypeServiceId)
+        public async Task<bool> CheckExistTypeService(int TypeServiceId)
         {
-            var typeService = typeServiceRepository.GetTypeServiceById(TypeServiceId);
+            var typeService = await typeServiceRepository.GetTypeServiceById(TypeServiceId);
             if (typeService == null)
             {
                 return false;
