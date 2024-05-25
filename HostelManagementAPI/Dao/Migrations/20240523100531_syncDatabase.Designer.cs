@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Repository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class HostelManagementDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240523100531_syncDatabase")]
+    partial class syncDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -442,24 +445,6 @@ namespace Repository.Migrations
                     b.ToTable("RoomsImage");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
-                {
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("RoomId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("RoomService");
-                });
-
             modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.Property<int>("ServiceID")
@@ -669,25 +654,6 @@ namespace Repository.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
-                {
-                    b.HasOne("BusinessObject.Models.Room", "Room")
-                        .WithMany("RoomServices")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObject.Models.Service", "Service")
-                        .WithMany("RoomServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.HasOne("BusinessObject.Models.TypeService", "TypeService")
@@ -746,8 +712,6 @@ namespace Repository.Migrations
                     b.Navigation("RoomContract");
 
                     b.Navigation("RoomImages");
-
-                    b.Navigation("RoomServices");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Service", b =>
@@ -755,8 +719,6 @@ namespace Repository.Migrations
                     b.Navigation("BillPaymentDetail");
 
                     b.Navigation("ContractDetails");
-
-                    b.Navigation("RoomServices");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
