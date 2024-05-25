@@ -16,7 +16,25 @@ namespace HostelManagementWebAPI.Controllers
             _roomService = roomService;
         }
 
-		[HttpPut("{roomId}/status")]
+		[HttpPut("rooms/{roomId}")]
+		public async Task<ActionResult> UpdateRoom(int roomId, [FromBody] UpdateRoomRequestDto updateRoomRequestDto)
+		{
+			try
+			{
+				await _roomService.UpdateRoom(roomId, updateRoomRequestDto);
+				return Ok();
+			}
+			catch (ServiceException ex)
+			{
+				return BadRequest(new ApiResponseStatus(400, ex.Message));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+			}
+		}
+
+		[HttpPut("rooms/{roomId}/status")]
 		public async Task<ActionResult> ChangeRoomStatus(int roomId, [FromBody] int status)
 		{
 			try
@@ -34,7 +52,7 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[HttpGet("{roomId}")]
+		[HttpGet("rooms/{roomId}")]
 		public async Task<ActionResult> GetRoomDetailById(int roomId)
 		{
 			try
@@ -48,7 +66,7 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[HttpGet("{hostelId}/rooms")]
+		[HttpGet("rooms/{hostelId}/list")]
 		public async Task<ActionResult> GetListRoomByHostelId(int hostelId)
 		{
 			try
@@ -62,7 +80,7 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[HttpPost]
+		[HttpPost("rooms")]
 		public async Task<ActionResult> Create([FromBody] CreateRoomRequestDto createRoomRequestDto)
 		{
 			try
@@ -80,7 +98,7 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[HttpPost("{roomId}/images")]
+		[HttpPost("rooms/{roomId}/images")]
 		public async Task<ActionResult> UploadImage(int roomId, IFormFileCollection imageFiles)
 		{
 			try
