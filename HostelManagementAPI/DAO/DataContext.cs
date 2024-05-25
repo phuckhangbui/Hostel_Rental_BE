@@ -177,9 +177,6 @@ namespace DAO
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            modelBuilder.Entity<RoomService>()
-                .HasKey(k => new {k.RoomId, k.ServiceId});
-
             modelBuilder.Entity<TypeService>()
              .HasKey(typeservice => typeservice.TypeServiceID);
 
@@ -320,18 +317,6 @@ namespace DAO
                 .HasOne(service => service.TypeService)
                 .WithMany(typeservice => typeservice.Services)
                 .HasForeignKey(service => service.TypeServiceID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<RoomService>()
-                .HasOne(rs => rs.Room)
-                .WithMany(r => r.RoomServices)
-                .HasForeignKey(rs => rs.RoomId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<RoomService>()
-                .HasOne(rs => rs.Service)
-                .WithMany(r => r.RoomServices)
-                .HasForeignKey(rs => rs.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
