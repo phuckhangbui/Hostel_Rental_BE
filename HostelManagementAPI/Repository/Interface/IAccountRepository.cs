@@ -10,5 +10,6 @@ namespace Repository.Interface
         Task<Account> GetAccountByEmail(string email);
         Task CreateAccount(Account account);
         Task UpdateAccount(Account account);
+        Task<Account> GetAccountById(int id);
     }
 }

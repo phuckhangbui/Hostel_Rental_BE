@@ -36,5 +36,10 @@ namespace Repository.Implement
         {
             await AccountDAO.Instance.UpdateAsync(account);
         }
+
+        public async Task<Account> GetAccountById(int id)
+        {
+           return await AccountDAO.Instance.GetAccountById(id);
+        }
     }
 }
