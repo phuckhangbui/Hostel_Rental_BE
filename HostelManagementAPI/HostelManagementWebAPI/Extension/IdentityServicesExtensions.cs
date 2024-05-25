@@ -6,10 +6,10 @@ namespace HostelManagementWebAPI.Extensions;
 
 public static class IdentityServiceExtension
 {
-    private const string ADMIN_ID = "1";
-    private const string STAFF_ID = "2";
-    private const string MEMBER_ID = "3";
 
+    const string ADMIN_ID = "1";
+    const string OWNER_ID = "2";
+    const string MEMBER_ID = "3";
     public static IServiceCollection IdentityServices(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -32,13 +32,13 @@ public static class IdentityServiceExtension
         services.AddAuthorization(options =>
         {
             options.AddPolicy("Admin", policy =>
-                policy.RequireClaim("RoleId", ADMIN_ID));
-            options.AddPolicy("Staff", policy =>
-                policy.RequireClaim("RoleId", STAFF_ID));
+                      policy.RequireClaim("RoleId", ADMIN_ID));
+            options.AddPolicy("Owner", policy =>
+                      policy.RequireClaim("RoleId", OWNER_ID));
             options.AddPolicy("Member", policy =>
-                policy.RequireClaim("RoleId", MEMBER_ID));
-            options.AddPolicy("AdminAndStaff", policy =>
-                policy.RequireClaim("RoleId", ADMIN_ID, STAFF_ID));
+                      policy.RequireClaim("RoleId", MEMBER_ID));
+            options.AddPolicy("MemberAndOwner", policy =>
+                        policy.RequireClaim("RoleId", MEMBER_ID, OWNER_ID));
         });
         return services;
     }

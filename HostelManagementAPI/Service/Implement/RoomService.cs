@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject.Enum;
 using BusinessObject.Models;
-using DTOs;
+using DTOs.Room;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
 using Service.Exceptions;
@@ -9,17 +9,55 @@ using Service.Interface;
 
 namespace Service.Implement
 {
-	public class RoomService : IRoomService
+    public class RoomService : IRoomService
 	{
 		private readonly IRoomRepository _roomRepository;
 		private readonly ICloudinaryService _cloudinaryService;
 		private readonly IMapper _mapper;
+
+		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
+		{
+			var rooms = await _roomRepository.GetListRoomsByHostelId(hostelId);
+			return _mapper.Map<IEnumerable<RoomListResponseDto>>(rooms);
+		}
 
 		public RoomService(IRoomRepository roomRepository, ICloudinaryService cloudinaryService, IMapper mapper)
 		{
 			_roomRepository = roomRepository;
 			_mapper = mapper;
 			_cloudinaryService = cloudinaryService;
+		}
+
+		public async Task ChangeRoomStatus(int roomId, int status)
+		{
+			var room = await _roomRepository.GetRoomDetailById(roomId);
+			if (room == null)
+			{
+				throw new ServiceException("Room not found with this ID");
+			}
+
+			if (!Enum.IsDefined(typeof(RoomEnum), status))
+			{
+				throw new ServiceException("Invalid status value");
+			}
+
+			room.Status = status;
+			await _roomRepository.UpdateRoom(room);
+		}
+
+		public async Task<RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId)
+		{
+			var room = await _roomRepository.GetRoomDetailById(roomId);
+			if (room == null)
+			{
+				throw new ServiceException("Room not found with this ID");
+			}
+
+			var roomDetailDto = _mapper.Map<RoomDetailResponseDto>(room);
+
+			roomDetailDto.RoomImageUrls = room.RoomImages.Select(img => img.RoomUrl).ToList();
+
+			return roomDetailDto;
 		}
 
 		public async Task CreateRoom(CreateRoomRequestDto createRoomRequestDto)

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
 using DTOs;
+using DTOs.Account;
 using Google.Apis.Auth;
 using Repository.Interface;
 using Service.Exceptions;
@@ -55,9 +56,15 @@ namespace Service.Implement
             }
         }
 
-        public async Task<IEnumerable<Account>> GetAllAccounts()
+        public async Task<IEnumerable<AccountViewDto>> GetAllAccounts()
         {
-            return await _accountRepository.GetAllAsync();
+            return _accountRepository.GetAllAsync().Result.Select(x => new AccountViewDto
+            {
+                AccountID = x.AccountID,
+                Email = x.Email,
+                Name = x.Name,
+                Status = x.Status
+            }).ToList();
         }
 
         public async Task<AccountDto> Login(EmailLoginDto login)
@@ -222,6 +229,27 @@ namespace Service.Implement
             AccountDto accountDto = _mapper.Map<AccountDto>(account);
             accountDto.Token = _tokenService.CreateToken(account);
             return accountDto;
+        }
+
+        public async Task ActiveAccount(int idAccount)
+        {
+            var account = _accountRepository.GetAccountById(idAccount);
+            account.Result.Status = 0;
+            await _accountRepository.UpdateAccount(account.Result);
+        }
+
+        public async Task UnactiveAccount(int idAccount)
+        {
+            var account = _accountRepository.GetAccountById(idAccount);
+            account.Result.Status = 1;
+            await _accountRepository.UpdateAccount(account.Result);
+        }
+
+        public async Task<AccountViewDetail> GetAccountById(int id)
+        {
+            var account = await _accountRepository.GetAccountById(id);
+            AccountViewDetail accountViewDetail = _mapper.Map<AccountViewDetail>(account);
+            return accountViewDetail;
         }
     }
 }
