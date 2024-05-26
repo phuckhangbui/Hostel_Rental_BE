@@ -45,5 +45,10 @@ namespace DAO
             return await dataContext.Account.FirstOrDefaultAsync(x => x.AccountID.Equals(id));
         }
 
+        public async Task<Account> GetAccountWithHostelById(int id)
+        {
+            return await dataContext.Account.Include(x => x.Hostels).FirstOrDefaultAsync(x => x.AccountID == id);
+        }
+
     }
 }
