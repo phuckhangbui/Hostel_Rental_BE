@@ -1,5 +1,5 @@
-﻿using DTOs;
-using DTOs.Account;
+﻿using DTOs.Account;
+using DTOs.AccountAuthentication;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;

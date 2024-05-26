@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DTOs
+namespace DTOs.AccountAuthentication
 {
-    public class ConfirmPasswordDtos
+    public class EmailLoginDto
     {
         [Required]
         [DataType(DataType.EmailAddress)]
@@ -10,10 +10,6 @@ namespace DTOs
 
         [Required]
         [DataType(DataType.Password)]
-        public string SystemPassword { get; set; }
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string NewPassword { get; set; }
+        public string Password { get; set; }
     }
 }
