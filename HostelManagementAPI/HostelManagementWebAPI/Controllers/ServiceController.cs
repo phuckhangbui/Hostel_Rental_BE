@@ -59,8 +59,7 @@ namespace HostelManagementWebAPI.Controllers
         public async Task<ActionResult> UpdateService([FromBody] UpdateServiceDto updateService)
         {
             try
-            {
-                
+            {                
                 if (updateService == null)
                 {
                     return BadRequest(new ApiResponseStatus(400, "Invalid request."));
