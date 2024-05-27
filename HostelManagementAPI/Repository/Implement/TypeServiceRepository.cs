@@ -16,7 +16,7 @@ namespace Repository.Implement
             throw new NotImplementedException();
         }
 
-        public TypeService GetTypeServiceById(int id)
+        public Task<TypeService> GetTypeServiceById(int id)
         {
             return TypeServiceDao.Instance.GetTypeServiceById(id);
         }

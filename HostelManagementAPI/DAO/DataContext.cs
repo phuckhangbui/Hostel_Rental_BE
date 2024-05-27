@@ -58,7 +58,7 @@ namespace DAO
         public DbSet<Notice> Notice { get; set; }
         public DbSet<Room> Room { get; set; }
         public DbSet<RoomImage> RoomsImage { get; set; }
-        public DbSet<Service> Service { get; set; }
+        public DbSet<Services> Service { get; set; }
         public DbSet<TypeService> TypeService { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -169,10 +169,10 @@ namespace DAO
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            modelBuilder.Entity<Service>()
+            modelBuilder.Entity<Services>()
              .HasKey(service => service.ServiceID);
 
-            modelBuilder.Entity<Service>()
+            modelBuilder.Entity<Services>()
                 .Property(service => service.ServiceID)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
@@ -316,7 +316,7 @@ namespace DAO
                 .OnDelete(DeleteBehavior.Restrict);
 
             //one type service have many service
-            modelBuilder.Entity<Service>()
+            modelBuilder.Entity<Services>()
                 .HasOne(service => service.TypeService)
                 .WithMany(typeservice => typeservice.Services)
                 .HasForeignKey(service => service.TypeServiceID)

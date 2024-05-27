@@ -1,6 +1,6 @@
 ﻿namespace BusinessObject.Models
 {
-    public class Service
+    public class Services
     {
         public int ServiceID { get; set; }
         public TypeService TypeService { get; set; }

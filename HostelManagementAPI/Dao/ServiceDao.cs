@@ -2,7 +2,7 @@
 
 namespace DAO
 {
-    public class ServiceDao : BaseDAO<Service>
+    public class ServiceDao : BaseDAO<Services>
     {
         private static ServiceDao instance = null;
         private static readonly object instacelock = new object();
@@ -25,6 +25,16 @@ namespace DAO
                 }
 
             }
+        }
+
+        public async Task<Services> GetServiceById(int id)
+        {
+            Services service = null;
+            using (var context = new DataContext())
+            {
+                service = context.Service.FirstOrDefault(x => x.ServiceID == id);
+            }
+            return service;
         }
     }
 }

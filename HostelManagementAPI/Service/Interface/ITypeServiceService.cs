@@ -8,6 +8,6 @@ namespace Service.Interface
         Task CreateTypeService (CreateTypeServiceDto typeService);
         Task<IEnumerable<TypeService>> GetAllTypeService();
         Task<bool> UpdateTypeServiceName(UpdateTypeServiceDto updateTypeServiceDto);
-        bool CheckExistTypeService(int TypeServiceId);
+        Task<bool> CheckExistTypeService(int TypeServiceId);
     }
 }

@@ -9,34 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5776d40a-8a78-4ce4-8e9b-ecda258c9d1a" name="Changes" comment="code api create, update, get TypeService">
-      <change afterPath="$PROJECT_DIR$/DTOs/Account/AccountViewDetail.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DTOs/Account/AccountViewDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DTOs/Room/CreateRoomRequestDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DTOs/Room/RoomDetailResponseDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DTOs/Room/RoomListResponseDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DAO/RoomDao.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DAO/RoomDao.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/AccountDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DTOs/Account/AccountDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DTOs/CreateRoomRequestDto.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dao/AccountDao.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Dao/AccountDao.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/AccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/AccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/Admin/AdminAccountController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/Admin/AdminAccountController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/BaseApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/BaseApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/LoginController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/LoginController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/RoomController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Controllers/RoomController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Extension/IdentityServicesExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Extension/IdentityServicesExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/HostelManagementWebAPI.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/HostelManagementWebAPI.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HostelManagementWebAPI/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HostelManagementWebAPI/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/Implement/AccountRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/Implement/AccountRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/Implement/RoomRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/Implement/RoomRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/Interface/IAccountRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/Interface/IAccountRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/Interface/IRoomRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/Interface/IRoomRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/Mapper/AutoMapperProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/Mapper/AutoMapperProfile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Service/Implement/AccountService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Service/Implement/AccountService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Service/Implement/RoomService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Service/Implement/RoomService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Service/Interface/IAccountService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Service/Interface/IAccountService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Service/Interface/IRoomService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Service/Interface/IRoomService.cs" afterDir="false" />
-    </list>
+    <list default="true" id="5776d40a-8a78-4ce4-8e9b-ecda258c9d1a" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -84,7 +57,7 @@
     ".NET Launch Settings Profile.HostelManagementWebAPI: http.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging dev__minh",
+    "git-widget-placeholder": "dev__minh",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -155,7 +128,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1716619660035</updated>
-      <workItem from="1716619663182" duration="4140000" />
+      <workItem from="1716619663182" duration="4904000" />
     </task>
     <task id="LOCAL-00001" summary="code api create, update, get TypeService">
       <option name="closed" value="true" />

@@ -16,15 +16,23 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IAccountService, AccountService>();
+
         services.AddScoped<ITokenService, TokenService>();
+
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IMemberShipRepository, MemberShipRepository>();
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
-		services.AddScoped<IHostelRepository, HostelRepository>();
+		    services.AddScoped<IHostelRepository, HostelRepository>();
 
-		services.AddScoped<IRoomService, RoomService>();
+		    services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IMemberShipService, MemberShipService>();
+
+        services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
         services.AddScoped<ITypeServiceService, TypeServiceService>();
+
+        services.AddScoped<IServiceRepository, ServiceRepository>();
+        services.AddScoped<IServiceService, ServiceService>();
+
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
 		services.AddScoped<IHostelService, HostelService>();
