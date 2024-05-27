@@ -22,9 +22,10 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IMemberShipRepository, MemberShipRepository>();
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
-		    services.AddScoped<IHostelRepository, HostelRepository>();
+		services.AddScoped<IHostelRepository, HostelRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
-		    services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IMemberShipService, MemberShipService>();
 
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
@@ -36,8 +37,9 @@ public static class ApplicationServicesExtensions
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
 		services.AddScoped<IHostelService, HostelService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
-		services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
         services.AddCors(opt =>
         {

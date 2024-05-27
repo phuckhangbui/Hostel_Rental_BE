@@ -20,7 +20,6 @@ namespace HostelManagementWebAPI.Controllers
             var accountLogin = await _accountService.GetAccountLoginByUsername(loginDto);
             if (accountLogin != null)
             {
-                //HttpContext.Session.SetString("token", accountLogin.Token);
                 return Ok(accountLogin);
             }
             else

@@ -10,5 +10,7 @@
 		public string? OwnerName { get; set; }
 		public int? Status { get; set; }
 		public int? NumOfAvailableRoom { get; set; }
+		public string? Thumbnail {  get; set; }
+		public int? NumOfTotalRoom { get; set; }
 	}
 }
