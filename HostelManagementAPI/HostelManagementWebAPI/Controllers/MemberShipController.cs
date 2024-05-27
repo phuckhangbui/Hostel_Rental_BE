@@ -86,6 +86,24 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [HttpGet("get-memberships")]
+        public async Task<ActionResult> GetAllMemberShip()
+        {
+            try
+            {
+                var memberships = await _memberShipService.GetAllMemberships();
+                return Ok(memberships);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         [Authorize(Policy = "Admin")]
         [HttpPut("admin-deactivate-membership")]
         public async Task<ActionResult> DeactivateMembership([FromBody] UpdateMembershipDto updateMembershipDto)
