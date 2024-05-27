@@ -39,7 +39,14 @@ namespace Repository.Implement
 
         public async Task<Account> GetAccountById(int id)
         {
-           return await AccountDAO.Instance.GetAccountById(id);
+            return await AccountDAO.Instance.GetAccountById(id);
         }
+
+        public async Task<Account> GetAccountWithHostelById(int id)
+        {
+            return await AccountDAO.Instance.GetAccountWithHostelById(id);
+
+        }
+
     }
 }

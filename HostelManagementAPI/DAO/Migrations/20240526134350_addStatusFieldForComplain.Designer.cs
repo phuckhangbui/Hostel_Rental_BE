@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Repository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class HostelManagementDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240526134350_addStatusFieldForComplain")]
+    partial class addStatusFieldForComplain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -463,7 +466,7 @@ namespace Repository.Migrations
                     b.ToTable("RoomService");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
+            modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.Property<int>("ServiceID")
                         .ValueGeneratedOnAdd()
@@ -521,7 +524,7 @@ namespace Repository.Migrations
                         .HasForeignKey("BillPaymentID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
+                    b.HasOne("BusinessObject.Models.Service", "Service")
                         .WithMany("BillPaymentDetail")
                         .HasForeignKey("ServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -580,7 +583,7 @@ namespace Repository.Migrations
                         .HasForeignKey("ContractID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
+                    b.HasOne("BusinessObject.Models.Service", "Service")
                         .WithMany("ContractDetails")
                         .HasForeignKey("ServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -680,7 +683,7 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
+                    b.HasOne("BusinessObject.Models.Service", "Service")
                         .WithMany("RoomServices")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -691,7 +694,7 @@ namespace Repository.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
+            modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.HasOne("BusinessObject.Models.TypeService", "TypeService")
                         .WithMany("Services")
@@ -753,7 +756,7 @@ namespace Repository.Migrations
                     b.Navigation("RoomServices");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
+            modelBuilder.Entity("BusinessObject.Models.Service", b =>
                 {
                     b.Navigation("BillPaymentDetail");
 

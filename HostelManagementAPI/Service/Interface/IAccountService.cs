@@ -1,6 +1,6 @@
 ﻿using BusinessObject.Models;
-using DTOs;
 using DTOs.Account;
+using DTOs.AccountAuthentication;
 
 namespace Service.Interface
 {

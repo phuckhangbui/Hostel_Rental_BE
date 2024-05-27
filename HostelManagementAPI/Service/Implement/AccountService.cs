@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
-using DTOs;
 using DTOs.Account;
+using DTOs.AccountAuthentication;
 using Google.Apis.Auth;
 using Repository.Interface;
 using Service.Exceptions;
