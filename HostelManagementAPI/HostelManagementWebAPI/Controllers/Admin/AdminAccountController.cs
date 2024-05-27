@@ -1,14 +1,13 @@
-﻿using BusinessObject.Models;
-using DTOs.Account;
+﻿using DTOs.Account;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
-using Service.Implement;
 using Service.Interface;
 
 namespace HostelManagementWebAPI.Controllers.Admin
 {
+    [ApiController]
     public class AdminAccountController : BaseApiController
     {
         private readonly IAccountService _accountService;
@@ -17,8 +16,8 @@ namespace HostelManagementWebAPI.Controllers.Admin
             _accountService = accountService;
         }
 
-        [Authorize("Admin")]
-        [HttpGet("/admin/accounts")]
+        [Authorize(policy: "Admin")]
+        [HttpGet("admin/accounts")]
         public async Task<ActionResult<IEnumerable<AccountViewDto>>> GetAllAccountsInFlatform()
         {
             var accounts = await _accountService.GetAllAccounts();
@@ -32,13 +31,13 @@ namespace HostelManagementWebAPI.Controllers.Admin
             }
         }
 
-        [Authorize("Admin")]
-        [HttpPost("/admin/account/active")]
-        public async Task<ActionResult> ActiveAccount(int idaccount)
+        [Authorize(policy : "Admin")]
+        [HttpPost("admin/account/active")]
+        public async Task<ActionResult> ActiveAccount(AccountStatusDto idaccount)
         {
             try
             {
-                await _accountService.ActiveAccount(idaccount);
+                await _accountService.ActiveAccount(idaccount.AccountId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -51,13 +50,13 @@ namespace HostelManagementWebAPI.Controllers.Admin
             }
         }
 
-        [Authorize("Admin")]
-        [HttpPost("/admin/account/block")]
-        public async Task<ActionResult> BlockAccount(int idaccount)
+        [Authorize(policy: "Admin")]
+        [HttpPost("admin/account/block")]
+        public async Task<ActionResult> BlockAccount(AccountStatusDto idaccount)
         {
             try
             {
-                await _accountService.UnactiveAccount(idaccount);
+                await _accountService.UnactiveAccount(idaccount.AccountId);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -70,8 +69,8 @@ namespace HostelManagementWebAPI.Controllers.Admin
             }
         }
 
-        [Authorize("Admin")]
-        [HttpGet("/admin/accounts/detail/{accountID}")]
+        [Authorize(policy: "Admin")]
+        [HttpGet("admin/accounts/detail/{accountID}")]
         public async Task<ActionResult<AccountViewDetail>> GetAccountDetailById(int accountID)
         {
             try

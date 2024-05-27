@@ -14,6 +14,7 @@ public class AutoMapperProfile : Profile
     {
         //CreateMap<SendMessageDto, Message>();
         CreateMap<Account, AccountDto>().ReverseMap();
+        CreateMap<Account, AccountViewDetail>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
         CreateMap<Room, RoomDetailResponseDto>()
