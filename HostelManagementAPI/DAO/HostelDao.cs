@@ -37,5 +37,11 @@ namespace DAO
 				.Include(h => h.Rooms)
 				.ToListAsync();
 		}
-	}
+
+        public async Task<IEnumerable<Hostel>> GetAllHostelsTotalActiveAsync()
+        {
+            return await dataContext.Hostel.Where(x => x.Status == 0)
+                .ToListAsync();
+        }
+    }
 }
