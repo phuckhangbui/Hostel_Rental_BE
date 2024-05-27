@@ -97,5 +97,28 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
-    }
+
+		[HttpPost("hostels/{hostelId}/images")]
+		public async Task<ActionResult> UploadImage(int hostelId, IFormFile formFile)
+		{
+			try
+			{
+				if (formFile == null || formFile.Length == 0)
+				{
+					return BadRequest(new ApiResponseStatus(400, "Invalid image file."));
+				}
+
+				await _hostelService.UploadHostelThumbnail(hostelId, formFile);
+				return Ok(new ApiResponseStatus(200, "Image uploaded successfully."));
+			}
+			catch (ServiceException ex)
+			{
+				return BadRequest(new ApiResponseStatus(400, ex.Message));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+			}
+		}
+	}
 }
