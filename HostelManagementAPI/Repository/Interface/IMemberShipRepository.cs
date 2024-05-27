@@ -9,6 +9,7 @@ namespace Repository.Interface
         MemberShip GetMembershipById(int memberShipID);
         Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive();
         Task<IEnumerable<GetMemberShipDto>> GetMembershipExpire();
+        Task<IEnumerable<GetMemberShipDto>> GetAllMemberships();
         Task<bool> UpdateMembershipStatus(MemberShip memberShip);
     }
 }

@@ -38,6 +38,11 @@ namespace Service.Implement
             return await memberShipRepository.GetMembershipExpire();
         }
 
+        public Task<IEnumerable<GetMemberShipDto>> GetAllMemberships()
+        {
+            return memberShipRepository.GetAllMemberships();
+        }
+
         public async Task<bool> DeactivateMembership(UpdateMembershipDto updateMembershipDto)
         {
             var memberShip = memberShipRepository.GetMembershipById(updateMembershipDto.MemberShipID);

@@ -61,6 +61,24 @@ namespace Repository.Implement
             return result.ToList();
         }
 
+        public async Task<IEnumerable<GetMemberShipDto>> GetAllMemberships()
+        {
+            var memberShips = await MemberShipDao.Instance.GetAllAsync();
+
+            var result = memberShips.Select(x => new GetMemberShipDto
+            {
+                MemberShipID = x.MemberShipID,
+                MemberShipName = x.MemberShipName,
+                CapacityHostel = x.CapacityHostel,
+                Month = x.Month,
+                MemberShipFee = x.MemberShipFee,
+                Status = x.Status
+            }); ;
+
+            result = result.OrderBy(x => x.MemberShipFee);
+            return result.ToList();
+        }
+
         public async Task<bool> UpdateMembershipStatus(MemberShip memberShip)
         {
             if (memberShip == null)
@@ -81,7 +99,5 @@ namespace Repository.Implement
                 }
             }
         }
-
-        
     }
 }
