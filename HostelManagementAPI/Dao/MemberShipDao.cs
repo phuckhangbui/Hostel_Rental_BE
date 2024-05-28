@@ -26,7 +26,7 @@ namespace DAO
             }
         }
 
-        public MemberShip GetMemberShipById(int id)
+        public async Task<MemberShip> GetMemberShipById(int id)
         {
             MemberShip memberShip = null;
             memberShip = dataContext.Membership.FirstOrDefault(x => x.MemberShipID == id);

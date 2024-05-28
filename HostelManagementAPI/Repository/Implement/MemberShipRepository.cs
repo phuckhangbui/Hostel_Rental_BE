@@ -18,9 +18,9 @@ namespace Repository.Implement
         {
             return await MemberShipDao.Instance.CreateAsync(memberShip);
         }
-        public MemberShip GetMembershipById(int memberShipID)
+        public async Task<MemberShip> GetMembershipById(int memberShipID)
         {
-            return MemberShipDao.Instance.GetMemberShipById(memberShipID);
+            return await MemberShipDao.Instance.GetMemberShipById(memberShipID);
         }
 
         public async Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive()
@@ -98,6 +98,11 @@ namespace Repository.Implement
                     throw;
                 }
             }
+        }
+
+        public async Task UpdateMemberShip(MemberShip memberShip)
+        {
+            await MemberShipDao.Instance.UpdateAsync(memberShip);
         }
     }
 }

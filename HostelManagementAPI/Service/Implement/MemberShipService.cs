@@ -1,4 +1,5 @@
-﻿using BusinessObject.Enum;
+﻿using AutoMapper;
+using BusinessObject.Enum;
 using BusinessObject.Models;
 using DTOs.Membership;
 using Repository.Interface;
@@ -9,10 +10,12 @@ namespace Service.Implement
     public class MemberShipService : IMemberShipService
     {
         public IMemberShipRepository memberShipRepository;
+        private readonly IMapper _mapper;
 
-        public MemberShipService(IMemberShipRepository memberShipRepository)
+        public MemberShipService(IMemberShipRepository memberShipRepository, IMapper mapper)
         {
             this.memberShipRepository = memberShipRepository;
+            _mapper = mapper;
         }
 
         public async Task CreateMemberShip(CreateMemberShipDto createMemberShipDto)
@@ -45,7 +48,7 @@ namespace Service.Implement
 
         public async Task<bool> DeactivateMembership(UpdateMembershipDto updateMembershipDto)
         {
-            var memberShip = memberShipRepository.GetMembershipById(updateMembershipDto.MemberShipID);
+            var memberShip = await memberShipRepository.GetMembershipById(updateMembershipDto.MemberShipID);
             if (memberShip == null)
             {
                 return false;
@@ -57,7 +60,7 @@ namespace Service.Implement
 
         public async Task<bool> ActivateMembership(UpdateMembershipDto updateMembershipDto)
         {
-            var memberShip = memberShipRepository.GetMembershipById(updateMembershipDto.MemberShipID);
+            var memberShip = await memberShipRepository.GetMembershipById(updateMembershipDto.MemberShipID);
             if (memberShip == null)
             {
                 return false;
@@ -67,6 +70,26 @@ namespace Service.Implement
                 memberShip.Status = (int)MemberShipEnum.Active;
                 return await memberShipRepository.UpdateMembershipStatus(memberShip);
             }
+        }
+
+        public async Task<GetMemberShipDto> GetDetailMemberShip(int packageID)
+        {
+            var package = await memberShipRepository.GetMembershipById(packageID);
+            return _mapper.Map<GetMemberShipDto>(package);
+        }
+
+        public async Task UpdateMemberShip(UpdateMemberShipAdminDto updateMemberShipAdmin)
+        {
+            var memberShip = await memberShipRepository.GetMembershipById(updateMemberShipAdmin.MemberShipID);
+            if (memberShip == null)
+            {
+                
+            }
+            memberShip.MemberShipFee = updateMemberShipAdmin.MemberShipFee;
+            memberShip.MemberShipName = updateMemberShipAdmin.MemberShipName;
+            memberShip.Month = updateMemberShipAdmin.Month;
+            memberShip.CapacityHostel = updateMemberShipAdmin.CapacityHostel;
+            await memberShipRepository.UpdateMemberShip(memberShip);
         }
     }
 }

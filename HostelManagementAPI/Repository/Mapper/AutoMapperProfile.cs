@@ -4,6 +4,7 @@ using BusinessObject.Models;
 using DTOs.Account;
 using DTOs.Complain;
 using DTOs.Hostel;
+using DTOs.Membership;
 using DTOs.Room;
 
 namespace Repository.Mapper;
@@ -16,6 +17,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Account, AccountDto>().ReverseMap();
         CreateMap<Account, AccountViewDetail>().ReverseMap();
         CreateMap<Room, RoomOfHostelAdminView>().ReverseMap();
+        CreateMap<MemberShip, GetMemberShipDto>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
         CreateMap<Room, RoomDetailResponseDto>()

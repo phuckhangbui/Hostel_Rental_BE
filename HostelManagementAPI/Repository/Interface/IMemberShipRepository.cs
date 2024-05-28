@@ -6,7 +6,8 @@ namespace Repository.Interface
     public interface IMemberShipRepository
     {
         Task<bool> CreateMemberShip(MemberShip memberShip);
-        MemberShip GetMembershipById(int memberShipID);
+        Task UpdateMemberShip(MemberShip memberShip);
+        Task<MemberShip> GetMembershipById(int memberShipID);
         Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive();
         Task<IEnumerable<GetMemberShipDto>> GetMembershipExpire();
         Task<IEnumerable<GetMemberShipDto>> GetAllMemberships();
