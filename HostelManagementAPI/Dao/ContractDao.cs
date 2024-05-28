@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace DAO
 {
-    public class ContractDao
+    public class ContractDao: BaseDAO<Contract>
     {
         private static ContractDao instance = null;
         private readonly DataContext dataContext;
