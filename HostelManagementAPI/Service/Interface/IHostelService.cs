@@ -5,7 +5,7 @@ namespace Service.Interface
 {
     public interface IHostelService
     {
-        Task CreateHostel(CreateHostelRequestDto createHostelRequestDto);
+        Task<CreateHostelResponseDto> CreateHostel(CreateHostelRequestDto createHostelRequestDto);
         Task<IEnumerable<HostelListResponseDto>> GetHostels();
         Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView();
         Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID);
