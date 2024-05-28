@@ -1,4 +1,5 @@
 ﻿using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Implement;
@@ -15,6 +16,7 @@ namespace HostelManagementWebAPI.Controllers
             this.memberShipRegisteredService = memberShipRegisteredService;
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpGet("admin-get-all-membership")]
         public async Task<ActionResult> GetAllMembership()
         {
