@@ -34,6 +34,9 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IServiceRepository, ServiceRepository>();
         services.AddScoped<IServiceService, ServiceService>();
 
+        services.AddScoped<IMembershipRegisterRepository, MembershipRegisterRepository>();
+        services.AddScoped<IMembershipRegisterService, MembershipRegisterService>();
+
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
 		services.AddScoped<IHostelService, HostelService>();

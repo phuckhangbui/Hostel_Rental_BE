@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Models;
 using DTOs.Dashboard;
+using DTOs.MemberShipRegisterTransaction;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -61,6 +62,24 @@ namespace DAO
             FormattedNumberOfProfit = utils.FormatCurrency(group.Sum(x => x.PackageFee))
         });
             return profit;
+        }
+
+        public async Task<IEnumerable<ViewMemberShipDto>> GetAllMembership()
+        {
+            var membersRegister = await dataContext.MembershipsRegisterTransaction
+                .Select(x => new ViewMemberShipDto
+                {
+                    MemberShipTransactionID = x.MemberShipTransactionID,
+                    AccountID = (int)x.AccountID,
+                    Email = x.OwnerAccount.Email,
+                    MembershipName = x.MemberShip.MemberShipName,
+                    DateRegister = x.DateRegister.Value,
+                    DateExpire = x.DateExpire.Value,
+                    Status = x.Status,
+                })
+                .ToListAsync();
+
+            return membersRegister;
         }
     }
 }
