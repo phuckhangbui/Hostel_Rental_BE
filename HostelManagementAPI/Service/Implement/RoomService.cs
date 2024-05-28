@@ -150,5 +150,11 @@ namespace Service.Implement
 
 			await _roomRepository.UpdateRoom(room);
 		}
-	}
+
+        public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)
+        {
+            var rooms = await _roomRepository.GetListRoomsByHostelId(hostelId);
+            return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
+        }
+    }
 }

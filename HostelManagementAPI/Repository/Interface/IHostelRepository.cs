@@ -8,5 +8,6 @@ namespace Repository.Interface
         Task<Hostel> GetHostelById(int id);
         Task<IEnumerable<Hostel>> GetAllHostels();
         Task UpdateHostel(Hostel hostel);
+        Task<IEnumerable<Hostel>> GetOwnerHostels(int ownerId);
     }
 }
