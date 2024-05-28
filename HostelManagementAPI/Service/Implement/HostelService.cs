@@ -2,6 +2,7 @@
 using BusinessObject.Enum;
 using BusinessObject.Models;
 using DTOs.Hostel;
+using Microsoft.AspNetCore.Http;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -12,15 +13,18 @@ namespace Service.Implement
     {
         private readonly IHostelRepository _hostelRepository;
         private readonly IAccountRepository _accountRepository;
-        private readonly IMapper _mapper;
+		private readonly ICloudinaryService _cloudinaryService;
+		private readonly IMapper _mapper;
 
         public HostelService(
             IHostelRepository hostelRepository,
             IAccountRepository accountRepository,
+            ICloudinaryService cloudinaryService,
             IMapper mapper)
         {
             _hostelRepository = hostelRepository;
             _accountRepository = accountRepository;
+            _cloudinaryService = cloudinaryService;
             _mapper = mapper;
         }
 
@@ -61,10 +65,22 @@ namespace Service.Implement
             await _hostelRepository.CreateHostel(hostel);
         }
 
+        public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
+        {
+            var hostel = await _hostelRepository.GetHostelById(hostelID);
+            return _mapper.Map<HostelDetailAdminView>(hostel);
+        }
+
         public async Task<IEnumerable<HostelListResponseDto>> GetHostels()
         {
             var hostels = await _hostelRepository.GetAllHostels();
             return _mapper.Map<IEnumerable<HostelListResponseDto>>(hostels);
+        }
+
+        public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
+        {
+            var hostels = await _hostelRepository.GetAllHostels();
+            return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
         }
 
         public async Task<IEnumerable<HostelListResponseDto>> GetHostelsByOwner(int onwerId)
@@ -109,5 +125,34 @@ namespace Service.Implement
 
             await _hostelRepository.UpdateHostel(currentHostel);
         }
-    }
+
+		public async Task UploadHostelThumbnail(int hostelId, IFormFile formFile)
+		{
+			var currentHostel = await _hostelRepository.GetHostelById(hostelId);
+			if (currentHostel == null)
+			{
+				throw new ServiceException("Hostel not found with this ID");
+			}
+            else
+            {
+				try
+				{
+					var result = await _cloudinaryService.AddPhotoAsync(formFile);
+					if (result.Error != null)
+					{
+						throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
+					}
+
+					string imageUrl = result.SecureUrl.AbsoluteUri;
+                    currentHostel.Thumbnail = imageUrl;
+
+                    await _hostelRepository.UpdateHostel(currentHostel);
+				}
+				catch (Exception ex)
+				{
+					throw new ServiceException("Upload hostel image fail with error", ex);
+				}
+			}
+		}
+	}
 }

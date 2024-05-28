@@ -1,33 +1,27 @@
 ﻿using BusinessObject.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
     public class MemberShipDao : BaseDAO<MemberShip>
     {
         private static MemberShipDao instance = null;
-        private static readonly object instacelock = new object();
+        private readonly DataContext dataContext;
 
         public MemberShipDao()
         {
+            dataContext = new DataContext();
         }
 
         public static MemberShipDao Instance
         {
             get
             {
-                lock (instacelock)
-                {
                     if (instance == null)
                     {
                         instance = new MemberShipDao();
                     }
                     return instance;
-                }
                 
             }
         }
@@ -35,11 +29,14 @@ namespace DAO
         public MemberShip GetMemberShipById(int id)
         {
             MemberShip memberShip = null;
-            using (var context = new DataContext())
-            {
-                memberShip = context.Membership.FirstOrDefault(x => x.MemberShipID == id);
-            }
+            memberShip = dataContext.Membership.FirstOrDefault(x => x.MemberShipID == id);
             return memberShip;
+        }
+
+        public async Task<IEnumerable<MemberShip>> GetAllPackagesTotalActiveAsync()
+        {
+            return await dataContext.Membership.Where(x => x.Status == 0)
+                .ToListAsync();
         }
     }
 }
