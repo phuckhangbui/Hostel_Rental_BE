@@ -61,10 +61,22 @@ namespace Service.Implement
             await _hostelRepository.CreateHostel(hostel);
         }
 
+        public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
+        {
+            var hostel = await _hostelRepository.GetHostelById(hostelID);
+            return _mapper.Map<HostelDetailAdminView>(hostel);
+        }
+
         public async Task<IEnumerable<HostelListResponseDto>> GetHostels()
         {
             var hostels = await _hostelRepository.GetAllHostels();
             return _mapper.Map<IEnumerable<HostelListResponseDto>>(hostels);
+        }
+
+        public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
+        {
+            var hostels = await _hostelRepository.GetAllHostels();
+            return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
         }
 
         public async Task<IEnumerable<HostelListResponseDto>> GetHostelsByOwner(int onwerId)
