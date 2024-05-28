@@ -1,5 +1,6 @@
 ﻿using DTOs.Hostel;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -16,13 +17,14 @@ namespace HostelManagementWebAPI.Controllers
             _hostelService = hostelService;
         }
 
-        [HttpPost("hostels")]
+		[Authorize(Policy = "Owner")]
+		[HttpPost("hostels")]
         public async Task<ActionResult> Create([FromBody] CreateHostelRequestDto createHostelRequestDto)
         {
             try
             {
-                await _hostelService.CreateHostel(createHostelRequestDto);
-                return Ok();
+                var result = await _hostelService.CreateHostel(createHostelRequestDto);
+                return Ok(result);
             }
             catch (ServiceException ex)
             {
@@ -48,7 +50,8 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpGet("hostels/{ownerId}")]
+		[Authorize(Policy = "Owner")]
+		[HttpGet("hostels/{ownerId}")]
         public async Task<ActionResult> GetHostelsByOwner(int ownerId)
         {
             try
@@ -62,7 +65,8 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPut("hostels")]
+		[Authorize(Policy = "Owner")]
+		[HttpPut("hostels")]
         public async Task<ActionResult> Update([FromBody] UpdateHostelRequestDto updateHostelRequestDto)
         {
             try
@@ -80,7 +84,8 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPut("hostels/{hostelId}/status")]
+		[Authorize(Policy = "Owner")]
+		[HttpPut("hostels/{hostelId}/status")]
         public async Task<ActionResult> ChangeStatus(int hostelId, [FromBody] int status)
         {
             try
@@ -98,6 +103,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+		[Authorize(Policy = "Owner")]
 		[HttpPost("hostels/{hostelId}/images")]
 		public async Task<ActionResult> UploadImage(int hostelId, IFormFile formFile)
 		{
