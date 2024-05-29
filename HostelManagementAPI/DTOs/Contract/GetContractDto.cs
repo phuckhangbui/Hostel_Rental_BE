@@ -10,7 +10,7 @@ namespace DTOs.Contract
     {
         public int ContractID { get; set; }
         public int OwnerAccountId { get; set; }
-        public int? AccountID { get; set; }
+        public int? StudentAccountID { get; set; }
         public int? RoomID { get; set; }
         public string? ContractTerm { get; set; }
         public DateTime? CreatedDate { get; set; }

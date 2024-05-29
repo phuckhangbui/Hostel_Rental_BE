@@ -3,6 +3,7 @@
 using AutoMapper;
 using BusinessObject.Enum;
 using BusinessObject.Models;
+using DAO;
 using DTOs.Contract;
 using DTOs.Hostel;
 using Repository.Implement;
@@ -28,9 +29,16 @@ namespace Service.Implement
             _mapper = mapper;
         }
 
-        public Task ChangeContractStatus(int contractId, int status)
+        public async Task ChangeContractStatus(int contractId, int status)
         {
-            throw new NotImplementedException();
+            var currentContract = await _contractRepository.GetContractById(contractId);
+            if (currentContract == null)
+            {
+                throw new ServiceException("Contract not found with given ID");
+            }
+            currentContract.Status = status;
+            
+            await _contractRepository.UpdateContract(currentContract);
         }
 
         public async Task CreateContract(CreateContractDto contractDto)
@@ -56,46 +64,26 @@ namespace Service.Implement
             return _mapper.Map<IEnumerable<GetContractDto>>(contracts);
         }
 
-        public async Task UpdateContract(ContractDto contractDto)
+        public async Task UpdateContract(UpdateContractDto contractDto)
         {
             var currentContract = await _contractRepository.GetContractById(contractDto.ContractID);
             if (currentContract == null)
             {
                 throw new ServiceException("Contract not found with given ID");
             }
-
-            //if (contractDto.AccountID.HasValue)
-            //{
-            //    currentContract.AccountID = contractDto.AccountID;
-            //}
-            //if (contractDto.RoomID.HasValue)
-            //{
-            //    currentContract.RoomID = contractDto.RoomID;
-            //}
-            //if (!string.IsNullOrEmpty(contractDto.ContractTerm))
-            //{
-            //    currentContract.ContractTerm = contractDto.ContractTerm;
-            //}
-            //if (contractDto.CreatedDate.HasValue)
-            //{
-            //    currentContract.CreatedDate = contractDto.CreatedDate;
-            //}
-            //if (contractDto.DateStart.HasValue)
-            //{
-            //    currentContract.DateStart = contractDto.DateStart;
-            //}
-            //if (contractDto.DateEnd.HasValue)
-            //{
-            //    currentContract.DateEnd = contractDto.DateEnd;
-            //}
-            //if (contractDto.DateSign.HasValue)
-            //{
-            //    currentContract.DateSign = contractDto.DateSign;
-            //}
-            currentContract.Status = contractDto.Status;
+            currentContract.OwnerAccountID = contractDto.OwnerAccountId;
+            currentContract.StudentAccountID = contractDto.StudentAccountID;
+            currentContract.RoomID = contractDto.RoomID;
+            currentContract.ContractTerm = contractDto.ContractTerm;
+            currentContract.DateStart = currentContract.DateStart;
+            currentContract.DateSign = currentContract.DateSign;
+            currentContract.DateEnd = currentContract.DateEnd;
+            
 
             await _contractRepository.UpdateContract(currentContract);
         }
+
+
 
     }
 }
