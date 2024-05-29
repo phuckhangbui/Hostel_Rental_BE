@@ -34,5 +34,24 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+        [Authorize(Policy = "Admin")]
+        [HttpGet("admin/memberships/detail/{membershipRegisterID}")]
+        public async Task<ActionResult> GetDetailMemberShipRegister(int membershipRegisterID)
+        {
+            try
+            {
+                var membershipRegistered = await memberShipRegisteredService.GetDetailMemberShipRegister(membershipRegisterID);
+                return Ok(membershipRegistered);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
     }
 }
