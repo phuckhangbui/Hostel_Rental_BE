@@ -67,16 +67,22 @@ namespace Service.Implement
             return new CreateHostelResponseDto { HostelID = hostel.HostelID};
         }
 
-        public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
+		public async Task<HostelResponseDto> GetHostelDetail(int hostelID)
+		{
+			var hostel = await _hostelRepository.GetHostelById(hostelID);
+			return _mapper.Map<HostelResponseDto>(hostel);
+		}
+
+		public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
         {
             var hostel = await _hostelRepository.GetHostelById(hostelID);
             return _mapper.Map<HostelDetailAdminView>(hostel);
         }
 
-        public async Task<IEnumerable<HostelListResponseDto>> GetHostels()
+        public async Task<IEnumerable<HostelResponseDto>> GetHostels()
         {
             var hostels = await _hostelRepository.GetAllHostels();
-            return _mapper.Map<IEnumerable<HostelListResponseDto>>(hostels);
+            return _mapper.Map<IEnumerable<HostelResponseDto>>(hostels);
         }
 
         public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
@@ -85,7 +91,7 @@ namespace Service.Implement
             return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
         }
 
-        public async Task<IEnumerable<HostelListResponseDto>> GetHostelsByOwner(int onwerId)
+        public async Task<IEnumerable<HostelResponseDto>> GetHostelsByOwner(int onwerId)
         {
             var ownerAccount = await _accountRepository.GetAccountWithHostelById(onwerId);
             if (ownerAccount == null)
@@ -98,7 +104,7 @@ namespace Service.Implement
             }
 
             var ownerHostels = await _hostelRepository.GetOwnerHostels(onwerId);
-            return _mapper.Map<IEnumerable<HostelListResponseDto>>(ownerHostels);
+            return _mapper.Map<IEnumerable<HostelResponseDto>>(ownerHostels);
 
         }
 
