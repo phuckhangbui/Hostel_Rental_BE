@@ -7,6 +7,7 @@ using DTOs.Hostel;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
+using DTOs.Contract;
 
 namespace Repository.Mapper;
 
@@ -47,7 +48,10 @@ public class AutoMapperProfile : Profile
            .ForMember(dest => dest.MembershipName, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.MemberShipName : string.Empty))
            .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.CapacityHostel : 0))
            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.Month : 0));
+        CreateMap<Contract, ContractDto>();
+        CreateMap<Contract, GetContractDto>()
+            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
 
-
+            
     }
 }

@@ -221,14 +221,14 @@ namespace DAO
             modelBuilder.Entity<Contract>()
                .HasOne(contract => contract.OwnerAccount)
                .WithMany(account => account.OwnerContract)
-               .HasForeignKey(contract => contract.AccountID)
+               .HasForeignKey(contract => contract.OwnerAccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract student
             modelBuilder.Entity<Contract>()
                .HasOne(contract => contract.StudentLeadAccount)
                .WithMany(account => account.StudentContract)
-               .HasForeignKey(contract => contract.AccountID)
+               .HasForeignKey(contract => contract.StudentAccountID)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract member
