@@ -5,6 +5,7 @@ using DTOs.Account;
 using DTOs.Complain;
 using DTOs.Hostel;
 using DTOs.Room;
+using DTOs.Contract;
 
 namespace Repository.Mapper;
 
@@ -36,7 +37,10 @@ public class AutoMapperProfile : Profile
         CreateMap<Complain, DisplayComplainDto>()
             .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : string.Empty))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : string.Empty));
+        CreateMap<Contract, ContractDto>();
+        CreateMap<Contract, GetContractDto>()
+            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
 
-
+            
     }
 }

@@ -4,8 +4,9 @@
     {
         public int ContractID { get; set; }
         public Account OwnerAccount { get; set; }
-        public int? AccountID { get; set; }
+        public int? OwnerAccountID { get; set; }
         public Account StudentLeadAccount { get; set; }
+        public int? StudentAccountID { get; set; }
         public Room Room { get; set; }
         public int? RoomID { get; set; }
         public string? ContractTerm { get; set; }
