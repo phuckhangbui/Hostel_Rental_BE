@@ -85,6 +85,9 @@ namespace Repository.Migrations
                     b.Property<int?>("BillPaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BillType")
+                        .HasColumnType("int");
+
                     b.Property<int>("ContractID")
                         .HasColumnType("int");
 
@@ -200,8 +203,14 @@ namespace Repository.Migrations
                     b.Property<DateTime?>("DateStart")
                         .HasColumnType("datetime2");
 
+                    b.Property<double?>("DepositFee")
+                        .HasColumnType("float");
+
                     b.Property<int?>("OwnerAccountID")
                         .HasColumnType("int");
+
+                    b.Property<double?>("RoomFee")
+                        .HasColumnType("float");
 
                     b.Property<int?>("RoomID")
                         .HasColumnType("int");

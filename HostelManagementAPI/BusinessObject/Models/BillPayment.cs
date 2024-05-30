@@ -10,6 +10,7 @@
         public DateTime? CreatedDate { get; set; }
         public double? TotalAmount { get; set; }
         public int? BillPaymentStatus { get; set; }
+        public int? BillType { get; set; } //1 deposit, 2 monthly payment
 
         public IList<BillPaymentDetail> Details { get; set; }
     }
