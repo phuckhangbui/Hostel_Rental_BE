@@ -42,5 +42,13 @@ namespace DAO
             }
             return typeService;
         }
+
+        public async Task<bool> CheckTypeServiceNameExist(string typeServiceName)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.TypeService.AnyAsync(x => x.TypeName.Trim().ToLower() == typeServiceName.Trim().ToLower());
+            }
+        }
     }
 }

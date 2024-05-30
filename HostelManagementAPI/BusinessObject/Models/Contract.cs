@@ -14,6 +14,9 @@
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public DateTime? DateSign { get; set; }
+        public Double? RoomFee { get; set; }
+        public Double? DepositFee { get; set; }
+
         public int Status { get; set; }
 
         public IList<ContractMember> Members { get; set; }

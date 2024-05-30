@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BusinessObject.Enum;
-using BusinessObject.Models;
 using DTOs.Hostel;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
@@ -13,8 +12,8 @@ namespace Service.Implement
     {
         private readonly IHostelRepository _hostelRepository;
         private readonly IAccountRepository _accountRepository;
-		private readonly ICloudinaryService _cloudinaryService;
-		private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly IMapper _mapper;
 
         public HostelService(
             IHostelRepository hostelRepository,
@@ -41,8 +40,7 @@ namespace Service.Implement
                 throw new ServiceException("Invalid status value");
             }
 
-            currentHostel.Status = status;
-            await _hostelRepository.UpdateHostel(currentHostel);
+            await _hostelRepository.UpdateHostelStatus(hostelId, status);
         }
 
         public async Task<CreateHostelResponseDto> CreateHostel(CreateHostelRequestDto createHostelRequestDto)
@@ -53,18 +51,14 @@ namespace Service.Implement
                 throw new ServiceException("Account not found with this ID");
             }
 
-            Hostel hostel = new Hostel
-            {
-                HostelName = createHostelRequestDto.HostelName,
-                HostelAddress = createHostelRequestDto.HostelAddress,
-                HostelDescription = createHostelRequestDto.HostelDescription,
-                AccountID = createHostelRequestDto.AccountID,
-                Status = (int)HostelEnum.Available,
-            };
+            var newHostelId = await _hostelRepository.CreateHostel(createHostelRequestDto);
 
-            await _hostelRepository.CreateHostel(hostel);
+            return new CreateHostelResponseDto { HostelID = newHostelId };
+        }
 
-            return new CreateHostelResponseDto { HostelID = hostel.HostelID};
+        public async Task<HostelResponseDto> GetHostelDetail(int hostelID)
+        {
+            return await _hostelRepository.GetHostelById(hostelID);
         }
 
         public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
@@ -73,10 +67,9 @@ namespace Service.Implement
             return _mapper.Map<HostelDetailAdminView>(hostel);
         }
 
-        public async Task<IEnumerable<HostelListResponseDto>> GetHostels()
+        public async Task<IEnumerable<HostelResponseDto>> GetHostels()
         {
-            var hostels = await _hostelRepository.GetAllHostels();
-            return _mapper.Map<IEnumerable<HostelListResponseDto>>(hostels);
+            return await _hostelRepository.GetAllHostels();
         }
 
         public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
@@ -85,25 +78,23 @@ namespace Service.Implement
             return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
         }
 
-        public async Task<IEnumerable<HostelListResponseDto>> GetHostelsByOwner(int onwerId)
+        public async Task<IEnumerable<HostelResponseDto>> GetHostelsByOwner(int ownerId)
         {
-            var ownerAccount = await _accountRepository.GetAccountWithHostelById(onwerId);
+            var ownerAccount = await _accountRepository.GetAccountWithHostelById(ownerId);
             if (ownerAccount == null)
             {
                 throw new ServiceException("Account not found with this ID");
             }
-            if (ownerAccount.Hostels == null)
-            {
-                return null;
-            }
+            //if (ownerAccount.Hostels == null)
+            //{
+            //    return null;
+            //}
 
-            var ownerHostels = await _hostelRepository.GetOwnerHostels(onwerId);
-            return _mapper.Map<IEnumerable<HostelListResponseDto>>(ownerHostels);
-
+            return await _hostelRepository.GetOwnerHostels(ownerId);
         }
 
 
-        public async Task UpdateHostel(UpdateHostelRequestDto updateHostelRequestDto)
+        public async Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto)
         {
             var ownerAccount = await _accountRepository.GetAccountById(updateHostelRequestDto.AccountID);
             if (ownerAccount == null)
@@ -111,7 +102,7 @@ namespace Service.Implement
                 throw new ServiceException("Account not found with this ID");
             }
 
-            var currentHostel = await _hostelRepository.GetHostelById(updateHostelRequestDto.HostelId);
+            var currentHostel = await _hostelRepository.GetHostelById(hostelId);
             if (currentHostel == null)
             {
                 throw new ServiceException("Hostel not found with this ID");
@@ -122,40 +113,36 @@ namespace Service.Implement
                 throw new ServiceException("The hostel does not belong to the specified account.");
             }
 
-            currentHostel.HostelName = updateHostelRequestDto.HostelName;
-            currentHostel.HostelDescription = updateHostelRequestDto.HostelDescription;
-            currentHostel.HostelAddress = updateHostelRequestDto.HostelAddress;
-
-            await _hostelRepository.UpdateHostel(currentHostel);
+            await _hostelRepository.UpdateHostel(hostelId, updateHostelRequestDto);
         }
 
-		public async Task UploadHostelThumbnail(int hostelId, IFormFile formFile)
-		{
-			var currentHostel = await _hostelRepository.GetHostelById(hostelId);
-			if (currentHostel == null)
-			{
-				throw new ServiceException("Hostel not found with this ID");
-			}
+        public async Task UploadHostelThumbnail(int hostelId, IFormFile formFile)
+        {
+            var currentHostel = await _hostelRepository.GetHostelById(hostelId);
+            if (currentHostel == null)
+            {
+                throw new ServiceException("Hostel not found with this ID");
+            }
             else
             {
-				try
-				{
-					var result = await _cloudinaryService.AddPhotoAsync(formFile);
-					if (result.Error != null)
-					{
-						throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
-					}
+                try
+                {
+                    var result = await _cloudinaryService.AddPhotoAsync(formFile);
+                    if (result.Error != null)
+                    {
+                        throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
+                    }
 
-					string imageUrl = result.SecureUrl.AbsoluteUri;
+                    string imageUrl = result.SecureUrl.AbsoluteUri;
                     currentHostel.Thumbnail = imageUrl;
 
-                    await _hostelRepository.UpdateHostel(currentHostel);
-				}
-				catch (Exception ex)
-				{
-					throw new ServiceException("Upload hostel image fail with error", ex);
-				}
-			}
-		}
-	}
+                    await _hostelRepository.UpdateHostelImage(hostelId, imageUrl);
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException("Upload hostel image fail with error", ex);
+                }
+            }
+        }
+    }
 }

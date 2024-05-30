@@ -1,13 +1,15 @@
-﻿using BusinessObject.Models;
+﻿using DTOs.Hostel;
 
 namespace Repository.Interface
 {
     public interface IHostelRepository
     {
-        Task<bool> CreateHostel(Hostel hostel);
-        Task<Hostel> GetHostelById(int id);
-        Task<IEnumerable<Hostel>> GetAllHostels();
-        Task UpdateHostel(Hostel hostel);
-        Task<IEnumerable<Hostel>> GetOwnerHostels(int ownerId);
+        Task<int> CreateHostel(CreateHostelRequestDto createHostelRequestDto);
+        Task<HostelResponseDto> GetHostelById(int id);
+        Task<IEnumerable<HostelResponseDto>> GetAllHostels();
+        Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto);
+        Task<IEnumerable<HostelResponseDto>> GetOwnerHostels(int ownerId);
+        Task UpdateHostelStatus(int hostelId, int status);
+        Task UpdateHostelImage(int hostelId, string imageUrl);
     }
 }

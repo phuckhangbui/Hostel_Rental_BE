@@ -15,6 +15,8 @@
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public bool? IsLoginWithGmail { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
 
         public IList<Hostel> Hostels { get; set; }
         public IList<MemberShipRegisterTransaction> Memberships { get; set; }

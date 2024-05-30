@@ -23,6 +23,11 @@ namespace HostelManagementWebAPI.Controllers.Admin
         {
             try
             {
+                var checkNameExist = await _memberShipService.CheckMembershipNameExist(createMembershipRequestDto.MemberShipName);
+                if(checkNameExist)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Membership name already exists"));
+                }
                 if (createMembershipRequestDto == null)
                 {
                     return BadRequest(new ApiResponseStatus(400, "Invalid request."));
@@ -54,6 +59,11 @@ namespace HostelManagementWebAPI.Controllers.Admin
         {
             try
             {
+                var checkNameExist = await _memberShipService.CheckMembershipNameExist(updateMemberShipAdminDto.MemberShipName);
+                if (checkNameExist)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Membership name already exists"));
+                }
                 if (updateMemberShipAdminDto == null)
                 {
                     return BadRequest(new ApiResponseStatus(400, "Invalid request."));

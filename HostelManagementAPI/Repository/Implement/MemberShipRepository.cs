@@ -1,21 +1,23 @@
-﻿using BusinessObject.Enum;
+﻿using AutoMapper;
 using BusinessObject.Models;
 using DAO;
 using DTOs.Membership;
-using Microsoft.EntityFrameworkCore;
 using Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.Implement
 {
     public class MemberShipRepository : IMemberShipRepository
     {
-        public async Task<bool> CreateMemberShip(MemberShip memberShip)
+        private readonly IMapper _mapper;
+
+        public MemberShipRepository(IMapper mapper)
         {
+            _mapper = mapper;
+        }
+        public async Task<bool> CreateMemberShip(CreateMemberShipDto createMemberShipDto)
+        {
+            var memberShip = _mapper.Map<MemberShip>(createMemberShipDto);
+            memberShip.Status = 0;
             return await MemberShipDao.Instance.CreateAsync(memberShip);
         }
         public async Task<MemberShip> GetMembershipById(int memberShipID)
@@ -103,6 +105,16 @@ namespace Repository.Implement
         public async Task UpdateMemberShip(MemberShip memberShip)
         {
             await MemberShipDao.Instance.UpdateAsync(memberShip);
+        }
+
+        public async Task<bool> CheckMembershipNameExist(string memberShipName)
+        {
+            var result = MemberShipDao.Instance.GetAllAsync().Result.Where(x => x.MemberShipName.ToLower() == memberShipName.ToLower()).FirstOrDefault();
+            if (result != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
