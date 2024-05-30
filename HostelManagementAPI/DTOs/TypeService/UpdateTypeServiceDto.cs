@@ -3,5 +3,5 @@
 public class UpdateTypeServiceDto
 {
     public int TypeServiceID { get; set; }
-    public string TypeServiceName { get; set; }
+    public string TypeName { get; set; }
 }

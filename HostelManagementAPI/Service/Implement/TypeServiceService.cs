@@ -16,28 +16,17 @@ namespace Service.Implement
 
         public async Task CreateTypeService(CreateTypeServiceDto createTypeServiceDto)
         {
-            TypeService typeService = new TypeService
-            {
-                TypeName = createTypeServiceDto.TypeName,
-            };
-            await typeServiceRepository.CreateTypeService(typeService);
+            await typeServiceRepository.CreateTypeService(createTypeServiceDto);
         }
 
-        public async Task<IEnumerable<TypeService>> GetAllTypeService()
+        public async Task<IEnumerable<ViewAllTypeServiceDto>> GetAllTypeService()
         {
             return await typeServiceRepository.GetTypeServices();
         }
 
         public async Task<bool> UpdateTypeServiceName(UpdateTypeServiceDto updateTypeServiceDto)
         {
-            var typeService = await typeServiceRepository.GetTypeServiceById(updateTypeServiceDto.TypeServiceID);
-            if (typeService == null)
-            {
-                return false;
-            }
-
-            typeService.TypeName = updateTypeServiceDto.TypeServiceName;
-            return await typeServiceRepository.UpdateTypeService(typeService);
+            return await typeServiceRepository.UpdateTypeService(updateTypeServiceDto);
         }
 
         public async Task<bool> CheckExistTypeService(int TypeServiceId)
@@ -49,6 +38,11 @@ namespace Service.Implement
             }
 
             return true;
+        }
+
+        public async Task<bool> CheckTypeServiceNameExist(string typeServiceName)
+        {
+            return await typeServiceRepository.CheckTypeServiceNameExist(typeServiceName);
         }
     }
 }
