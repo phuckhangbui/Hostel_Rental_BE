@@ -54,6 +54,8 @@ namespace Service.Implement
                 DateStart = contractDto.DateStart,
                 ContractTerm = contractDto.ContractTerm,
                 Status = contractDto.Status,
+                RoomFee = contractDto.RoomFee,
+                DepositFee = contractDto.DepositFee,
             };
             await _contractRepository.CreateContract(contract);
         }
@@ -75,10 +77,11 @@ namespace Service.Implement
             currentContract.StudentAccountID = contractDto.StudentAccountID;
             currentContract.RoomID = contractDto.RoomID;
             currentContract.ContractTerm = contractDto.ContractTerm;
-            currentContract.DateStart = currentContract.DateStart;
-            currentContract.DateSign = currentContract.DateSign;
-            currentContract.DateEnd = currentContract.DateEnd;
-            
+            currentContract.DateEnd = DateTime.Parse(contractDto.DateEnd);
+            currentContract.DateSign = DateTime.Parse(contractDto.DateSign);
+            currentContract.Status = contractDto.Status;
+            currentContract.RoomFee = contractDto.RoomFee;
+            currentContract.DepositFee = contractDto.DepositFee;
 
             await _contractRepository.UpdateContract(currentContract);
         }

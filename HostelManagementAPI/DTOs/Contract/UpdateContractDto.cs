@@ -11,7 +11,6 @@ namespace DTOs.Contract
         public int? StudentAccountID { get; set; }
         public int? RoomID { get; set; }
         public string? ContractTerm { get; set; }
-        public string? DateStart { get; set; }
         public string? DateEnd { get; set; }
         public string? DateSign { get; set; }
         public int Status { get; set; }
