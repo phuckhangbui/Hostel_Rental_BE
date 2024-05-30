@@ -8,6 +8,7 @@ using DTOs.Hostel;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
+using DTOs.TypeService;
 
 namespace Repository.Mapper;
 
@@ -23,6 +24,9 @@ public class AutoMapperProfile : Profile
         CreateMap<Room, RoomOfHostelAdminView>().ReverseMap();
         CreateMap<MemberShip, GetMemberShipDto>().ReverseMap();
         CreateMap<MemberShip, CreateMemberShipDto>().ReverseMap();
+        CreateMap<TypeService, CreateTypeServiceDto>().ReverseMap();
+        CreateMap<TypeService, UpdateTypeServiceDto>().ReverseMap();
+        CreateMap<TypeService, ViewAllTypeServiceDto>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
         CreateMap<Room, RoomDetailResponseDto>()

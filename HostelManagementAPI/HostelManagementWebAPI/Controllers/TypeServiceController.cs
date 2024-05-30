@@ -25,11 +25,19 @@ namespace HostelManagementWebAPI.Controllers
         {
             try
             {
+                var checkTypeServiceNameExist = await _typeServiceService.CheckTypeServiceNameExist(typeService.TypeName);
                 if (typeService == null)
                 {
                     return BadRequest(new ApiResponseStatus(400, "Invalid request."));
                 }
-
+                if(string.IsNullOrEmpty(typeService.TypeName))
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Please input type service name"));
+                }
+                if(checkTypeServiceNameExist)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Type name already exist"));
+                }
                 await _typeServiceService.CreateTypeService(typeService);
                 return Ok();
             }
@@ -43,7 +51,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [Authorize(Policy = "Admin")]
+        //[Authorize(Policy = "Admin")]
         [HttpGet("admin-get-all-type-service")]
         public async Task<ActionResult> GetAllTypeService()
         {
@@ -62,6 +70,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Admin")]
         [HttpPut("admin-update-type-service-name")]
         public async Task<ActionResult> UpdateTypeServiceName([FromBody] UpdateTypeServiceDto typeService)
         {
@@ -72,9 +81,14 @@ namespace HostelManagementWebAPI.Controllers
                 {
                     return BadRequest(new ApiResponseStatus(400, "Can't found type service"));
                 }
-                if (string.IsNullOrEmpty(typeService.TypeServiceName))
+                if (string.IsNullOrEmpty(typeService.TypeName))
                 {
-                    return BadRequest(new ApiResponseStatus(400, "Invalid request"));
+                    return BadRequest(new ApiResponseStatus(400, "Please input type service name"));
+                }
+                var checkTypeServiceNameExist = await _typeServiceService.CheckTypeServiceNameExist(typeService.TypeName);
+                if (checkTypeServiceNameExist)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Type name already exist"));
                 }
 
                 var result = await _typeServiceService.UpdateTypeServiceName(typeService);

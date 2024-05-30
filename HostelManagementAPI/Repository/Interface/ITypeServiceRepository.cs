@@ -1,13 +1,15 @@
 ﻿using BusinessObject.Models;
+using DTOs.TypeService;
 
 namespace Repository.Interface
 {
     public interface ITypeServiceRepository
     {
-        Task<bool> CreateTypeService(TypeService typeService);
-        Task<bool> UpdateTypeService(TypeService typeService);
+        Task<bool> CreateTypeService(CreateTypeServiceDto createTypeServiceDto);
+        Task<bool> UpdateTypeService(UpdateTypeServiceDto updateTypeServiceDto);
         Task DeleteTypeService(int id);
         Task<TypeService> GetTypeServiceById(int id);
-        Task<IEnumerable<TypeService>> GetTypeServices();
+        Task<IEnumerable<ViewAllTypeServiceDto>> GetTypeServices();
+        Task<bool> CheckTypeServiceNameExist(string typeServiceName);
     }
 }
