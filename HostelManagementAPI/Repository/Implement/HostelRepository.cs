@@ -1,35 +1,84 @@
-﻿using BusinessObject.Models;
+﻿using AutoMapper;
+using BusinessObject.Enum;
+using BusinessObject.Models;
 using DAO;
+using DTOs.Hostel;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
     public class HostelRepository : IHostelRepository
 	{
-		public async Task<bool> CreateHostel(Hostel hostel)
+		private readonly IMapper _mapper;
+
+        public HostelRepository(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
+        public async Task<int> CreateHostel(CreateHostelRequestDto createHostelRequestDto)
 		{
-			return await HostelDao.Instance.CreateAsync(hostel);
+			Hostel hostel = new Hostel
+			{
+				HostelName = createHostelRequestDto.HostelName,
+				HostelAddress = createHostelRequestDto.HostelAddress,
+				HostelDescription = createHostelRequestDto.HostelDescription,
+				AccountID = createHostelRequestDto.AccountID,
+				Status = (int)HostelEnum.Available,
+			};
+
+			await HostelDao.Instance.CreateAsync(hostel);
+
+			return hostel.HostelID;
 		}
 
-		public async Task<IEnumerable<Hostel>> GetAllHostels()
-		{
-			return await HostelDao.Instance.GetAllHostelsAsync();
-		}
-
-		public async Task<Hostel> GetHostelById(int id)
-		{
-			return await HostelDao.Instance.GetHostelById(id);
-		}
-
-		public async Task<IEnumerable<Hostel>> GetOwnerHostels(int ownerId)
+		public async Task<IEnumerable<HostelResponseDto>> GetAllHostels()
 		{
 			var hostels = await HostelDao.Instance.GetAllHostelsAsync();
-			return hostels.Where(h => h.AccountID == ownerId).OrderByDescending(h => h.HostelID);
+			return _mapper.Map<IEnumerable<HostelResponseDto>>(hostels);
 		}
 
-		public async Task UpdateHostel(Hostel hostel)
+		public async Task<HostelResponseDto> GetHostelById(int id)
 		{
-			await HostelDao.Instance.UpdateAsync(hostel);
+			var hostel = await HostelDao.Instance.GetHostelById(id);
+			
+			return _mapper.Map<HostelResponseDto>(hostel);
+		}
+
+		public async Task<IEnumerable<HostelResponseDto>> GetOwnerHostels(int ownerId)
+		{
+			var hostels = await HostelDao.Instance.GetAllHostelsAsync();
+			hostels = hostels.Where(h => h.AccountID == ownerId).OrderByDescending(h => h.HostelID);
+			return _mapper.Map<IEnumerable<HostelResponseDto>>(hostels);
+		}
+
+		public async Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto)
+		{
+			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+
+			currentHostel.HostelName = updateHostelRequestDto.HostelName;
+			currentHostel.HostelDescription = updateHostelRequestDto.HostelDescription;
+			currentHostel.HostelAddress = updateHostelRequestDto.HostelAddress;
+
+			await HostelDao.Instance.UpdateAsync(currentHostel);
+		}
+
+		public async Task UpdateHostelImage(int hostelId, string imageUrl)
+		{
+			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+
+			currentHostel.Thumbnail = imageUrl;
+
+			await HostelDao.Instance.UpdateAsync(currentHostel);
+		}
+
+		public async Task UpdateHostelStatus(int hostelId, int status)
+		{
+			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+
+			currentHostel.Status = status;
+
+			await HostelDao.Instance.UpdateAsync(currentHostel);
 		}
 	}
 }
