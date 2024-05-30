@@ -51,7 +51,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
 		[Authorize(Policy = "Owner")]
-		[HttpGet("hostels/{ownerId}")]
+		[HttpGet("owner/{ownerId}/hostels")]
         public async Task<ActionResult> GetHostelsByOwner(int ownerId)
         {
             try
@@ -65,13 +65,27 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+		[HttpGet("hostels/{hostelId}")]
+		public async Task<ActionResult> GetHostelDetail(int hostelId)
+		{
+			try
+			{
+				var hostels = await _hostelService.GetHostelDetail(hostelId);
+				return Ok(hostels);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+			}
+		}
+
 		[Authorize(Policy = "Owner")]
-		[HttpPut("hostels")]
-        public async Task<ActionResult> Update([FromBody] UpdateHostelRequestDto updateHostelRequestDto)
+		[HttpPut("hostels/{hostelId}")]
+        public async Task<ActionResult> Update(int hostelId, [FromBody] UpdateHostelRequestDto updateHostelRequestDto)
         {
             try
             {
-                await _hostelService.UpdateHostel(updateHostelRequestDto);
+                await _hostelService.UpdateHostel(hostelId, updateHostelRequestDto);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -85,8 +99,8 @@ namespace HostelManagementWebAPI.Controllers
         }
 
 		[Authorize(Policy = "Owner")]
-		[HttpPut("hostels/{hostelId}/status")]
-        public async Task<ActionResult> ChangeStatus(int hostelId, [FromBody] int status)
+		[HttpPut("hostels/{hostelId}/status/{status}")]
+        public async Task<ActionResult> ChangeStatus(int hostelId, int status)
         {
             try
             {

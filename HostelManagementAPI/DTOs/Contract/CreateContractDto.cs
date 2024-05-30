@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DTOs.Contract
+﻿namespace DTOs.Contract
 {
     public class CreateContractDto
     {
@@ -16,5 +10,7 @@ namespace DTOs.Contract
         public DateTime? DateEnd { get; set; }
         public DateTime? DateSign { get; set; }
         public int Status { get; set; }
+        public Double? RoomFee { get; set; }
+        public Double? DepositFee { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BusinessObject.Enum;
-using BusinessObject.Models;
 using DTOs.Room;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
@@ -18,8 +17,7 @@ namespace Service.Implement
 
 		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
 		{
-			var rooms = await _roomRepository.GetListRoomsByHostelId(hostelId);
-			return _mapper.Map<IEnumerable<RoomListResponseDto>>(rooms);
+			return await _roomRepository.GetListRoomsByHostelId(hostelId);
 		}
 
 		public RoomService(
@@ -47,8 +45,7 @@ namespace Service.Implement
 				throw new ServiceException("Invalid status value");
 			}
 
-			room.Status = status;
-			await _roomRepository.UpdateRoom(room);
+			await _roomRepository.UpdateRoomStatus(roomId, status);
 		}
 
 		public async Task<RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId)
@@ -59,14 +56,10 @@ namespace Service.Implement
 				throw new ServiceException("Room not found with this ID");
 			}
 
-			var roomDetailDto = _mapper.Map<RoomDetailResponseDto>(room);
-
-			roomDetailDto.RoomImageUrls = room.RoomImages.Select(img => img.RoomUrl).ToList();
-
-			return roomDetailDto;
+			return room;
 		}
 
-		public async Task CreateRoom(CreateRoomRequestDto createRoomRequestDto)
+		public async Task<CreateRoomResponseDto> CreateRoom(CreateRoomRequestDto createRoomRequestDto)
 		{
 			var hostel = await _hostelRepository.GetHostelById(createRoomRequestDto.HostelID);
 			if (hostel == null)
@@ -74,34 +67,19 @@ namespace Service.Implement
 				throw new ServiceException("Hostel not found with this ID");
 			}
 
-			Room room = new Room
-			{
-				RoomName = createRoomRequestDto.RoomName,
-				Capacity = createRoomRequestDto.Capacity,
-				Lenght = createRoomRequestDto.Length,
-				Width = createRoomRequestDto.Width,
-				Description = createRoomRequestDto.Description,
-				RoomFee = createRoomRequestDto.RoomFee,
-				HostelID = createRoomRequestDto.HostelID,
-				Status = (int)RoomEnum.Available,
-				RoomImages = new List<RoomImage>(),
-			};
+			var roomId = await _roomRepository.CreateRoom(createRoomRequestDto);
 
-			await _roomRepository.CreateRoom(room);
+			return new CreateRoomResponseDto { RoomID = roomId };
 		}
 
 		public async Task UploadRoomImage(IFormFileCollection files, int roomId)
 		{
-			Room room = await _roomRepository.GetRoomById(roomId);
+			var room = await _roomRepository.GetRoomDetailById(roomId);
 			if (room != null)
 			{
 				try
 				{
-					if (room.RoomImages == null)
-					{
-						room.RoomImages = new List<RoomImage>();
-					}
-
+					var images = new List<string>();
 					foreach (var file in files)
 					{
 						var result = await _cloudinaryService.AddPhotoAsync(file);
@@ -111,16 +89,10 @@ namespace Service.Implement
 						}
 
 						string imageUrl = result.SecureUrl.AbsoluteUri;
-						var roomImage = new RoomImage
-						{
-							RoomUrl = imageUrl,
-							RoomID = room.RoomID
-						};
-
-						room.RoomImages.Add(roomImage);
+						images.Add(imageUrl);
 					}
 
-					await _roomRepository.UpdateRoom(room);
+					await _roomRepository.UploadRoomImage(roomId, images);
 				}
 				catch (Exception ex)
 				{
@@ -141,14 +113,7 @@ namespace Service.Implement
 				throw new ServiceException("Room not found with this ID");
 			}
 
-			room.RoomName = updateRoomRequestDto.RoomName;
-			room.Capacity = updateRoomRequestDto.Capacity;
-			room.Lenght = updateRoomRequestDto.Length;
-			room.Width = updateRoomRequestDto.Width;
-			room.Description = updateRoomRequestDto.Description;
-			room.RoomFee = updateRoomRequestDto.RoomFee;
-
-			await _roomRepository.UpdateRoom(room);
+			await _roomRepository.UpdateRoom(roomId, updateRoomRequestDto);
 		}
 
         public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessObject.Models;
+using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
 using Google.Apis.Auth;
@@ -27,32 +27,31 @@ namespace Service.Implement
 
         public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
         {
-            Account account = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
-            if (account == null || account.Status == 1) // status block
+            AccountDto accountDto = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
+            if (accountDto == null || accountDto.Status == 1) // status block
                 return null;
             else
             {
-                using var hmac = new HMACSHA512(account.PasswordSalt);
+                using var hmac = new HMACSHA512(accountDto.PasswordSalt);
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if (computedHash[i] != account.PasswordHash[i])
+                    if (computedHash[i] != accountDto.PasswordHash[i])
                     {
                         return null;
                     }
                 }
 
+                accountDto.IsNewAccount = false;
+                accountDto.Token = _tokenService.CreateToken(accountDto);
 
-                return new AccountDto
-                {
-                    AccountId = account.AccountID,
-                    Email = account.Email,
-                    Token = _tokenService.CreateToken(account),
-                    RoleId = (int)account.RoleId,
-                    Name = account.Name,
-                    Username = account.Username,
-                    IsNewAccount = false
-                };
+                var refreshToken = _tokenService.GenerateRefreshToken();
+                accountDto.RefreshToken = refreshToken;
+                accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+                await _accountRepository.UpdateAccount(accountDto);
+                return accountDto;
+
             }
         }
 
@@ -60,36 +59,43 @@ namespace Service.Implement
         {
             return _accountRepository.GetAllAsync().Result.Select(x => new AccountViewDto
             {
-                AccountID = x.AccountID,
+                AccountId = x.AccountId,
                 Email = x.Email,
                 Name = x.Name,
                 Status = x.Status
             }).ToList();
         }
 
-        public async Task<AccountDto> Login(EmailLoginDto login)
+        public async Task<AccountLoginDto> Login(EmailLoginDto login)
         {
-            Account account = await _accountRepository.GetAccountByEmail(login.Email);
-            if (account != null)
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(login.Email);
+
+            if (accountDto != null)
             {
-                if ((bool)account.IsLoginWithGmail)
+                if ((bool)accountDto.IsLoginWithGmail)
                 {
                     throw new ServiceException("The account is created by login with Google, please use login with Google");
                 }
-                using var hmac = new HMACSHA512(account.PasswordSalt);
+                using var hmac = new HMACSHA512(accountDto.PasswordSalt);
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if (computedHash[i] != account.PasswordHash[i])
+                    if (computedHash[i] != accountDto.PasswordHash[i])
                     {
                         return null;
                     }
-                }
 
-                AccountDto accountDto = _mapper.Map<AccountDto>(account);
-                accountDto.IsNewAccount = false;
-                accountDto.Token = _tokenService.CreateToken(account);
-                return accountDto;
+
+                    accountDto.IsNewAccount = false;
+                    accountDto.Token = _tokenService.CreateToken(accountDto);
+
+                    var refreshToken = _tokenService.GenerateRefreshToken();
+                    accountDto.RefreshToken = refreshToken;
+                    accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+                    await _accountRepository.UpdateAccount(accountDto);
+
+                    return _mapper.Map<AccountLoginDto>(accountDto); ;
+                }
             }
             throw new ServiceException("No account associate with this email");
         }
@@ -97,8 +103,8 @@ namespace Service.Implement
 
         public async Task RegisterEmail(EmailRegisterDto emailRegisterDto)
         {
-            Account account = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
-            if (account != null)
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
+            if (accountDto != null)
             {
                 throw new ServiceException("This email has already been used. Please choose other email");
             }
@@ -108,7 +114,7 @@ namespace Service.Implement
 
 
             using var hmac = new HMACSHA512();
-            Account newAccount = new Account
+            AccountDto newAccount = new AccountDto
             {
                 Email = emailRegisterDto.Email,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(tempPassword)),
@@ -127,8 +133,8 @@ namespace Service.Implement
 
         public async Task ForgetPassword(EmailRegisterDto emailRegisterDto)
         {
-            Account account = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
-            if (account == null)
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
+            if (accountDto == null)
             {
                 throw new ServiceException("No account associate with this email");
             }
@@ -137,85 +143,89 @@ namespace Service.Implement
             var tempPassword = random.Next(111111, 999999).ToString();
 
             using var hmac = new HMACSHA512();
-            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(tempPassword));
-            account.PasswordSalt = hmac.Key;
+            accountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(tempPassword));
+            accountDto.PasswordSalt = hmac.Key;
 
-            await _accountRepository.UpdateAsync(account);
+            await _accountRepository.UpdateAccount(accountDto);
 
             //send mail here for the passwords
             _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, tempPassword));
         }
 
-        public async Task<AccountDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
+        public async Task<AccountLoginDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
         {
-            Account account = await _accountRepository.GetAccountByEmail(confirmPasswordDtos.Email);
-            if (account != null)
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(confirmPasswordDtos.Email);
+            if (accountDto != null)
             {
-                if (account.PasswordHash == null)
+                if (accountDto.PasswordHash == null)
                 {
                     throw new ServiceException("The account is created by login with Google, please use login with Google");
                 }
-                using var hmac = new HMACSHA512(account.PasswordSalt);
+                using var hmac = new HMACSHA512(accountDto.PasswordSalt);
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(confirmPasswordDtos.SystemPassword));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if (computedHash[i] != account.PasswordHash[i])
+                    if (computedHash[i] != accountDto.PasswordHash[i])
                     {
                         return null;
                     }
                 }
 
-                account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(confirmPasswordDtos.NewPassword));
-                account.PasswordSalt = hmac.Key;
-                account.Status = 2; // fix later
+                accountDto.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(confirmPasswordDtos.NewPassword));
+                accountDto.PasswordSalt = hmac.Key;
+                accountDto.Status = 2; // fix later
                 try
                 {
-                    await _accountRepository.UpdateAccount(account);
+                    await _accountRepository.UpdateAccount(accountDto);
                 }
                 catch (Exception ex)
                 {
                     throw new ServiceException("Cannot update the password");
                 }
-                AccountDto accountDto = _mapper.Map<AccountDto>(account);
-                accountDto.Token = _tokenService.CreateToken(account);
-                return accountDto;
+                accountDto.Token = _tokenService.CreateToken(accountDto);
+
+                return _mapper.Map<AccountLoginDto>(accountDto);
             }
             else throw new ServiceException("No account associate with this email");
         }
 
-        public async Task<AccountDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<AccountLoginDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
         {
             GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(loginWithGoogle.IdTokenString);
 
             string userEmail = payload.Email;
 
-            Account account = await _accountRepository.GetAccountByEmail(userEmail);
-            if (account != null)
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(userEmail);
+            if (accountDto != null)
             {
-                if ((bool)!account.IsLoginWithGmail)
+                if ((bool)!accountDto.IsLoginWithGmail)
                 {
                     throw new ServiceException("This email has already been used and associated with an password, please choose other login method");
                 }
-                AccountDto accountDto = _mapper.Map<AccountDto>(account);
-                accountDto.Token = _tokenService.CreateToken(account);
-                return accountDto;
+                accountDto.Token = _tokenService.CreateToken(accountDto);
+                var refreshToken = _tokenService.GenerateRefreshToken();
+                accountDto.RefreshToken = refreshToken;
+                accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+                await _accountRepository.UpdateAccount(accountDto);
+
+                return _mapper.Map<AccountLoginDto>(accountDto);
             }
             return null;
         }
 
-        public async Task<AccountDto> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<AccountLoginDto> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
         {
             GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(loginWithGoogle.IdTokenString);
 
             string userEmail = payload.Email;
 
-            Account account = await _accountRepository.GetAccountByEmail(userEmail);
-            if (account != null)
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(userEmail);
+            if (accountDto != null)
             {
                 throw new ServiceException("This email has already been used. Please choose other email");
             }
 
-            Account newAccount = new Account
+            AccountDto newAccount = new AccountDto
             {
                 Email = payload.Email,
                 Name = payload.Name,
@@ -223,13 +233,26 @@ namespace Service.Implement
                 CreatedDate = DateTime.Now,
                 IsLoginWithGmail = true
             };
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            newAccount.RefreshToken = refreshToken;
+            newAccount.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
             await _accountRepository.CreateAccount(newAccount);
 
-            AccountDto accountDto = _mapper.Map<AccountDto>(account);
-            accountDto.Token = _tokenService.CreateToken(account);
-            return accountDto;
+            accountDto.Token = _tokenService.CreateToken(accountDto);
+            return _mapper.Map<AccountLoginDto>(accountDto);
         }
+
+        public async Task Logout(int accountId)
+        {
+            var account = await _accountRepository.GetAccountById(accountId);
+
+            account.RefreshToken = null;
+            account.RefreshTokenExpiryTime = DateTime.MinValue;
+
+            await _accountRepository.UpdateAccount(account);
+        }
+
 
         public async Task ActiveAccount(int idAccount)
         {
@@ -250,6 +273,30 @@ namespace Service.Implement
             var account = await _accountRepository.GetAccountById(id);
             AccountViewDetail accountViewDetail = _mapper.Map<AccountViewDetail>(account);
             return accountViewDetail;
+        }
+
+        public async Task<AccountLoginDto> RefreshToken(TokenApiDto tokenApiDto)
+        {
+            string accessToken = tokenApiDto.AccessToken;
+            string refreshToken = tokenApiDto.RefreshToken;
+            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+
+            var accountId = int.Parse(principal.Claims.First(i => i.Type == "AccountId").Value);
+
+            var accountDto = await _accountRepository.GetAccountById(accountId);
+
+            if (accountDto is null || accountDto.RefreshToken != refreshToken || accountDto.RefreshTokenExpiryTime <= DateTime.Now)
+                return null;
+
+            var newAccessToken = _tokenService.CreateToken(principal.Claims);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+            accountDto.Token = newAccessToken;
+            accountDto.RefreshToken = newRefreshToken;
+
+            await _accountRepository.UpdateAccount(accountDto);
+
+            return _mapper.Map<AccountLoginDto>(accountDto);
         }
     }
 }

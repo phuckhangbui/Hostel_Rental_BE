@@ -3,11 +3,11 @@ using BusinessObject.Enum;
 using BusinessObject.Models;
 using DTOs.Account;
 using DTOs.Complain;
+using DTOs.Contract;
 using DTOs.Hostel;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
-using DTOs.Contract;
 
 namespace Repository.Mapper;
 
@@ -18,6 +18,8 @@ public class AutoMapperProfile : Profile
         //CreateMap<SendMessageDto, Message>();
         CreateMap<Account, AccountDto>().ReverseMap();
         CreateMap<Account, AccountViewDetail>().ReverseMap();
+        CreateMap<AccountViewDetail, AccountDto>().ReverseMap();
+        CreateMap<AccountDto, AccountLoginDto>().ReverseMap();
         CreateMap<Room, RoomOfHostelAdminView>().ReverseMap();
         CreateMap<MemberShip, GetMemberShipDto>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
@@ -25,9 +27,10 @@ public class AutoMapperProfile : Profile
         CreateMap<Room, RoomDetailResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
             .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore());
-        CreateMap<Hostel, HostelListResponseDto>()
+        CreateMap<Hostel, HostelResponseDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
-            .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0));
+            .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0))
+			.ForMember(dest => dest.NumOfTotalRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
         CreateMap<Hostel, HostelsAdminView>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty));
@@ -52,6 +55,6 @@ public class AutoMapperProfile : Profile
         CreateMap<Contract, GetContractDto>()
             .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
 
-            
+
     }
 }

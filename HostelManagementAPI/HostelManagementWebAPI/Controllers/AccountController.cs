@@ -1,6 +1,8 @@
-﻿using DTOs.Account;
+﻿using DTOs;
+using DTOs.Account;
 using DTOs.AccountAuthentication;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -18,7 +20,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AccountDto>> Login(EmailLoginDto login)
+        public async Task<ActionResult<AccountLoginDto>> Login(EmailLoginDto login)
         {
 
             try
@@ -53,7 +55,7 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new ApiResponseStatus(400));
             }
@@ -78,7 +80,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("confirm/password")]
-        public async Task<ActionResult<AccountDto>> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
+        public async Task<ActionResult<AccountLoginDto>> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
         {
             try
             {
@@ -96,7 +98,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("login/google")]
-        public async Task<ActionResult<AccountDto>> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<ActionResult<AccountLoginDto>> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
         {
             try
             {
@@ -118,7 +120,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("register/google")]
-        public async Task<ActionResult<AccountDto>> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<ActionResult<AccountLoginDto>> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
         {
             try
             {
@@ -129,10 +131,51 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new ApiResponseStatus(400));
             }
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<ActionResult<AccountLoginDto>> Refresh(TokenApiDto tokenApiDto)
+        {
+            if (tokenApiDto is null)
+                return BadRequest(new ApiResponseStatus(400, "Invalid client request"));
+
+            try
+            {
+                var accountDto = await _accountService.RefreshToken(tokenApiDto);
+                if (accountDto == null)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Invalid token"));
+                }
+                return Ok(accountDto);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiResponseStatus(400));
+            }
+
+
+        }
+
+        [HttpPost, Authorize]
+        [Route("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+                await _accountService.Logout(accountId);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiResponseStatus(400));
+            }
+
         }
     }
 }

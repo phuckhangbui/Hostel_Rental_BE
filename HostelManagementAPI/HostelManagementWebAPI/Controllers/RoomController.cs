@@ -1,5 +1,6 @@
 ﻿using DTOs.Room;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -16,6 +17,7 @@ namespace HostelManagementWebAPI.Controllers
             _roomService = roomService;
         }
 
+		[Authorize(Policy = "Owner")]
 		[HttpPut("rooms/{roomId}")]
 		public async Task<ActionResult> UpdateRoom(int roomId, [FromBody] UpdateRoomRequestDto updateRoomRequestDto)
 		{
@@ -34,8 +36,9 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[HttpPut("rooms/{roomId}/status")]
-		public async Task<ActionResult> ChangeRoomStatus(int roomId, [FromBody] int status)
+		[Authorize(Policy = "Owner")]
+		[HttpPut("rooms/{roomId}/status/{status}")]
+		public async Task<ActionResult> ChangeRoomStatus(int roomId, int status)
 		{
 			try
 			{
@@ -80,13 +83,14 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
+		[Authorize(Policy = "Owner")]
 		[HttpPost("rooms")]
 		public async Task<ActionResult> Create([FromBody] CreateRoomRequestDto createRoomRequestDto)
 		{
 			try
 			{
-				await _roomService.CreateRoom(createRoomRequestDto);
-				return Ok();
+				var result = await _roomService.CreateRoom(createRoomRequestDto);
+				return Ok(result);
 			}
 			catch (ServiceException ex)
 			{
@@ -98,6 +102,7 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
+		[Authorize(Policy = "Owner")]
 		[HttpPost("rooms/{roomId}/images")]
 		public async Task<ActionResult> UploadImage(int roomId, IFormFileCollection imageFiles)
 		{
