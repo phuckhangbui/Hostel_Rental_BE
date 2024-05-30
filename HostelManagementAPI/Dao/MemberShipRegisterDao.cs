@@ -53,8 +53,9 @@ namespace DAO
 
         public async Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth()
         {
+            var context = new DataContext();
             var utils = new Utils();
-            var profit = dataContext.MembershipsRegisterTransaction
+            var profit = context.MembershipsRegisterTransaction
         .GroupBy(x => x.DateRegister.Value.Month)
         .Select(group => new TypeMonthDtos
         {
@@ -80,6 +81,11 @@ namespace DAO
                 .ToListAsync();
 
             return membersRegister;
+        }
+
+        public async Task<MemberShipRegisterTransaction> GetDetailMemberShipRegister(int registerID)
+        {
+            return await dataContext.MembershipsRegisterTransaction.Include(x => x.OwnerAccount).Include(z => z.MemberShip).FirstOrDefaultAsync(y => y.MemberShipTransactionID == registerID);
         }
     }
 }
