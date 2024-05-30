@@ -1,50 +1,60 @@
-﻿using BusinessObject.Models;
+﻿using AutoMapper;
+using BusinessObject.Models;
 using DAO;
+using DTOs.Account;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
     public class AccountRepository : IAccountRepository
     {
-        public async Task<Account> GetAccountLoginByUsername(string username)
+        private readonly IMapper _mapper;
+
+        public AccountRepository(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
+        public async Task<AccountDto> GetAccountLoginByUsername(string username)
         {
             var account = await AccountDAO.Instance.GetAccountLoginByUsername(username);
-            return account;
+            return _mapper.Map<AccountDto>(account);
         }
 
-        public Task<IEnumerable<Account>> GetAllAsync()
+        public async Task<IEnumerable<AccountDto>> GetAllAsync()
         {
-            return AccountDAO.Instance.GetAllAsync();
+            var list = await AccountDAO.Instance.GetAllAsync();
+            return _mapper.Map<IEnumerable<AccountDto>>(list);
         }
 
-        public async Task<bool> UpdateAsync(Account account)
+        public async Task<AccountDto> GetAccountByEmail(string email)
         {
-            return await AccountDAO.Instance.UpdateAsync(account);
+            var account = await AccountDAO.Instance.GetAccountByEmail(email);
+            return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<Account> GetAccountByEmail(string email)
+        public async Task CreateAccount(AccountDto accountDto)
         {
-            return await AccountDAO.Instance.GetAccountByEmail(email);
-        }
-
-        public async Task CreateAccount(Account account)
-        {
+            var account = _mapper.Map<Account>(accountDto);
             await AccountDAO.Instance.CreateAsync(account);
         }
 
-        public async Task UpdateAccount(Account account)
+        public async Task UpdateAccount(AccountDto accountDto)
         {
+            var account = _mapper.Map<Account>(accountDto);
             await AccountDAO.Instance.UpdateAsync(account);
         }
 
-        public async Task<Account> GetAccountById(int id)
+        public async Task<AccountDto> GetAccountById(int id)
         {
-            return await AccountDAO.Instance.GetAccountById(id);
+            var account = await AccountDAO.Instance.GetAccountById(id);
+            return _mapper.Map<AccountDto>(account);
         }
 
-        public async Task<Account> GetAccountWithHostelById(int id)
+        public async Task<AccountDto> GetAccountWithHostelById(int id)
         {
-            return await AccountDAO.Instance.GetAccountWithHostelById(id);
+            var account = await AccountDAO.Instance.GetAccountWithHostelById(id);
+            return _mapper.Map<AccountDto>(account);
 
         }
 

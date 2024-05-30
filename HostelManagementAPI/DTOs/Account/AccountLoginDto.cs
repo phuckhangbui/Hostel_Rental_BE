@@ -1,6 +1,6 @@
 ﻿namespace DTOs.Account
 {
-    public class AccountDto
+    public class AccountLoginDto
     {
         public int AccountId { get; set; }
         public string? Email { get; set; }
@@ -9,8 +9,6 @@
         public int? RoleId { get; set; }
         public string? Token { get; set; }
         public int? Status { get; set; }
-        public byte[]? PasswordSalt { get; set; }
-        public byte[]? PasswordHash { get; set; }
         public DateTime? CreatedDate { get; set; }
         public bool? IsLoginWithGmail { get; set; }
         public bool? IsNewAccount { get; set; }

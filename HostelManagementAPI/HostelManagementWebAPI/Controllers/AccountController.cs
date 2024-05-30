@@ -18,7 +18,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AccountDto>> Login(EmailLoginDto login)
+        public async Task<ActionResult<AccountLoginDto>> Login(EmailLoginDto login)
         {
 
             try
@@ -53,7 +53,7 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new ApiResponseStatus(400));
             }
@@ -78,7 +78,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("confirm/password")]
-        public async Task<ActionResult<AccountDto>> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
+        public async Task<ActionResult<AccountLoginDto>> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("login/google")]
-        public async Task<ActionResult<AccountDto>> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<ActionResult<AccountLoginDto>> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("register/google")]
-        public async Task<ActionResult<AccountDto>> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<ActionResult<AccountLoginDto>> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
         {
             try
             {

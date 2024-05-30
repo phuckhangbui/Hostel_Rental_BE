@@ -16,5 +16,7 @@ namespace DTOs.Contract
         public string? DateEnd { get; set; }
         public string? DateSign { get; set; }
         public int Status { get; set; }
+        public Double? RoomFee { get; set; }
+        public Double? DepositFee { get; set; }
     }
 }
