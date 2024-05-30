@@ -19,5 +19,7 @@ namespace Service.Interface
         Task<AccountViewDetail> GetAccountById(int id);
         Task Logout(int accountId);
         Task<AccountLoginDto> RefreshToken(TokenApiDto tokenApiDto);
+        Task<CustomerViewAccount> GetAccountProfileById(int id);
+
     }
 }

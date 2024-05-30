@@ -58,5 +58,10 @@ namespace Repository.Implement
 
         }
 
+        public async Task<CustomerViewAccount> GetAccountProfileById(int id)
+        {
+            var account = await AccountDAO.Instance.GetAccountById(id);
+            return _mapper.Map<CustomerViewAccount>(account);
+        }
     }
 }

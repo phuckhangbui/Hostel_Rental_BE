@@ -298,5 +298,12 @@ namespace Service.Implement
 
             return _mapper.Map<AccountLoginDto>(accountDto);
         }
+
+        public async Task<CustomerViewAccount> GetAccountProfileById(int id)
+        {
+            var account = await _accountRepository.GetAccountProfileById(id);
+            CustomerViewAccount customerViewAccount = _mapper.Map<CustomerViewAccount>(account);
+            return customerViewAccount;
+        }
     }
 }

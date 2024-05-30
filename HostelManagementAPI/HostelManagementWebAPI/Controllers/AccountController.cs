@@ -177,5 +177,24 @@ namespace HostelManagementWebAPI.Controllers
             }
 
         }
+
+        [HttpGet("profile")]
+        public async Task<ActionResult<CustomerViewAccount>> GetAccountDetailById(int accountID)
+        {
+            try
+            {
+                var account = await _accountService.GetAccountProfileById(accountID);
+                if (account == null)
+                {
+                    return NotFound(new ApiResponseStatus(404, "Account not found"));
+                }
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
     }
 }

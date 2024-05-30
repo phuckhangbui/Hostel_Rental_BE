@@ -10,6 +10,7 @@ namespace Repository.Interface
         Task CreateAccount(AccountDto accountDto);
         Task UpdateAccount(AccountDto accountDto);
         Task<AccountDto> GetAccountById(int id);
+        Task<CustomerViewAccount> GetAccountProfileById(int id); 
         Task<AccountDto> GetAccountWithHostelById(int id);
 
     }
