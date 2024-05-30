@@ -80,25 +80,6 @@ namespace HostelManagementWebAPI.Controllers.Admin
         }
 
         [Authorize(Policy = "Admin")]
-        [HttpGet("admin-get-memberships-active")]
-        public async Task<ActionResult> GetMemberships()
-        {
-            try
-            {
-                var memberships = await _memberShipService.GetMembershipsActive();
-                return Ok(memberships);
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(new ApiResponseStatus(400, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-            }
-        }
-
-        [Authorize(Policy = "Admin")]
         [HttpGet("admin-get-memberships-expire")]
         public async Task<ActionResult> GetMembershipsExpire()
         {
