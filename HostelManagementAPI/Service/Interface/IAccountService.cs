@@ -1,4 +1,5 @@
-﻿using DTOs.Account;
+﻿using DTOs;
+using DTOs.Account;
 using DTOs.AccountAuthentication;
 
 namespace Service.Interface
@@ -16,5 +17,7 @@ namespace Service.Interface
         Task ActiveAccount(int idAccount);
         Task UnactiveAccount(int idAccount);
         Task<AccountViewDetail> GetAccountById(int id);
+        Task Logout(int accountId);
+        Task<AccountLoginDto> RefreshToken(TokenApiDto tokenApiDto);
     }
 }

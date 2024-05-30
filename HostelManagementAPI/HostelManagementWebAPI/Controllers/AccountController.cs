@@ -1,6 +1,8 @@
-﻿using DTOs.Account;
+﻿using DTOs;
+using DTOs.Account;
 using DTOs.AccountAuthentication;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -129,10 +131,51 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new ApiResponseStatus(400));
             }
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<ActionResult<AccountLoginDto>> Refresh(TokenApiDto tokenApiDto)
+        {
+            if (tokenApiDto is null)
+                return BadRequest(new ApiResponseStatus(400, "Invalid client request"));
+
+            try
+            {
+                var accountDto = await _accountService.RefreshToken(tokenApiDto);
+                if (accountDto == null)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Invalid token"));
+                }
+                return Ok(accountDto);
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiResponseStatus(400));
+            }
+
+
+        }
+
+        [HttpPost, Authorize]
+        [Route("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+                await _accountService.Logout(accountId);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiResponseStatus(400));
+            }
+
         }
     }
 }
