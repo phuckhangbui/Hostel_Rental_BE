@@ -1,31 +1,52 @@
 ﻿using BusinessObject.Models;
-using Dao;
+using DAO;
 using Repository.Interface;
 
 namespace Repository.Implement
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly AccountDao _accountDao;
-
-        public AccountRepository()
+        public async Task<Account> GetAccountLoginByUsername(string username)
         {
-            _accountDao = new AccountDao();
+            var account = await AccountDAO.Instance.GetAccountLoginByUsername(username);
+            return account;
         }
 
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
+        public Task<IEnumerable<Account>> GetAllAsync()
         {
-            return await _accountDao.FirebaseTokenExisted(firebaseToken);
-        }
-
-        public async Task<Account> getAccountLoginByUsername(string username)
-        {
-            return await _accountDao.getAccountLoginByUsername(username);
+            return AccountDAO.Instance.GetAllAsync();
         }
 
         public async Task<bool> UpdateAsync(Account account)
         {
-            return _accountDao.updateObject(account);
+            return await AccountDAO.Instance.UpdateAsync(account);
         }
+
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+            return await AccountDAO.Instance.GetAccountByEmail(email);
+        }
+
+        public async Task CreateAccount(Account account)
+        {
+            await AccountDAO.Instance.CreateAsync(account);
+        }
+
+        public async Task UpdateAccount(Account account)
+        {
+            await AccountDAO.Instance.UpdateAsync(account);
+        }
+
+        public async Task<Account> GetAccountById(int id)
+        {
+            return await AccountDAO.Instance.GetAccountById(id);
+        }
+
+        public async Task<Account> GetAccountWithHostelById(int id)
+        {
+            return await AccountDAO.Instance.GetAccountWithHostelById(id);
+
+        }
+
     }
 }

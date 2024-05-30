@@ -13,8 +13,9 @@
         public int? HostelID { get; set; }
         public int Status { get; set; }
 
-        public IEnumerable<RoomImage> RoomImages { get; set; }
-        public IEnumerable<Complain> Complains { get; set; }
-        public IEnumerable<Contract> RoomContract { get; set; }
+        public IList<RoomImage> RoomImages { get; set; }
+        public IList<Complain> Complains { get; set; }
+        public IList<Contract> RoomContract { get; set; }
+        public IList<RoomService> RoomServices { get; set; }
     }
 }

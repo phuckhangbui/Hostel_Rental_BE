@@ -1,4 +1,5 @@
-﻿using BusinessObject.Dtos;
+﻿using DTOs.Account;
+using DTOs.AccountAuthentication;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Interface;
@@ -13,13 +14,12 @@ namespace HostelManagementWebAPI.Controllers
             _accountService = accountService;
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> LoginAdminOrStaff(LoginDto loginDto)
+        [HttpPost("login/username")]
+        public async Task<ActionResult<AccountDto>> LoginAccountWithUsername(LoginDto loginDto)
         {
-            var accountLogin = await _accountService.getAccountLogin(loginDto);
+            var accountLogin = await _accountService.GetAccountLoginByUsername(loginDto);
             if (accountLogin != null)
             {
-                //HttpContext.Session.SetString("token", accountLogin.Token);
                 return Ok(accountLogin);
             }
             else

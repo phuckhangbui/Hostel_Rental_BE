@@ -1,6 +1,0 @@
-@PRN231_Group3_BE_HostAddress = http://localhost:5260
-
-GET {{PRN231_Group3_BE_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

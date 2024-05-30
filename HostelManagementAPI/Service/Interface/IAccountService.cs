@@ -1,11 +1,21 @@
-﻿using BusinessObject.Dtos;
-using BusinessObject.Models;
+﻿using BusinessObject.Models;
+using DTOs.Account;
+using DTOs.AccountAuthentication;
 
 namespace Service.Interface
 {
     public interface IAccountService
     {
-        Task<UserDto> getAccountLogin(LoginDto loginDto);
-        Task<Account> FirebaseTokenExisted(string firebaseToken);
+        Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto);
+        Task<IEnumerable<AccountViewDto>> GetAllAccounts();
+        Task<AccountDto> Login(EmailLoginDto login);
+        Task RegisterEmail(EmailRegisterDto emailRegisterDto);
+        Task ForgetPassword(EmailRegisterDto emailRegisterDto);
+        Task<AccountDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos);
+        Task<AccountDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle);
+        Task<AccountDto> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle);
+        Task ActiveAccount(int idAccount);
+        Task UnactiveAccount(int idAccount);
+        Task<AccountViewDetail> GetAccountById(int id);
     }
 }

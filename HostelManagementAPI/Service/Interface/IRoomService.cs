@@ -1,0 +1,16 @@
+﻿using DTOs.Room;
+using Microsoft.AspNetCore.Http;
+
+namespace Service.Interface
+{
+    public interface IRoomService
+	{
+		Task CreateRoom(CreateRoomRequestDto createRoomRequestDto);
+		Task UploadRoomImage(IFormFileCollection files, int roomId);
+		Task <IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId);
+        Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId);
+        Task <RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId);
+		Task ChangeRoomStatus(int roomId, int status);
+		Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto);
+	}
+}

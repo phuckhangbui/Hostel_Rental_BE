@@ -1,9 +1,12 @@
-﻿using BusinessObject.Dtos;
+﻿using AutoMapper;
 using BusinessObject.Models;
-using Microsoft.IdentityModel.Tokens;
-using Repository.Implement;
+using DTOs.Account;
+using DTOs.AccountAuthentication;
+using Google.Apis.Auth;
 using Repository.Interface;
+using Service.Exceptions;
 using Service.Interface;
+using Service.Mail;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -14,16 +17,17 @@ namespace Service.Implement
     {
         private readonly IAccountRepository _accountRepository;
         private readonly ITokenService _tokenService;
-        public AccountService(IAccountRepository accountRepository, ITokenService tokenService) { _accountRepository = accountRepository; _tokenService = tokenService; }
-
-        public AccountService()
+        private readonly IMapper _mapper;
+        private readonly IMailService _mailService;
+        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService)
         {
-            _accountRepository = new AccountRepository();
+            _accountRepository = accountRepository; _tokenService = tokenService; _mapper = mapper;
+            _mailService = mailService;
         }
 
-        public async Task<UserDto> getAccountLogin(LoginDto loginDto)
+        public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
         {
-           Account account =  await _accountRepository.getAccountLoginByUsername(loginDto.Username);
+            Account account = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
             if (account == null || account.Status == 1) // status block
                 return null;
             else
@@ -38,39 +42,214 @@ namespace Service.Implement
                     }
                 }
 
-                if (loginDto.FirebaseRegisterToken.IsNullOrEmpty())
-                {
 
-                }
-                else if (!loginDto.FirebaseRegisterToken.Equals(account.FirebaseToken))
+                return new AccountDto
                 {
-                    var firebaseTokenExistedAccount = await _accountRepository.FirebaseTokenExisted(loginDto.FirebaseRegisterToken);
-                    if (firebaseTokenExistedAccount != null)
-                    {
-                        firebaseTokenExistedAccount.FirebaseToken = null;
-                        await _accountRepository.UpdateAsync(firebaseTokenExistedAccount);
-                    }
-                    account.FirebaseToken = loginDto.FirebaseRegisterToken;
-                    await _accountRepository.UpdateAsync(account);
-                }
-
-                return new UserDto
-                {
-                    Id = account.AccountID,
+                    AccountId = account.AccountID,
                     Email = account.Email,
                     Token = _tokenService.CreateToken(account),
-                    RoleID = account.Permissions.Select(x => x.RoleID),
-                    AccountName = account.Name,
+                    RoleId = (int)account.RoleId,
+                    Name = account.Name,
                     Username = account.Username,
-                    isNewAccount = false
+                    IsNewAccount = false
                 };
             }
         }
 
-
-        public async Task<Account> FirebaseTokenExisted(string firebaseToken)
+        public async Task<IEnumerable<AccountViewDto>> GetAllAccounts()
         {
-            return await _accountRepository.FirebaseTokenExisted(firebaseToken);
+            return _accountRepository.GetAllAsync().Result.Select(x => new AccountViewDto
+            {
+                AccountID = x.AccountID,
+                Email = x.Email,
+                Name = x.Name,
+                Status = x.Status
+            }).ToList();
+        }
+
+        public async Task<AccountDto> Login(EmailLoginDto login)
+        {
+            Account account = await _accountRepository.GetAccountByEmail(login.Email);
+            if (account != null)
+            {
+                if ((bool)account.IsLoginWithGmail)
+                {
+                    throw new ServiceException("The account is created by login with Google, please use login with Google");
+                }
+                using var hmac = new HMACSHA512(account.PasswordSalt);
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != account.PasswordHash[i])
+                    {
+                        return null;
+                    }
+                }
+
+                AccountDto accountDto = _mapper.Map<AccountDto>(account);
+                accountDto.IsNewAccount = false;
+                accountDto.Token = _tokenService.CreateToken(account);
+                return accountDto;
+            }
+            throw new ServiceException("No account associate with this email");
+        }
+
+
+        public async Task RegisterEmail(EmailRegisterDto emailRegisterDto)
+        {
+            Account account = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
+            if (account != null)
+            {
+                throw new ServiceException("This email has already been used. Please choose other email");
+            }
+
+            Random random = new Random();
+            var tempPassword = random.Next(111111, 999999).ToString();
+
+
+            using var hmac = new HMACSHA512();
+            Account newAccount = new Account
+            {
+                Email = emailRegisterDto.Email,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(tempPassword)),
+                PasswordSalt = hmac.Key,
+                CreatedDate = DateTime.Now,
+                Status = 1, // k sure cho docs
+                RoleId = 3, // k sure cho docs
+                IsLoginWithGmail = false
+            };
+
+            await _accountRepository.CreateAccount(newAccount);
+
+            //send mail here for the passwords
+            _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, tempPassword));
+        }
+
+        public async Task ForgetPassword(EmailRegisterDto emailRegisterDto)
+        {
+            Account account = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
+            if (account == null)
+            {
+                throw new ServiceException("No account associate with this email");
+            }
+
+            Random random = new Random();
+            var tempPassword = random.Next(111111, 999999).ToString();
+
+            using var hmac = new HMACSHA512();
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(tempPassword));
+            account.PasswordSalt = hmac.Key;
+
+            await _accountRepository.UpdateAsync(account);
+
+            //send mail here for the passwords
+            _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, tempPassword));
+        }
+
+        public async Task<AccountDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
+        {
+            Account account = await _accountRepository.GetAccountByEmail(confirmPasswordDtos.Email);
+            if (account != null)
+            {
+                if (account.PasswordHash == null)
+                {
+                    throw new ServiceException("The account is created by login with Google, please use login with Google");
+                }
+                using var hmac = new HMACSHA512(account.PasswordSalt);
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(confirmPasswordDtos.SystemPassword));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != account.PasswordHash[i])
+                    {
+                        return null;
+                    }
+                }
+
+                account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(confirmPasswordDtos.NewPassword));
+                account.PasswordSalt = hmac.Key;
+                account.Status = 2; // fix later
+                try
+                {
+                    await _accountRepository.UpdateAccount(account);
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException("Cannot update the password");
+                }
+                AccountDto accountDto = _mapper.Map<AccountDto>(account);
+                accountDto.Token = _tokenService.CreateToken(account);
+                return accountDto;
+            }
+            else throw new ServiceException("No account associate with this email");
+        }
+
+        public async Task<AccountDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        {
+            GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(loginWithGoogle.IdTokenString);
+
+            string userEmail = payload.Email;
+
+            Account account = await _accountRepository.GetAccountByEmail(userEmail);
+            if (account != null)
+            {
+                if ((bool)!account.IsLoginWithGmail)
+                {
+                    throw new ServiceException("This email has already been used and associated with an password, please choose other login method");
+                }
+                AccountDto accountDto = _mapper.Map<AccountDto>(account);
+                accountDto.Token = _tokenService.CreateToken(account);
+                return accountDto;
+            }
+            return null;
+        }
+
+        public async Task<AccountDto> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        {
+            GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(loginWithGoogle.IdTokenString);
+
+            string userEmail = payload.Email;
+
+            Account account = await _accountRepository.GetAccountByEmail(userEmail);
+            if (account != null)
+            {
+                throw new ServiceException("This email has already been used. Please choose other email");
+            }
+
+            Account newAccount = new Account
+            {
+                Email = payload.Email,
+                Name = payload.Name,
+                RoleId = 3, // fix later
+                CreatedDate = DateTime.Now,
+                IsLoginWithGmail = true
+            };
+
+            await _accountRepository.CreateAccount(newAccount);
+
+            AccountDto accountDto = _mapper.Map<AccountDto>(account);
+            accountDto.Token = _tokenService.CreateToken(account);
+            return accountDto;
+        }
+
+        public async Task ActiveAccount(int idAccount)
+        {
+            var account = _accountRepository.GetAccountById(idAccount);
+            account.Result.Status = 0;
+            await _accountRepository.UpdateAccount(account.Result);
+        }
+
+        public async Task UnactiveAccount(int idAccount)
+        {
+            var account = _accountRepository.GetAccountById(idAccount);
+            account.Result.Status = 1;
+            await _accountRepository.UpdateAccount(account.Result);
+        }
+
+        public async Task<AccountViewDetail> GetAccountById(int id)
+        {
+            var account = await _accountRepository.GetAccountById(id);
+            AccountViewDetail accountViewDetail = _mapper.Map<AccountViewDetail>(account);
+            return accountViewDetail;
         }
     }
 }
