@@ -13,8 +13,8 @@ namespace Service.Implement
     {
         private readonly IHostelRepository _hostelRepository;
         private readonly IAccountRepository _accountRepository;
-		private readonly ICloudinaryService _cloudinaryService;
-		private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly IMapper _mapper;
 
         public HostelService(
             IHostelRepository hostelRepository,
@@ -64,7 +64,7 @@ namespace Service.Implement
 
             await _hostelRepository.CreateHostel(hostel);
 
-            return new CreateHostelResponseDto { HostelID = hostel.HostelID};
+            return new CreateHostelResponseDto { HostelID = hostel.HostelID };
         }
 
         public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
@@ -92,10 +92,10 @@ namespace Service.Implement
             {
                 throw new ServiceException("Account not found with this ID");
             }
-            if (ownerAccount.Hostels == null)
-            {
-                return null;
-            }
+            //if (ownerAccount.Hostels == null)
+            //{
+            //    return null;
+            //}
 
             var ownerHostels = await _hostelRepository.GetOwnerHostels(onwerId);
             return _mapper.Map<IEnumerable<HostelListResponseDto>>(ownerHostels);
@@ -129,33 +129,33 @@ namespace Service.Implement
             await _hostelRepository.UpdateHostel(currentHostel);
         }
 
-		public async Task UploadHostelThumbnail(int hostelId, IFormFile formFile)
-		{
-			var currentHostel = await _hostelRepository.GetHostelById(hostelId);
-			if (currentHostel == null)
-			{
-				throw new ServiceException("Hostel not found with this ID");
-			}
+        public async Task UploadHostelThumbnail(int hostelId, IFormFile formFile)
+        {
+            var currentHostel = await _hostelRepository.GetHostelById(hostelId);
+            if (currentHostel == null)
+            {
+                throw new ServiceException("Hostel not found with this ID");
+            }
             else
             {
-				try
-				{
-					var result = await _cloudinaryService.AddPhotoAsync(formFile);
-					if (result.Error != null)
-					{
-						throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
-					}
+                try
+                {
+                    var result = await _cloudinaryService.AddPhotoAsync(formFile);
+                    if (result.Error != null)
+                    {
+                        throw new ServiceException("Error uploading image to Cloudinary: " + result.Error.Message);
+                    }
 
-					string imageUrl = result.SecureUrl.AbsoluteUri;
+                    string imageUrl = result.SecureUrl.AbsoluteUri;
                     currentHostel.Thumbnail = imageUrl;
 
                     await _hostelRepository.UpdateHostel(currentHostel);
-				}
-				catch (Exception ex)
-				{
-					throw new ServiceException("Upload hostel image fail with error", ex);
-				}
-			}
-		}
-	}
+                }
+                catch (Exception ex)
+                {
+                    throw new ServiceException("Upload hostel image fail with error", ex);
+                }
+            }
+        }
+    }
 }

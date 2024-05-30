@@ -1,4 +1,4 @@
-﻿using BusinessObject.Models;
+﻿using DTOs.Account;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Service.Interface;
@@ -19,13 +19,13 @@ namespace Service.Implement
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
         }
 
-        public string CreateToken(Account account)
+        public string CreateToken(AccountDto accountDto)
         {
             var claim = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.NameId, account.AccountID.ToString()),
-            new Claim("RoleId", account.RoleId.ToString()),
-            new Claim("AccountId", account.AccountID.ToString())
+            new Claim(JwtRegisteredClaimNames.NameId, accountDto.AccountId.ToString()),
+            new Claim("RoleId", accountDto.RoleId.ToString()),
+            new Claim("AccountId", accountDto.AccountId.ToString())
         };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

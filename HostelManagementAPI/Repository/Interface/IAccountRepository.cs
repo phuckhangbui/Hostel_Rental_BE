@@ -1,17 +1,16 @@
-﻿using BusinessObject.Models;
+﻿using DTOs.Account;
 
 namespace Repository.Interface
 {
     public interface IAccountRepository
     {
-        Task<Account> GetAccountLoginByUsername(string username);
-        Task<bool> UpdateAsync(Account account);
-        Task<IEnumerable<Account>> GetAllAsync();
-        Task<Account> GetAccountByEmail(string email);
-        Task CreateAccount(Account account);
-        Task UpdateAccount(Account account);
-        Task<Account> GetAccountById(int id);
-        Task<Account> GetAccountWithHostelById(int id);
+        Task<AccountDto> GetAccountLoginByUsername(string username);
+        Task<IEnumerable<AccountDto>> GetAllAsync();
+        Task<AccountDto> GetAccountByEmail(string email);
+        Task CreateAccount(AccountDto accountDto);
+        Task UpdateAccount(AccountDto accountDto);
+        Task<AccountDto> GetAccountById(int id);
+        Task<AccountDto> GetAccountWithHostelById(int id);
 
     }
 }

@@ -1,9 +1,9 @@
-﻿using BusinessObject.Models;
+﻿using DTOs.Account;
 
 namespace Service.Interface
 {
     public interface ITokenService
     {
-        string CreateToken(Account account);
+        string CreateToken(AccountDto accountDto);
     }
 }
