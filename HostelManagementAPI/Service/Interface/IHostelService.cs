@@ -9,7 +9,7 @@ namespace Service.Interface
         Task<IEnumerable<HostelResponseDto>> GetHostels();
         Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView();
         Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID);
-        Task UpdateHostel(UpdateHostelRequestDto updateHostelRequestDto);
+        Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto);
         Task ChangeHostelStatus(int hostelId, int status);
         Task<IEnumerable<HostelResponseDto>> GetHostelsByOwner(int ownerId);
         Task UploadHostelThumbnail(int hostelId, IFormFile formFile);

@@ -80,12 +80,12 @@ namespace HostelManagementWebAPI.Controllers
 		}
 
 		[Authorize(Policy = "Owner")]
-		[HttpPut("hostels")]
-        public async Task<ActionResult> Update([FromBody] UpdateHostelRequestDto updateHostelRequestDto)
+		[HttpPut("hostels/{hostelId}")]
+        public async Task<ActionResult> Update(int hostelId, [FromBody] UpdateHostelRequestDto updateHostelRequestDto)
         {
             try
             {
-                await _hostelService.UpdateHostel(updateHostelRequestDto);
+                await _hostelService.UpdateHostel(hostelId, updateHostelRequestDto);
                 return Ok();
             }
             catch (ServiceException ex)
