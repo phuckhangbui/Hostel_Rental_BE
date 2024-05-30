@@ -22,6 +22,7 @@ public class AutoMapperProfile : Profile
         CreateMap<AccountDto, AccountLoginDto>().ReverseMap();
         CreateMap<Room, RoomOfHostelAdminView>().ReverseMap();
         CreateMap<MemberShip, GetMemberShipDto>().ReverseMap();
+        CreateMap<MemberShip, CreateMemberShipDto>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
         CreateMap<Room, RoomDetailResponseDto>()
@@ -30,7 +31,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Hostel, HostelResponseDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0))
-			.ForMember(dest => dest.NumOfTotalRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
+            .ForMember(dest => dest.NumOfTotalRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
         CreateMap<Hostel, HostelsAdminView>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty));
@@ -54,7 +55,5 @@ public class AutoMapperProfile : Profile
         CreateMap<Contract, ContractDto>();
         CreateMap<Contract, GetContractDto>()
             .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
-
-
     }
 }

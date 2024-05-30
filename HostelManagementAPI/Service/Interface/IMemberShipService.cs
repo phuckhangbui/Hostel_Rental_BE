@@ -12,5 +12,6 @@ namespace Service.Interface
         Task<GetMemberShipDto> GetDetailMemberShip(int packageID);
         Task<bool> DeactivateMembership(UpdateMembershipDto updateMembershipDto);
         Task<bool> ActivateMembership(UpdateMembershipDto updateMembershipDto);
+        Task<bool> CheckMembershipNameExist(string memberShipName);
     }
 }

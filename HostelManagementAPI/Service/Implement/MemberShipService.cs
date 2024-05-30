@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BusinessObject.Enum;
-using BusinessObject.Models;
 using DTOs.Membership;
 using Repository.Interface;
 using Service.Interface;
@@ -20,15 +19,7 @@ namespace Service.Implement
 
         public async Task CreateMemberShip(CreateMemberShipDto createMemberShipDto)
         {
-            MemberShip memberShip = new MemberShip
-            {
-                MemberShipName = createMemberShipDto.MemberShipName,
-                CapacityHostel = createMemberShipDto.CapacityHostel,
-                Month = createMemberShipDto.Month,
-                MemberShipFee = createMemberShipDto.MemberShipFee,
-                Status = 0
-            };
-            await memberShipRepository.CreateMemberShip(memberShip);
+            await memberShipRepository.CreateMemberShip(createMemberShipDto);
         }
 
         public async Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive()
@@ -90,6 +81,11 @@ namespace Service.Implement
             memberShip.Month = updateMemberShipAdmin.Month;
             memberShip.CapacityHostel = updateMemberShipAdmin.CapacityHostel;
             await memberShipRepository.UpdateMemberShip(memberShip);
+        }
+
+        public async Task<bool> CheckMembershipNameExist(string memberShipName)
+        {
+            return await memberShipRepository.CheckMembershipNameExist(memberShipName);
         }
     }
 }
