@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessObject.Enum;
+using DTOs.Enum;
 using BusinessObject.Models;
 using DTOs.Account;
 using DTOs.Complain;

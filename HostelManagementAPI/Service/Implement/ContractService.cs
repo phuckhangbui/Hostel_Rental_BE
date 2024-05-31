@@ -1,12 +1,6 @@
-﻿
-
-using AutoMapper;
-using BusinessObject.Enum;
+﻿using AutoMapper;
 using BusinessObject.Models;
-using DAO;
 using DTOs.Contract;
-using DTOs.Hostel;
-using Repository.Implement;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
