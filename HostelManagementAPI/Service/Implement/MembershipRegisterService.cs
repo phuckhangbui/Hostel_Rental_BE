@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using DTOs.MemberShipRegisterTransaction;
+﻿using DTOs.MemberShipRegisterTransaction;
 using Repository.Interface;
 using Service.Interface;
 
@@ -8,11 +7,9 @@ namespace Service.Implement
     public class MembershipRegisterService : IMembershipRegisterService
     {
         public IMembershipRegisterRepository membershipRegisterRepository;
-        private readonly IMapper _mapper;
-        public MembershipRegisterService(IMembershipRegisterRepository membershipRegisterRepository, IMapper mapper)
+        public MembershipRegisterService(IMembershipRegisterRepository membershipRegisterRepository)
         {
             this.membershipRegisterRepository = membershipRegisterRepository;
-            _mapper = mapper;
         }
         public Task<IEnumerable<ViewMemberShipDto>> GetAllMemberships()
         {
@@ -21,8 +18,7 @@ namespace Service.Implement
 
         public async Task<ViewMemberShipDetailDto> GetDetailMemberShipRegister(int registerID)
         {
-            var register = await membershipRegisterRepository.GetDetailMemberShipRegister(registerID);
-            return _mapper.Map<ViewMemberShipDetailDto>(register);
+            return await membershipRegisterRepository.GetDetailMemberShipRegister(registerID);
         }
     }
 }

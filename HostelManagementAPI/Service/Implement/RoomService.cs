@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BusinessObject.Enum;
+﻿using DTOs.Enum;
 using DTOs.Room;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
@@ -13,7 +12,6 @@ namespace Service.Implement
 		private readonly IRoomRepository _roomRepository;
 		private readonly IHostelRepository _hostelRepository;
 		private readonly ICloudinaryService _cloudinaryService;
-		private readonly IMapper _mapper;
 
 		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
 		{
@@ -23,12 +21,10 @@ namespace Service.Implement
 		public RoomService(
 			IRoomRepository roomRepository, 
 			IHostelRepository hostelRepository,
-			ICloudinaryService cloudinaryService, 
-			IMapper mapper)
+			ICloudinaryService cloudinaryService)
 		{
 			_roomRepository = roomRepository;
 			_hostelRepository = hostelRepository;
-			_mapper = mapper;
 			_cloudinaryService = cloudinaryService;
 		}
 
@@ -118,8 +114,7 @@ namespace Service.Implement
 
         public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)
         {
-            var rooms = await _roomRepository.GetListRoomsByHostelId(hostelId);
-            return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
+            return await _roomRepository.GetHostelDetailWithRoomAdminView(hostelId); ;
         }
     }
 }

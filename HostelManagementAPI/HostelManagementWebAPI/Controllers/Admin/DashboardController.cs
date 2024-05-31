@@ -1,11 +1,7 @@
-﻿using DTOs.Account;
-using DTOs.AccountAuthentication;
-using DTOs.Dashboard;
+﻿using DTOs.Dashboard;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Service.Exceptions;
-using Service.Implement;
 using Service.Interface;
 
 namespace HostelManagementWebAPI.Controllers.Admin

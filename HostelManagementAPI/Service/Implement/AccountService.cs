@@ -2,6 +2,7 @@
 using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
+using DTOs.Enum;
 using Google.Apis.Auth;
 using Repository.Interface;
 using Service.Exceptions;
@@ -28,7 +29,7 @@ namespace Service.Implement
         public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
         {
             AccountDto accountDto = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
-            if (accountDto == null || accountDto.Status == 1) // status block
+            if (accountDto == null || accountDto.Status == (int)AccountStatusEnum.Inactive || accountDto.RoleId != (int)AccountRoleEnum.Admin) // status block
                 return null;
             else
             {

@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.TypeService;
+﻿using DTOs.TypeService;
 using Repository.Interface;
 using Service.Interface;
 

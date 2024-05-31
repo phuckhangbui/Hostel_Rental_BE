@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BusinessObject.Enum;
+﻿using DTOs.Enum;
 using DTOs.Hostel;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
@@ -13,18 +12,15 @@ namespace Service.Implement
         private readonly IHostelRepository _hostelRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly IMapper _mapper;
 
         public HostelService(
             IHostelRepository hostelRepository,
             IAccountRepository accountRepository,
-            ICloudinaryService cloudinaryService,
-            IMapper mapper)
+            ICloudinaryService cloudinaryService)
         {
             _hostelRepository = hostelRepository;
             _accountRepository = accountRepository;
             _cloudinaryService = cloudinaryService;
-            _mapper = mapper;
         }
 
         public async Task ChangeHostelStatus(int hostelId, int status)
@@ -63,8 +59,7 @@ namespace Service.Implement
 
         public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
         {
-            var hostel = await _hostelRepository.GetHostelById(hostelID);
-            return _mapper.Map<HostelDetailAdminView>(hostel);
+            return await _hostelRepository.GetHostelDetailAdminView(hostelID);
         }
 
         public async Task<IEnumerable<HostelResponseDto>> GetHostels()
@@ -74,8 +69,7 @@ namespace Service.Implement
 
         public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
         {
-            var hostels = await _hostelRepository.GetAllHostels();
-            return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
+            return await _hostelRepository.GetHostelsAdminView();
         }
 
         public async Task<IEnumerable<HostelResponseDto>> GetHostelsByOwner(int ownerId)

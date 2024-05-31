@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BusinessObject.Enum;
+﻿using DTOs.Enum;
 using DTOs.Membership;
 using Repository.Interface;
 using Service.Interface;
@@ -9,12 +8,10 @@ namespace Service.Implement
     public class MemberShipService : IMemberShipService
     {
         public IMemberShipRepository memberShipRepository;
-        private readonly IMapper _mapper;
 
-        public MemberShipService(IMemberShipRepository memberShipRepository, IMapper mapper)
+        public MemberShipService(IMemberShipRepository memberShipRepository)
         {
             this.memberShipRepository = memberShipRepository;
-            _mapper = mapper;
         }
 
         public async Task CreateMemberShip(CreateMemberShipDto createMemberShipDto)
@@ -65,8 +62,7 @@ namespace Service.Implement
 
         public async Task<GetMemberShipDto> GetDetailMemberShip(int packageID)
         {
-            var package = await memberShipRepository.GetMembershipById(packageID);
-            return _mapper.Map<GetMemberShipDto>(package);
+            return await memberShipRepository.GetDetailMemberShip(packageID);
         }
 
         public async Task UpdateMemberShip(UpdateMemberShipAdminDto updateMemberShipAdmin)

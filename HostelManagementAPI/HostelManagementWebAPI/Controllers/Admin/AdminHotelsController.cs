@@ -1,7 +1,6 @@
 ﻿using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Service.Implement;
 using Service.Interface;
 
 namespace HostelManagementWebAPI.Controllers.Admin

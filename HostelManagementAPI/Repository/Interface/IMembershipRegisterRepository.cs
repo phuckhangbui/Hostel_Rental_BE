@@ -7,6 +7,6 @@ namespace Repository.Interface
     public interface IMembershipRegisterRepository
     {
         Task<IEnumerable<ViewMemberShipDto>> GetAllMemberships();
-        Task<MemberShipRegisterTransaction> GetDetailMemberShipRegister(int registerID);
+        Task<ViewMemberShipDetailDto> GetDetailMemberShipRegister(int registerID);
     }
 }

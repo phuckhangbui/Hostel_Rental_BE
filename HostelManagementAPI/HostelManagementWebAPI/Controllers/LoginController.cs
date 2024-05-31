@@ -24,7 +24,7 @@ namespace HostelManagementWebAPI.Controllers
             }
             else
             {
-                return Unauthorized(new ApiResponseStatus(401));
+                return Unauthorized(new ApiResponseStatus(401, "Your account must not permission or your account is wrong"));
             }
         }
     }

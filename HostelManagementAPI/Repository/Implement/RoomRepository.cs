@@ -104,5 +104,11 @@ namespace Repository.Implement
 
 			await RoomDao.Instance.UpdateAsync(room);
 		}
-	}
+
+        public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)
+        {
+            var rooms = await RoomDao.Instance.GetRoomById(hostelId);
+            return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
+        }
+    }
 }

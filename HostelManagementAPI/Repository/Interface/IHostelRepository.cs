@@ -11,5 +11,7 @@ namespace Repository.Interface
         Task<IEnumerable<HostelResponseDto>> GetOwnerHostels(int ownerId);
         Task UpdateHostelStatus(int hostelId, int status);
         Task UpdateHostelImage(int hostelId, string imageUrl);
+        Task<HostelDetailAdminView> GetHostelDetailAdminView(int id);
+        Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView();
     }
 }
