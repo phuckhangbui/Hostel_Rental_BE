@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
+using DTOs.MemberShipRegisterTransaction;
 
 namespace Service.Interface
 {
@@ -20,6 +21,7 @@ namespace Service.Interface
         Task Logout(int accountId);
         Task<AccountLoginDto> RefreshToken(TokenApiDto tokenApiDto);
         Task<CustomerViewAccount> GetAccountProfileById(int id);
-
+        Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip();
+        Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountId);
     }
 }

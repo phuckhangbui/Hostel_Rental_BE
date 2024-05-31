@@ -1,4 +1,5 @@
-﻿using DTOs.MemberShipRegisterTransaction;
+﻿using DAO;
+using DTOs.MemberShipRegisterTransaction;
 using Repository.Interface;
 using Service.Interface;
 
@@ -11,14 +12,9 @@ namespace Service.Implement
         {
             this.membershipRegisterRepository = membershipRegisterRepository;
         }
-        public Task<IEnumerable<ViewMemberShipDto>> GetAllMemberships()
+        public async Task<IEnumerable<ViewHistoryMemberShipDtos>> GetAllMembershipPackageInAccount(int accountID)
         {
-            return membershipRegisterRepository.GetAllMemberships();
-        }
-
-        public async Task<ViewMemberShipDetailDto> GetDetailMemberShipRegister(int registerID)
-        {
-            return await membershipRegisterRepository.GetDetailMemberShipRegister(registerID);
+            return await membershipRegisterRepository.GetAllMembershipPackageInAccount(accountID);
         }
     }
 }

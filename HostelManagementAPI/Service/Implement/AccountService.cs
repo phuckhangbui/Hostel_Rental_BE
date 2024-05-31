@@ -3,6 +3,7 @@ using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
 using DTOs.Enum;
+using DTOs.MemberShipRegisterTransaction;
 using Google.Apis.Auth;
 using Repository.Interface;
 using Service.Exceptions;
@@ -305,6 +306,16 @@ namespace Service.Implement
             var account = await _accountRepository.GetAccountProfileById(id);
             CustomerViewAccount customerViewAccount = _mapper.Map<CustomerViewAccount>(account);
             return customerViewAccount;
+        }
+
+        public async Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip()
+        {
+            return await _accountRepository.GetAllMemberShip();
+        }
+
+        public async Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid)
+        {
+            return await _accountRepository.GetDetailMemberShipRegisterInformation(accountid);
         }
     }
 }

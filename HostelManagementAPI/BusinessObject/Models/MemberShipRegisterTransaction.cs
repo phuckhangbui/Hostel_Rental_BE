@@ -10,6 +10,5 @@
         public DateTime? DateRegister { get; set; }
         public DateTime? DateExpire { get; set; }
         public double PackageFee { get; set; }
-        public int Status { get; set; }
     }
 }

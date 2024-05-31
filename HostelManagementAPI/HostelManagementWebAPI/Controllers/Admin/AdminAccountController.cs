@@ -32,7 +32,7 @@ namespace HostelManagementWebAPI.Controllers.Admin
         }
 
         [Authorize(policy : "Admin")]
-        [HttpPost("admin/account/active")]
+        [HttpPut("admin/account/active/{idaccount}")]
         public async Task<ActionResult> ActiveAccount(AccountStatusDto idaccount)
         {
             try
@@ -51,7 +51,7 @@ namespace HostelManagementWebAPI.Controllers.Admin
         }
 
         [Authorize(policy: "Admin")]
-        [HttpPost("admin/account/block")]
+        [HttpPut("admin/account/block/{idaccount}")]
         public async Task<ActionResult> BlockAccount(AccountStatusDto idaccount)
         {
             try
