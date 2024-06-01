@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessObject.Enum;
+using DTOs.Enum;
 using BusinessObject.Models;
 using DTOs.Account;
 using DTOs.Complain;
@@ -20,6 +20,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Account, AccountDto>().ReverseMap();
         CreateMap<Account, AccountViewDetail>().ReverseMap();
         CreateMap<AccountViewDetail, AccountDto>().ReverseMap();
+        CreateMap<Account, AccountMemberShipInformationDtos>().ReverseMap();
         CreateMap<AccountDto, AccountLoginDto>().ReverseMap();
         CreateMap<Room, RoomOfHostelAdminView>().ReverseMap();
         CreateMap<MemberShip, GetMemberShipDto>().ReverseMap();
@@ -27,6 +28,7 @@ public class AutoMapperProfile : Profile
         CreateMap<TypeService, CreateTypeServiceDto>().ReverseMap();
         CreateMap<TypeService, UpdateTypeServiceDto>().ReverseMap();
         CreateMap<TypeService, ViewAllTypeServiceDto>().ReverseMap();
+        CreateMap<Account, ViewMemberShipDto>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
         CreateMap<Room, RoomDetailResponseDto>()
@@ -48,16 +50,14 @@ public class AutoMapperProfile : Profile
         CreateMap<Complain, DisplayComplainDto>()
             .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : string.Empty))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : string.Empty));
-        CreateMap<MemberShipRegisterTransaction, ViewMemberShipDetailDto>()
-           .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
-           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty))
-           .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Address : string.Empty))
-           .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Phone : string.Empty))
+        CreateMap<MemberShipRegisterTransaction, ViewHistoryMemberShipDtos>()
            .ForMember(dest => dest.MembershipName, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.MemberShipName : string.Empty))
            .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.CapacityHostel : 0))
            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.Month : 0));
-        CreateMap<Contract, ContractDto>();
+        CreateMap<Contract, UpdateContractDto>();
         CreateMap<Contract, GetContractDto>()
             .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
+        CreateMap<Account, CustomerViewAccount>().ReverseMap();
+
     }
 }

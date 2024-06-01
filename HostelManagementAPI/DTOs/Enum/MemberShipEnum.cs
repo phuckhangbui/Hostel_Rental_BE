@@ -1,4 +1,4 @@
-﻿namespace BusinessObject.Enum
+﻿namespace DTOs.Enum
 {
     public enum MemberShipEnum
     {

@@ -13,5 +13,6 @@ namespace Repository.Interface
         Task<IEnumerable<GetMemberShipDto>> GetAllMemberships();
         Task<bool> UpdateMembershipStatus(MemberShip memberShip);
         Task<bool> CheckMembershipNameExist(string memberShipName);
+        Task<GetMemberShipDto> GetDetailMemberShip(int packageID);
     }
 }

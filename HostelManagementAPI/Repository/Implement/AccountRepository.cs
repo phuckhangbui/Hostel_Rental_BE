@@ -2,6 +2,7 @@
 using BusinessObject.Models;
 using DAO;
 using DTOs.Account;
+using DTOs.MemberShipRegisterTransaction;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -58,5 +59,22 @@ namespace Repository.Implement
 
         }
 
+        public async Task<CustomerViewAccount> GetAccountProfileById(int id)
+        {
+            var account = await AccountDAO.Instance.GetAccountById(id);
+            return _mapper.Map<CustomerViewAccount>(account);
+        }
+
+        public async Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip()
+        {
+            var account = await AccountDAO.Instance.GetAllMemberShip();
+            return _mapper.Map<IEnumerable<ViewMemberShipDto>>(account);
+        }
+
+        public async Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid)
+        {
+            var account = await AccountDAO.Instance.GetAccountById(accountid);
+            return _mapper.Map<AccountMemberShipInformationDtos>(account);
+        }
     }
 }

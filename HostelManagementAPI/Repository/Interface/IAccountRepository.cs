@@ -1,4 +1,5 @@
 ﻿using DTOs.Account;
+using DTOs.MemberShipRegisterTransaction;
 
 namespace Repository.Interface
 {
@@ -10,7 +11,10 @@ namespace Repository.Interface
         Task CreateAccount(AccountDto accountDto);
         Task UpdateAccount(AccountDto accountDto);
         Task<AccountDto> GetAccountById(int id);
+        Task<CustomerViewAccount> GetAccountProfileById(int id); 
         Task<AccountDto> GetAccountWithHostelById(int id);
+        Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip();
+        Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid);
 
     }
 }

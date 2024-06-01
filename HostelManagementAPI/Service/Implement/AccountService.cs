@@ -2,6 +2,8 @@
 using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
+using DTOs.Enum;
+using DTOs.MemberShipRegisterTransaction;
 using Google.Apis.Auth;
 using Repository.Interface;
 using Service.Exceptions;
@@ -28,7 +30,7 @@ namespace Service.Implement
         public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
         {
             AccountDto accountDto = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
-            if (accountDto == null || accountDto.Status == 1) // status block
+            if (accountDto == null || accountDto.Status == (int)AccountStatusEnum.Inactive || accountDto.RoleId != (int)AccountRoleEnum.Admin) // status block
                 return null;
             else
             {
@@ -297,6 +299,23 @@ namespace Service.Implement
             await _accountRepository.UpdateAccount(accountDto);
 
             return _mapper.Map<AccountLoginDto>(accountDto);
+        }
+
+        public async Task<CustomerViewAccount> GetAccountProfileById(int id)
+        {
+            var account = await _accountRepository.GetAccountProfileById(id);
+            CustomerViewAccount customerViewAccount = _mapper.Map<CustomerViewAccount>(account);
+            return customerViewAccount;
+        }
+
+        public async Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip()
+        {
+            return await _accountRepository.GetAllMemberShip();
+        }
+
+        public async Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid)
+        {
+            return await _accountRepository.GetDetailMemberShipRegisterInformation(accountid);
         }
     }
 }

@@ -40,6 +40,11 @@ namespace DAO
             return await dataContext.Account.Where(x => x.RoleId != 1 && x.Status == 0).ToListAsync();
         }
 
+        public async Task<IEnumerable<Account>> GetAllMemberShip()
+        {
+            return await dataContext.Account.Where(x => x.RoleId == 2).ToListAsync();
+        }
+
         public async Task<Account> GetAccountByEmail(string email)
         {
             return await dataContext.Account.FirstOrDefaultAsync(x => x.Email.Equals(email));

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessObject.Enum;
+using DTOs.Enum;
 using BusinessObject.Models;
 using DAO;
 using DTOs.Hostel;
@@ -80,5 +80,19 @@ namespace Repository.Implement
 
 			await HostelDao.Instance.UpdateAsync(currentHostel);
 		}
-	}
+
+        public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int id)
+        {
+            var hostel = await HostelDao.Instance.GetHostelById(id);
+
+            return _mapper.Map<HostelDetailAdminView>(hostel);
+        }
+
+        public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
+        {
+            var hostels = await HostelDao.Instance.GetAllHostelsAsync();
+
+            return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
+        }
+    }
 }

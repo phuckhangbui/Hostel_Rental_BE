@@ -1,4 +1,5 @@
-﻿using BusinessObject.Models;
+﻿using AutoMapper;
+using BusinessObject.Models;
 using DAO;
 using DTOs.MemberShipRegisterTransaction;
 using Repository.Interface;
@@ -7,15 +8,17 @@ namespace Repository.Implement
 {
     public class MembershipRegisterRepository : IMembershipRegisterRepository
     {
-        public async Task<IEnumerable<ViewMemberShipDto>> GetAllMemberships()
+        private readonly IMapper _mapper;
+
+        public MembershipRegisterRepository(IMapper mapper)
         {
-            return await MemberShipRegisterDao.Instance.GetAllMembership();
-             
+            _mapper = mapper;
         }
 
-        public async Task<MemberShipRegisterTransaction> GetDetailMemberShipRegister(int registerID)
+        public async Task<IEnumerable<ViewHistoryMemberShipDtos>> GetAllMembershipPackageInAccount(int accountID)
         {
-            return await MemberShipRegisterDao.Instance.GetDetailMemberShipRegister(registerID);
+            var transaction = await MemberShipRegisterDao.Instance.GetAllMembershipPackageInAccount(accountID);
+            return _mapper.Map<IEnumerable<ViewHistoryMemberShipDtos>>(transaction);
         }
     }
 }

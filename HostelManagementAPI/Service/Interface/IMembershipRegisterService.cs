@@ -1,11 +1,9 @@
-﻿using DTOs.Membership;
-using DTOs.MemberShipRegisterTransaction;
+﻿using DTOs.MemberShipRegisterTransaction;
 
 namespace Service.Interface
 {
     public interface IMembershipRegisterService
     {
-        Task<IEnumerable<ViewMemberShipDto>> GetAllMemberships();
-        Task<ViewMemberShipDetailDto> GetDetailMemberShipRegister(int registerID);
+        Task<IEnumerable<ViewHistoryMemberShipDtos>> GetAllMembershipPackageInAccount(int accountID);
     }
 }

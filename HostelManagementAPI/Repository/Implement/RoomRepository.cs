@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BusinessObject.Enum;
+using DTOs.Enum;
 using BusinessObject.Models;
 using DAO;
 using DTOs.Room;
@@ -104,5 +104,17 @@ namespace Repository.Implement
 
 			await RoomDao.Instance.UpdateAsync(room);
 		}
-	}
+
+        public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)
+        {
+            var rooms = await RoomDao.Instance.GetRoomById(hostelId);
+            return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
+        }
+
+        public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
+		{
+			List<string> imageUrls = await RoomDao.Instance.GetRoomImagesByHostelId(hostelId);
+			return imageUrls;
+		}
+    }
 }

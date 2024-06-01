@@ -31,7 +31,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPut("contracts")]
-        public async Task<ActionResult> Update([FromBody] ContractDto contractDto)
+        public async Task<ActionResult> Update([FromBody] UpdateContractDto contractDto)
         {
             try
             {
@@ -54,6 +54,24 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 await _contractService.CreateContract(contractDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPut("contracts/{contractId}/status")]
+        public async Task<ActionResult> ChangeContractStatus(int contractId, [FromBody] int status)
+        {
+            try
+            {
+                await _contractService.ChangeContractStatus(contractId, status);
                 return Ok();
             }
             catch (ServiceException ex)

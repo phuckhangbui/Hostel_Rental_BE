@@ -30,7 +30,7 @@ namespace DAO
 
         public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllMemberShipTotalActiveAsync()
         {
-            return await dataContext.MembershipsRegisterTransaction.Where(x => x.Status == 0)
+            return await dataContext.MembershipsRegisterTransaction
                 .ToListAsync();
         }
 
@@ -65,27 +65,12 @@ namespace DAO
             return profit;
         }
 
-        public async Task<IEnumerable<ViewMemberShipDto>> GetAllMembership()
+        public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllMembershipPackageInAccount(int accountID)
         {
-            var membersRegister = await dataContext.MembershipsRegisterTransaction
-                .Select(x => new ViewMemberShipDto
-                {
-                    MemberShipTransactionID = x.MemberShipTransactionID,
-                    AccountID = (int)x.AccountID,
-                    Email = x.OwnerAccount.Email,
-                    MembershipName = x.MemberShip.MemberShipName,
-                    DateRegister = x.DateRegister.Value,
-                    DateExpire = x.DateExpire.Value,
-                    Status = x.Status,
-                })
+            var membersRegister = await dataContext.MembershipsRegisterTransaction.Include(z => z.MemberShip).Where(x => x.AccountID == accountID).OrderByDescending(x => x.DateRegister)
                 .ToListAsync();
 
             return membersRegister;
-        }
-
-        public async Task<MemberShipRegisterTransaction> GetDetailMemberShipRegister(int registerID)
-        {
-            return await dataContext.MembershipsRegisterTransaction.Include(x => x.OwnerAccount).Include(z => z.MemberShip).FirstOrDefaultAsync(y => y.MemberShipTransactionID == registerID);
         }
     }
 }

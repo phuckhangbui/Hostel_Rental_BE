@@ -116,5 +116,11 @@ namespace Repository.Implement
             }
             return false;
         }
+
+        public async Task<GetMemberShipDto> GetDetailMemberShip(int packageID)
+        {
+            var membership = MemberShipDao.Instance.GetMemberShipById(packageID);
+            return _mapper.Map<GetMemberShipDto>(membership);
+        }
     }
 }
