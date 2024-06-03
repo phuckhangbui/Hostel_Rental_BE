@@ -35,6 +35,9 @@ public class AutoMapperProfile : Profile
         CreateMap<Account, ViewMemberShipDto>().ReverseMap();
         CreateMap<Room, RoomListResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
+        CreateMap<MemberShipRegisterTransaction, ViewTransactionMembership>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount.Name))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount.Email));
         CreateMap<Room, RoomDetailResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
             .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore())
