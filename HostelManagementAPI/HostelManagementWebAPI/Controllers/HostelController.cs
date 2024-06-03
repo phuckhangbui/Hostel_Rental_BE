@@ -140,5 +140,8 @@ namespace HostelManagementWebAPI.Controllers
 				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
 			}
 		}
-	}
+
+        
+
+    }
 }

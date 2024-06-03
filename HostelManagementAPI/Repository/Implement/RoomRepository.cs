@@ -110,5 +110,11 @@ namespace Repository.Implement
             var rooms = await RoomDao.Instance.GetRoomById(hostelId);
             return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
         }
+
+        public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
+		{
+			List<string> imageUrls = await RoomDao.Instance.GetRoomImagesByHostelId(hostelId);
+			return imageUrls;
+		}
     }
 }
