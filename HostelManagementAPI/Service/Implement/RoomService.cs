@@ -127,5 +127,10 @@ namespace Service.Implement
         {
 			return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
         }
+
+        public Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        {
+            return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
+        }
     }
 }

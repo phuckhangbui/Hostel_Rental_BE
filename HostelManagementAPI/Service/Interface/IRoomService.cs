@@ -14,5 +14,7 @@ namespace Service.Interface
 		Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto);
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
 		Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
+		Task RemoveRoomServiceAsync(int roomId, int serviceId);
+
     }
 }

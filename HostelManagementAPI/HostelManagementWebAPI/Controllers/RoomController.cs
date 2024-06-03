@@ -158,5 +158,25 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
-    }
+
+        [HttpDelete("{roomId}/{serviceId}")]
+        public async Task<IActionResult> RemoveRoomService(int roomId, int serviceId)
+		{
+			try
+			{
+				await _roomService.RemoveRoomServiceAsync(roomId, serviceId);
+				return Ok();
+			}
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+
+
+        }
+	}
 }

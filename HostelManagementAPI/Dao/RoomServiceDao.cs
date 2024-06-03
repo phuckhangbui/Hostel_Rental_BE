@@ -50,5 +50,15 @@ namespace DAO
 
             await dataContext.SaveChangesAsync();
         }
+
+        public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        {
+            var roomService = await dataContext.RoomService.FirstOrDefaultAsync(rs => rs.RoomId == roomId && rs.ServiceId == serviceId);
+            if (roomService != null)
+            {
+                dataContext.RoomService.Remove(roomService);
+                await dataContext.SaveChangesAsync();
+            }
+        }
     }
 }

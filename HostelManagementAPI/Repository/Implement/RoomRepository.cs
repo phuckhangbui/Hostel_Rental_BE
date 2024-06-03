@@ -128,5 +128,10 @@ namespace Repository.Implement
 
             await RoomServiceDao.Instance.AddRoomServicesAsync(roomServices);
         }
+
+        public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        {
+			await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
+        }
     }
 }
