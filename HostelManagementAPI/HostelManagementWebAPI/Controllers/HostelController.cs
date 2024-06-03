@@ -1,4 +1,5 @@
 ﻿using DTOs.Hostel;
+using DTOs.HostelService;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,7 +66,22 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-		[HttpGet("hostels/{hostelId}")]
+        [Authorize(Policy = "Owner")]
+        [HttpGet("owner/hostels/{hostelId}")]
+        public async Task<ActionResult> GetHostelDetailForOwner(int hostelId)
+        {
+            try
+            {
+                var hostels = await _hostelService.GetHostelDetailForOwner(hostelId);
+                return Ok(hostels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("hostels/{hostelId}")]
 		public async Task<ActionResult> GetHostelDetail(int hostelId)
 		{
 			try
@@ -141,7 +157,23 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-        
-
+        [Authorize(Policy = "Owner")]
+        [HttpPost("hostels/{hostelId}/services")]
+        public async Task<ActionResult> AddHostelServices(int hostelId, [FromBody] HostelServiceRequestDto hostelServiceRequestDto)
+        {
+            try
+            {
+                await _hostelService.AddHostelServices(hostelId, hostelServiceRequestDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
     }
 }

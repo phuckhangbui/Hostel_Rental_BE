@@ -1,5 +1,6 @@
 ﻿using DTOs.Enum;
 using DTOs.Hostel;
+using DTOs.HostelService;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
 using Service.Exceptions;
@@ -21,6 +22,19 @@ namespace Service.Implement
             _hostelRepository = hostelRepository;
             _accountRepository = accountRepository;
             _cloudinaryService = cloudinaryService;
+        }
+
+        public async Task AddHostelServices(int hostelID, HostelServiceRequestDto hostelServiceRequestDto)
+        {
+            var currentHostel = await _hostelRepository.GetHostelById(hostelID);
+            if (currentHostel == null)
+            {
+                throw new ServiceException("Hostel not found with this ID");
+            }
+            else
+            {
+                await _hostelRepository.AddHostelServices(hostelID, hostelServiceRequestDto);
+            }
         }
 
         public async Task ChangeHostelStatus(int hostelId, int status)
@@ -58,7 +72,9 @@ namespace Service.Implement
             if (hostelResponseDto != null)
             {
                 var hostelServicesResponseDto = await _hostelRepository.GetHostelServices(hostelID);
-                hostelResponseDto.HostelServices = (List<DTOs.HostelService.HostelServiceResponseDto>)hostelServicesResponseDto;
+                hostelServicesResponseDto = hostelServicesResponseDto.Where(hs => hs.Status == (int)HostelServiceEnum.Active).ToList();
+
+                hostelResponseDto.HostelServices = (List<HostelServiceResponseDto>)hostelServicesResponseDto;
                 return hostelResponseDto;
             }
             else
@@ -70,6 +86,22 @@ namespace Service.Implement
         public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
         {
             return await _hostelRepository.GetHostelDetailAdminView(hostelID);
+        }
+
+        public async Task<HostelResponseDto> GetHostelDetailForOwner(int hostelID)
+        {
+            var hostelResponseDto = await _hostelRepository.GetHostelById(hostelID);
+            if (hostelResponseDto != null)
+            {
+                var hostelServicesResponseDto = await _hostelRepository.GetHostelServices(hostelID);
+
+                hostelResponseDto.HostelServices = (List<HostelServiceResponseDto>)hostelServicesResponseDto;
+                return hostelResponseDto;
+            }
+            else
+            {
+                throw new ServiceException("Hostel not found with this ID");
+            }
         }
 
         public async Task<IEnumerable<HostelResponseDto>> GetHostels()
