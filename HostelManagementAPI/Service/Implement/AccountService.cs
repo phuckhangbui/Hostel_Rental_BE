@@ -163,6 +163,11 @@ namespace Service.Implement
                 OtpToken = otp,
             };
 
+            if (newAccount.RoleId == (int)AccountRoleEnum.Owner)
+            {
+                newAccount.PackageStatus = (int)AccountPackageStatusEnum.Inactive;
+            }
+
             await _accountRepository.CreateAccount(newAccount);
 
             //send mail here for the passwords
@@ -252,9 +257,9 @@ namespace Service.Implement
             return null;
         }
 
-        public async Task<AccountLoginDto> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<AccountLoginDto> RegisterWithGoogle(RegisterWithGoogleDto registerWithGoogle)
         {
-            GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(loginWithGoogle.IdTokenString);
+            GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(registerWithGoogle.IdTokenString);
 
             string userEmail = payload.Email;
 
@@ -268,13 +273,20 @@ namespace Service.Implement
             {
                 Email = payload.Email,
                 Name = payload.Name,
-                RoleId = 3, // fix later
+                RoleId = registerWithGoogle.RoleId,
                 CreatedDate = DateTime.Now,
                 IsLoginWithGmail = true
             };
+
+
             var refreshToken = _tokenService.GenerateRefreshToken();
             newAccount.RefreshToken = refreshToken;
             newAccount.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+            if (newAccount.RoleId == (int)AccountRoleEnum.Owner)
+            {
+                newAccount.PackageStatus = (int)AccountPackageStatusEnum.Inactive;
+            }
 
             await _accountRepository.CreateAccount(newAccount);
 

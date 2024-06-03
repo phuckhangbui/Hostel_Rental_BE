@@ -138,11 +138,11 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("register/google")]
-        public async Task<ActionResult<AccountLoginDto>> RegisterWithGoogle(LoginWithGoogleDto loginWithGoogle)
+        public async Task<ActionResult<AccountLoginDto>> RegisterWithGoogle(RegisterWithGoogleDto register)
         {
             try
             {
-                var user = await _accountService.RegisterWithGoogle(loginWithGoogle);
+                var user = await _accountService.RegisterWithGoogle(register);
                 return Ok(user);
             }
             catch (ServiceException ex)

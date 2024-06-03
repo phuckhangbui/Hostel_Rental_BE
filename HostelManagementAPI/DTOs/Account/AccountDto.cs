@@ -15,7 +15,7 @@
         public byte[]? PasswordHash { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
-        public int? IsPackage { get; set; }
+        public int? PackageStatus { get; set; }
         public bool? IsLoginWithGmail { get; set; }
         public string? OtpToken { get; set; }
         public string? RefreshToken { get; set; }

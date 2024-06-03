@@ -8,8 +8,9 @@
         public string? ServiceName { get; set; }
         public double? ServicePrice { get; set; }
 
-        public IList<BillPaymentDetail> BillPaymentDetail { get; set; }
-        public IList<ContractDetail> ContractDetails { get; set; }
-        public IList<RoomService> RoomServices { get; set; }
+        public IList<BillPaymentDetail>? BillPaymentDetail { get; set; }
+        public IList<ContractDetail>? ContractDetails { get; set; }
+        public IList<RoomService>? RoomServices { get; set; }
+        public IList<HostelService>? HostelServices { get; set; }
     }
 }
