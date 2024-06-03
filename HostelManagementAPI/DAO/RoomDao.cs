@@ -32,17 +32,25 @@ namespace DAO
 
 		public async Task<IEnumerable<Room>> GetRoomListByHostelId(int hostelId)
 		{
-			return await dataContext.Room
-				.Where(r => r.HostelID == hostelId)
-				.Include(r => r.RoomImages)
-				.ToListAsync();
+            using (var context = new DataContext())
+			{
+                return await context.Room
+                .Where(r => r.HostelID == hostelId)
+                .Include(r => r.RoomImages)
+                .ToListAsync();
+            }
 		}
 
 		public async Task<Room> GetRoomDetailById(int roomId)
 		{
-			return await dataContext.Room
-				.Include(r => r.RoomImages)
-				.FirstOrDefaultAsync(r => r.RoomID == roomId);
+            using (var context = new DataContext())
+			{
+                return await context.Room
+					.Include(r => r.RoomImages)
+					.Include(r => r.RoomServices)
+						.ThenInclude(rs => rs.Service)
+					.FirstOrDefaultAsync(r => r.RoomID == roomId);
+            }
 		}
 	}
 }
