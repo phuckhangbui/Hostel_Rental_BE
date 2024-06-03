@@ -30,7 +30,8 @@ namespace DAO
 
         public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllMemberShipTotalActiveAsync()
         {
-            return await dataContext.MembershipsRegisterTransaction
+            DataContext _dataContext = new DataContext();
+            return await _dataContext.MembershipsRegisterTransaction
                 .ToListAsync();
         }
 
@@ -55,7 +56,9 @@ namespace DAO
         {
             var context = new DataContext();
             var utils = new Utils();
-            var profit = context.MembershipsRegisterTransaction
+            DateTime date = DateTime.Now;
+            int year = date.Year;
+            var profit = context.MembershipsRegisterTransaction.Where(x => x.DateRegister.Value.Year == year)
         .GroupBy(x => x.DateRegister.Value.Month)
         .Select(group => new TypeMonthDtos
         {
