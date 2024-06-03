@@ -115,7 +115,7 @@ namespace Service.Implement
         public async Task ConfirmOtp(AccountConfirmDto accountConfirmDto)
         {
             AccountDto accountDto = await _accountRepository.GetAccountByEmail(accountConfirmDto.Email);
-            if (accountDto != null && accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm && (bool)accountDto.IsLoginWithGmail)
+            if (accountDto != null && accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm && (bool)!accountDto.IsLoginWithGmail)
             {
                 if (accountDto.OtpToken != accountConfirmDto.OtpToken)
                 {
@@ -132,6 +132,26 @@ namespace Service.Implement
             }
         }
 
+        public async Task ResendRegisterOtp(string email)
+        {
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(email);
+            if (accountDto != null && accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm && (bool)!accountDto.IsLoginWithGmail)
+            {
+                Random random = new Random();
+                var otp = random.Next(111111, 999999).ToString();
+
+                accountDto.OtpToken = otp;
+
+                await _accountRepository.UpdateAccount(accountDto);
+
+                _mailService.SendMail(SendAccountPassword.SendInitPassword(email, otp));
+            }
+            else
+            {
+                throw new ServiceException("The email does not need this function");
+            }
+        }
+
 
         public async Task RegisterEmail(EmailRegisterDto emailRegisterDto)
         {
@@ -141,9 +161,12 @@ namespace Service.Implement
                 throw new ServiceException("This email has already been used. Please choose other email");
             }
 
-            if (accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm)
+            if (accountDto != null)
             {
-                await _accountRepository.RemoveAccount(accountDto);
+                if (accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm)
+                {
+                    await _accountRepository.RemoveAccount(accountDto);
+                }
             }
 
             Random random = new Random();
@@ -170,7 +193,6 @@ namespace Service.Implement
 
             await _accountRepository.CreateAccount(newAccount);
 
-            //send mail here for the passwords
             _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, otp));
         }
 

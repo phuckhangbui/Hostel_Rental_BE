@@ -46,6 +46,11 @@ namespace HostelManagementWebAPI.Controllers
         [HttpPost("register/email")]
         public async Task<ActionResult> Register(EmailRegisterDto emailRegisterDto)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(new ApiResponseStatus(400, "Invalid format"));
+            //}
+
             try
             {
                 await _accountService.RegisterEmail(emailRegisterDto);
@@ -61,12 +66,30 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPost("confirm/account")]
+        [HttpPost("otp/confirm")]
         public async Task<ActionResult> ConfirmAccount(AccountConfirmDto accountConfirmDto)
         {
             try
             {
                 await _accountService.ConfirmOtp(accountConfirmDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+        }
+
+        [HttpGet("otp/resend")]
+        public async Task<ActionResult> ResendOtp(string email)
+        {
+            try
+            {
+                await _accountService.ResendRegisterOtp(email);
                 return Ok();
             }
             catch (ServiceException ex)
