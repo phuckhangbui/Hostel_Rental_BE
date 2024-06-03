@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Models;
 using DAO;
+using DTOs.Contract;
 using Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,39 @@ using System.Threading.Tasks;
 
 namespace Repository.Implement
 {
+
     public class ContractRepository: IContractRepository
     {
-        public async Task<bool> CreateContract(Contract contract)
+        public async Task<bool> CreateContract(CreateContractDto contractDto)
         {
-            return await ContractDao.Instance.CreateAsync(contract);
+            var contract = new Contract
+            {
+                OwnerAccountID = contractDto.OwnerAccountId,
+                StudentAccountID = contractDto.StudentAccountID,
+                RoomID = contractDto.RoomID,
+                CreatedDate = DateTime.Now,
+                DateEnd = contractDto.DateEnd,
+                DateSign = contractDto.DateSign,
+                DateStart = contractDto.DateStart,
+                ContractTerm = contractDto.ContractTerm,
+                Status = 0,
+                RoomFee = contractDto.RoomFee,
+                DepositFee = contractDto.DepositFee,
+                ContractDetails = new List<ContractDetail>()
+            };
+
+            foreach (var detailDto in contractDto.ContractDetails)
+            {
+                var contractDetail = new ContractDetail
+                {
+                    ServiceID = detailDto.ServiceID,
+                };
+                contract.ContractDetails.Add(contractDetail);
+            }
+
+            await ContractDao.Instance.CreateAsync(contract);
+
+            return true;
         }
 
         public async Task<IEnumerable<Contract>> GetContractsAsync()

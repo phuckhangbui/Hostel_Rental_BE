@@ -37,7 +37,10 @@ namespace DAO
                 .Include(c => c.Room)
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
+                .Include(c => c.ContractDetails)  // Include ContractDetails
+                    .ThenInclude(cd => cd.Service)  // Include Service within ContractDetails
                 .ToListAsync();
         }
+
     }
 }
