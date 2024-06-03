@@ -6,7 +6,7 @@ using Service.Interface;
 
 namespace Service.Implement
 {
-    public class ContractService: IContractService
+    public class ContractService : IContractService
     {
         private readonly IContractRepository _contractRepository;
         private readonly IAccountRepository _accountRepository;
@@ -48,6 +48,28 @@ namespace Service.Implement
             var contracts = await _contractRepository.GetContractsAsync(); 
             return _mapper.Map<List<GetContractDto>>(contracts); 
 
+        }
+
+        public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
+        {
+            var owner = await _accountRepository.GetAccountById(ownerId); 
+            if (owner == null)
+            {
+                throw new ServiceException("Owner not found with this ID");
+            }
+            var contracts = await _contractRepository.GetContractByOwnerId(ownerId);
+            return _mapper.Map<List<GetContractDto>>(contracts);
+        }
+
+        public async Task<IEnumerable<GetContractDto>> GetContractsByStudentId(int studentId)
+        {
+            var student = await _accountRepository.GetAccountById(studentId);
+            if (student == null)
+            {
+                throw new ServiceException("Student not found with this ID");
+            }
+            var contracts = await _contractRepository.GetContractByStudentId(studentId);
+            return _mapper.Map<List<GetContractDto>>(contracts);
         }
 
         public async Task UpdateContract(UpdateContractDto contractDto)

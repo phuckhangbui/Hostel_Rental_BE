@@ -10,6 +10,8 @@ namespace Repository.Interface
         Task<IEnumerable<Contract>> GetContractsAsync();
         Task<Contract> GetContractById(int id);
         Task UpdateContract(Contract contract);
+        Task<IEnumerable<Contract>> GetContractByOwnerId(int ownerId);
+        Task<IEnumerable<Contract>> GetContractByStudentId(int studentId);
 
     }
 }

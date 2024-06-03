@@ -42,5 +42,29 @@ namespace DAO
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Contract>> GetContractsByOwnerIDAsync(int ownerID)
+        {
+            return await dataContext.Contract
+                .Include(c => c.Room)
+                .Include(c => c.OwnerAccount)
+                .Include(c => c.StudentLeadAccount)
+                .Include(c => c.ContractDetails)
+                    .ThenInclude(cd => cd.Service)
+                .Where(c => c.OwnerAccountID == ownerID)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Contract>> GetContractsByStudentIDAsync(int studentID)
+        {
+            return await dataContext.Contract
+                .Include(c => c.Room)
+                .Include(c => c.OwnerAccount)
+                .Include(c => c.StudentLeadAccount)
+                .Include(c => c.ContractDetails)
+                    .ThenInclude(cd => cd.Service)
+                .Where(c => c.StudentAccountID == studentID)
+                .ToListAsync();
+        }
+
     }
 }

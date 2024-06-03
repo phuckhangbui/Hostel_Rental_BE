@@ -83,5 +83,33 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+        [HttpGet("owner/contracts/{ownerId}")]
+        public async Task<ActionResult> GetContractsByOwnerId(int ownerId)
+        {
+            try
+            {
+                var contracts = await _contractService.GetContractsByOwnerId(ownerId);
+                return Ok(contracts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("student/contracts/{studentId}")]
+        public async Task<ActionResult> GetContractsByStudentId(int studentId)
+        {
+            try
+            {
+                var contracts = await _contractService.GetContractsByStudentId(studentId);
+                return Ok(contracts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
     }
 }
