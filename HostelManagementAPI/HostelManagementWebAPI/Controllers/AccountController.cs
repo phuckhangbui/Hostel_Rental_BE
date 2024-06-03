@@ -55,9 +55,9 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
         }
 
