@@ -1,4 +1,5 @@
 ﻿using DTOs.Hostel;
+using DTOs.HostelService;
 
 namespace Repository.Interface
 {
@@ -13,5 +14,6 @@ namespace Repository.Interface
         Task UpdateHostelImage(int hostelId, string imageUrl);
         Task<HostelDetailAdminView> GetHostelDetailAdminView(int id);
         Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView();
+        Task <IEnumerable<HostelServiceResponseDto>> GetHostelServices(int id);
     }
 }

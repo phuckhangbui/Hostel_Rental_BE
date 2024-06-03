@@ -4,6 +4,7 @@ using BusinessObject.Models;
 using DAO;
 using DTOs.Hostel;
 using Repository.Interface;
+using DTOs.HostelService;
 
 namespace Repository.Implement
 {
@@ -93,6 +94,13 @@ namespace Repository.Implement
             var hostels = await HostelDao.Instance.GetAllHostelsAsync();
 
             return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
+        }
+
+        public async Task<IEnumerable<HostelServiceResponseDto>> GetHostelServices(int id)
+        {
+            var hostelSerices = await HostelDao.Instance.GetHostelServicesByHostelId(id);
+
+			return _mapper.Map<IEnumerable<HostelServiceResponseDto>>(hostelSerices);
         }
     }
 }

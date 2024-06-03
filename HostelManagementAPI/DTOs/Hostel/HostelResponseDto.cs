@@ -1,6 +1,8 @@
-﻿namespace DTOs.Hostel
+﻿using DTOs.HostelService;
+
+namespace DTOs.Hostel
 {
-	public class HostelResponseDto
+    public class HostelResponseDto
 	{
 		public int HostelID { get; set; }
 		public string? HostelName { get; set; }
@@ -12,5 +14,6 @@
 		public int? NumOfAvailableRoom { get; set; }
 		public string? Thumbnail {  get; set; }
 		public int? NumOfTotalRoom { get; set; }
+		public List<HostelServiceResponseDto> HostelServices { get; set; }
 	}
 }

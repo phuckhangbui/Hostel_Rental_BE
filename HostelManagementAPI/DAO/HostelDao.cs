@@ -27,10 +27,13 @@ namespace DAO
 
 		public async Task<Hostel> GetHostelById(int id)
 		{
-			return await dataContext.Hostel
+			using (var context = new DataContext())
+			{
+                return await dataContext.Hostel
 				.Include(x => x.OwnerAccount)
-                .Include(h => h.Rooms)
+				.Include(h => h.Rooms)
 				.FirstOrDefaultAsync(h => h.HostelID == id);
+            }
 		}
 
 		public async Task<IEnumerable<Hostel>> GetAllHostelsAsync()
@@ -45,6 +48,17 @@ namespace DAO
         {
             return await dataContext.Hostel.Where(x => x.Status == 0)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<HostelService>> GetHostelServicesByHostelId(int hostelId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.HostelService
+                    .Include(hs => hs.Service)
+                    .Where(hs => hs.HostelId == hostelId && hs.Status == 0)
+                    .ToListAsync();
+            }
         }
 
     }

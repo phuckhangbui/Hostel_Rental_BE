@@ -54,7 +54,17 @@ namespace Service.Implement
 
         public async Task<HostelResponseDto> GetHostelDetail(int hostelID)
         {
-            return await _hostelRepository.GetHostelById(hostelID);
+            var hostelResponseDto = await _hostelRepository.GetHostelById(hostelID);
+            if (hostelResponseDto != null)
+            {
+                var hostelServicesResponseDto = await _hostelRepository.GetHostelServices(hostelID);
+                hostelResponseDto.HostelServices = (List<DTOs.HostelService.HostelServiceResponseDto>)hostelServicesResponseDto;
+                return hostelResponseDto;
+            }
+            else
+            {
+                throw new ServiceException("Hostel not found with this ID");
+            }
         }
 
         public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int hostelID)
