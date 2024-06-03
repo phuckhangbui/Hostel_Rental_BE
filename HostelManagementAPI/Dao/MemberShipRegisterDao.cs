@@ -75,5 +75,13 @@ namespace DAO
 
             return membersRegister;
         }
+
+        public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllTransactionMembership()
+        {
+            var membersRegister = await dataContext.MembershipsRegisterTransaction.Include(z => z.OwnerAccount).OrderByDescending(x => x.DateRegister)
+                .ToListAsync();
+
+            return membersRegister;
+        }
     }
 }

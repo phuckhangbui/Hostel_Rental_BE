@@ -16,5 +16,10 @@ namespace Service.Implement
         {
             return await membershipRegisterRepository.GetAllMembershipPackageInAccount(accountID);
         }
+
+        public async Task<IEnumerable<ViewTransactionMembership>> GetAllTransactionInAdmin()
+        {
+            return await membershipRegisterRepository.GetAllTransactionInAdmin();
+        }
     }
 }
