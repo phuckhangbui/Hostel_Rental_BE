@@ -12,6 +12,8 @@ namespace Repository.Interface
         Task UpdateContract(Contract contract);
         Task<IEnumerable<Contract>> GetContractByOwnerId(int ownerId);
         Task<IEnumerable<Contract>> GetContractByStudentId(int studentId);
+        Task<Contract> GetContractDetailsByContractId(int contractId);
+
 
     }
 }

@@ -42,6 +42,15 @@ namespace Service.Implement
             await _contractRepository.CreateContract(contract);
         }
 
+        public async Task<GetContractDto> GetContractDetailByContractId(int contractId)
+        {
+            var contract = await _contractRepository.GetContractDetailsByContractId(contractId);
+            if(contract == null)
+            {
+                throw new ServiceException("Contract not found with this ID");
+            }
+            return _mapper.Map<GetContractDto>(contract);
+        }
 
         public async Task<IEnumerable<GetContractDto>> GetContracts()
         {
