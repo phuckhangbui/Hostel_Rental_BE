@@ -116,5 +116,10 @@ namespace Service.Implement
         {
             return await _roomRepository.GetHostelDetailWithRoomAdminView(hostelId); ;
         }
+
+        public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
+        {
+			return await _roomRepository.GetRoomImagesByHostelId(hostelId);
+        }
     }
 }

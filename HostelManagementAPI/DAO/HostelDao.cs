@@ -46,5 +46,6 @@ namespace DAO
             return await dataContext.Hostel.Where(x => x.Status == 0)
                 .ToListAsync();
         }
+
     }
 }

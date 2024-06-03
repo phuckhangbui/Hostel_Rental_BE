@@ -1,4 +1,6 @@
-﻿namespace DTOs.Contract
+﻿using System.Diagnostics.Contracts;
+
+namespace DTOs.Contract
 {
     public class CreateContractDto
     {
@@ -10,7 +12,8 @@
         public DateTime? DateEnd { get; set; }
         public DateTime? DateSign { get; set; }
         public int Status { get; set; }
-        public Double? RoomFee { get; set; }
-        public Double? DepositFee { get; set; }
+        public double? RoomFee { get; set; }
+        public double? DepositFee { get; set; }
+        public List<ContractDetailsDto> ContractDetails { get; set; }        
     }
 }

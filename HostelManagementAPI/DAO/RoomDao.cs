@@ -52,5 +52,16 @@ namespace DAO
 					.FirstOrDefaultAsync(r => r.RoomID == roomId);
             }
 		}
-	}
+
+        public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
+        {
+            return await dataContext.Room
+                                    .Where(r => r.HostelID == hostelId)
+                                    .Join(dataContext.RoomsImage,
+                                          r => r.RoomID,
+                                          ri => ri.RoomID,
+                                          (r, ri) => ri.RoomUrl)
+                                    .ToListAsync();
+        }
+    }
 }

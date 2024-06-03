@@ -130,5 +130,19 @@ namespace HostelManagementWebAPI.Controllers
 				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
 			}
 		}
-	}
+
+        [HttpGet("rooms/{hostelId}/roomImages")]
+        public async Task<ActionResult> ViewAllRoomImageForHostel(int hostelId)
+        {
+            try
+            {
+                List<string> hostels = await _roomService.GetRoomImagesByHostelId(hostelId);
+                return Ok(hostels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+    }
 }
