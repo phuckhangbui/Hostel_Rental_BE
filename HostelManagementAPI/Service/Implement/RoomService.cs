@@ -1,4 +1,5 @@
-﻿using DTOs.Enum;
+﻿using BusinessObject.Models;
+using DTOs.Enum;
 using DTOs.Room;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
@@ -8,7 +9,7 @@ using Service.Interface;
 namespace Service.Implement
 {
     public class RoomService : IRoomService
-	{
+    {
 		private readonly IRoomRepository _roomRepository;
 		private readonly IHostelRepository _hostelRepository;
 		private readonly ICloudinaryService _cloudinaryService;
@@ -120,6 +121,11 @@ namespace Service.Implement
         public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
         {
 			return await _roomRepository.GetRoomImagesByHostelId(hostelId);
+        }
+
+        public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
+        {
+			return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
         }
     }
 }

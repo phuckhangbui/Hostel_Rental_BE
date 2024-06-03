@@ -43,7 +43,7 @@ namespace DAO
 
             return strConn;
         }
-        
+
 
         public DbSet<Account> Account { get; set; }
         public DbSet<BillPayment> BillPayment { get; set; }
@@ -60,7 +60,7 @@ namespace DAO
         public DbSet<RoomImage> RoomsImage { get; set; }
         public DbSet<Services> Service { get; set; }
         public DbSet<TypeService> TypeService { get; set; }
-
+        public DbSet<RoomService> RoomService { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -178,7 +178,7 @@ namespace DAO
                 .UseIdentityColumn();
 
             modelBuilder.Entity<RoomService>()
-                .HasKey(k => new {k.RoomId, k.ServiceId});
+                .HasKey(k => new { k.RoomId, k.ServiceId });
 
             modelBuilder.Entity<TypeService>()
              .HasKey(typeservice => typeservice.TypeServiceID);
