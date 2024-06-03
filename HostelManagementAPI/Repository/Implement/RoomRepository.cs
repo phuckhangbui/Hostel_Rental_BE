@@ -7,8 +7,8 @@ using Repository.Interface;
 
 namespace Repository.Implement
 {
-	public class RoomRepository : IRoomRepository
-	{
+    public class RoomRepository : IRoomRepository
+    {
 		private readonly IMapper _mapper;
 
         public RoomRepository(IMapper mapper)
@@ -116,5 +116,22 @@ namespace Repository.Implement
 			List<string> imageUrls = await RoomDao.Instance.GetRoomImagesByHostelId(hostelId);
 			return imageUrls;
 		}
+
+        public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
+        {
+            var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
+            {
+                RoomId = roomServicesDto.RoomId,
+                ServiceId = serviceId,
+                Status = roomServicesDto.Status
+            });
+
+            await RoomServiceDao.Instance.AddRoomServicesAsync(roomServices);
+        }
+
+        public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        {
+			await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
+        }
     }
 }

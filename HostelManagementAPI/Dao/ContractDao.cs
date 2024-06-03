@@ -66,5 +66,16 @@ namespace DAO
                 .ToListAsync();
         }
 
+        public async Task<Contract> GetContractByContractIDAsync(int contractID)
+        {
+            return await dataContext.Contract
+                .Include(c => c.Room)
+                .Include(c => c.OwnerAccount)
+                .Include(c => c.StudentLeadAccount)
+                .Include(c => c.ContractDetails)
+                    .ThenInclude(cd => cd.Service)
+                .FirstOrDefaultAsync(c => c.ContractID == contractID);
+        }
+
     }
 }
