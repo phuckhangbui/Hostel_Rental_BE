@@ -39,7 +39,7 @@ namespace HostelManagementWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
         }
 
@@ -61,6 +61,24 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [HttpPost("confirm/account")]
+        public async Task<ActionResult> ConfirmAccount(AccountConfirmDto accountConfirmDto)
+        {
+            try
+            {
+                await _accountService.ConfirmOtp(accountConfirmDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+        }
+
         [HttpPost("forget/password")]
         public async Task<ActionResult> ForgetPassword(EmailRegisterDto emailRegisterDto)
         {
@@ -75,7 +93,7 @@ namespace HostelManagementWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
         }
 
@@ -93,7 +111,7 @@ namespace HostelManagementWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
         }
 
@@ -115,7 +133,7 @@ namespace HostelManagementWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
         }
 
@@ -131,9 +149,9 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
         }
 
@@ -153,9 +171,9 @@ namespace HostelManagementWebAPI.Controllers
                 }
                 return Ok(accountDto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
 
 
@@ -171,9 +189,9 @@ namespace HostelManagementWebAPI.Controllers
                 await _accountService.Logout(accountId);
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(new ApiResponseStatus(400));
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
 
         }

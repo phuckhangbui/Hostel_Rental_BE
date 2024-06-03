@@ -2,19 +2,13 @@
 
 namespace DTOs.AccountAuthentication
 {
-    public class EmailRegisterDto
+    public class AccountConfirmDto
     {
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required]
-        public int RoleId { get; set; }
-
-        [Required]
-        public string Name { get; set; }
-
-        [Required]
-        public string Password { get; set; }
+        public string OtpToken { get; set; }
     }
 }

@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using DTOs.Enum;
 using BusinessObject.Models;
 using DTOs.Account;
 using DTOs.Complain;
 using DTOs.Contract;
+using DTOs.Enum;
 using DTOs.Hostel;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
-using DTOs.TypeService;
 using DTOs.RoomService;
+using DTOs.TypeService;
 
 namespace Repository.Mapper;
 
@@ -18,7 +18,10 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         //CreateMap<SendMessageDto, Message>();
-        CreateMap<Account, AccountDto>().ReverseMap();
+        CreateMap<Account, AccountDto>();
+        //.ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountID));
+        CreateMap<AccountDto, Account>();
+        //.ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountID));
         CreateMap<Account, AccountViewDetail>().ReverseMap();
         CreateMap<AccountViewDetail, AccountDto>().ReverseMap();
         CreateMap<Account, AccountMemberShipInformationDtos>().ReverseMap();
@@ -43,7 +46,7 @@ public class AutoMapperProfile : Profile
                 Status = rs.Status,
                 TypeServiceID = rs.Service.TypeServiceID
             })));
-        
+
         CreateMap<Hostel, HostelResponseDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0))

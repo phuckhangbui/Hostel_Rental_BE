@@ -11,6 +11,7 @@ namespace Service.Interface
         Task<IEnumerable<AccountViewDto>> GetAllAccounts();
         Task<AccountLoginDto> Login(EmailLoginDto login);
         Task RegisterEmail(EmailRegisterDto emailRegisterDto);
+        Task ConfirmOtp(AccountConfirmDto accountConfirmDto);
         Task ForgetPassword(EmailRegisterDto emailRegisterDto);
         Task<AccountLoginDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos);
         Task<AccountLoginDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle);

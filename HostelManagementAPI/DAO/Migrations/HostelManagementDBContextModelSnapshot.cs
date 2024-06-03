@@ -42,10 +42,19 @@ namespace Repository.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("IsLoginWithGmail")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("IsPackage")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtpToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("PasswordHash")
@@ -367,9 +376,6 @@ namespace Repository.Migrations
 
                     b.Property<double>("PackageFee")
                         .HasColumnType("float");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("MemberShipTransactionID");
 

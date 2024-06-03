@@ -17,6 +17,7 @@
         public int? Status { get; set; }
         public int? IsPackage { get; set; }
         public bool? IsLoginWithGmail { get; set; }
+        public string? OtpToken { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
 
