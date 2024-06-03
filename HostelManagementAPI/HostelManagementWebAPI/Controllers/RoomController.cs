@@ -87,7 +87,12 @@ namespace HostelManagementWebAPI.Controllers
 		[HttpPost("rooms")]
 		public async Task<ActionResult> Create([FromBody] CreateRoomRequestDto createRoomRequestDto)
 		{
-			try
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
 			{
 				var result = await _roomService.CreateRoom(createRoomRequestDto);
 				return Ok(result);

@@ -6,16 +6,26 @@ namespace DTOs.Room
     {
         [Required]
         public string RoomName { get; set; }
+
 		[Required]
-		public int Capacity { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Capacity must be greater than zero.")]
+        public int Capacity { get; set; }
+
 		[Required]
-		public double Length { get; set; }
+        [Range(1, double.MaxValue, ErrorMessage = "Length must be greater than zero.")]
+        public double Length { get; set; }
+
 		[Required]
-		public double Width { get; set; }
+        [Range(1, double.MaxValue, ErrorMessage = "Width must be greater than zero.")]
+        public double Width { get; set; }
+
 		[Required]
 		public string Description { get; set; }
+
 		[Required]
-		public double RoomFee { get; set; }
+        [Range(1, double.MaxValue, ErrorMessage = "Room fee must be greater than zero.")]
+        public double RoomFee { get; set; }
+
 		[Required]
 		public int HostelID { get; set; }
     }

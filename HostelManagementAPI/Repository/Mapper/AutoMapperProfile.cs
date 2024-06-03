@@ -9,6 +9,7 @@ using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
 using DTOs.TypeService;
+using DTOs.RoomService;
 
 namespace Repository.Mapper;
 
@@ -33,7 +34,16 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl));
         CreateMap<Room, RoomDetailResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
-            .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore());
+            .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore())
+            .ForMember(dest => dest.RoomServices, opt => opt.MapFrom(src => src.RoomServices.Select(rs => new RoomServiceResponseDto
+            {
+                ServiceID = rs.Service.ServiceID,
+                ServiceName = rs.Service.ServiceName,
+                ServicePrice = rs.Service.ServicePrice,
+                Status = rs.Status,
+                TypeServiceID = rs.Service.TypeServiceID
+            })));
+        
         CreateMap<Hostel, HostelResponseDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0))
