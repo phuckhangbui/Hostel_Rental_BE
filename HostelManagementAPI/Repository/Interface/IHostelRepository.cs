@@ -15,5 +15,6 @@ namespace Repository.Interface
         Task<HostelDetailAdminView> GetHostelDetailAdminView(int id);
         Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView();
         Task <IEnumerable<HostelServiceResponseDto>> GetHostelServices(int id);
+        Task AddHostelServices (int hostelId, HostelServiceRequestDto hostelServiceRequestDto);
     }
 }

@@ -102,5 +102,17 @@ namespace Repository.Implement
 
 			return _mapper.Map<IEnumerable<HostelServiceResponseDto>>(hostelSerices);
         }
+
+        public async Task AddHostelServices(int hostelId, HostelServiceRequestDto hostelServiceRequestDto)
+        {
+            var hostelServices = hostelServiceRequestDto.ServiceId.Select(serviceId => new HostelService
+            {
+                HostelId = hostelId,
+                ServiceId = serviceId,
+                Status = (int)HostelServiceEnum.Active,
+            });
+
+			await HostelDao.Instance.AddHostelServices(hostelServices);
+        }
     }
 }

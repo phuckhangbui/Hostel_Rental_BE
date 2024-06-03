@@ -56,10 +56,33 @@ namespace DAO
             {
                 return await context.HostelService
                     .Include(hs => hs.Service)
-                    .Where(hs => hs.HostelId == hostelId && hs.Status == 0)
+                    .Where(hs => hs.HostelId == hostelId)
                     .ToListAsync();
             }
         }
 
+        public async Task AddHostelServices(IEnumerable<HostelService> hostelServices)
+		{
+			using (var context = new DataContext())
+			{
+                foreach (var hostelService in hostelServices)
+                {
+                    var existingHostelService = await context.HostelService
+                        .FirstOrDefaultAsync(hs => hs.HostelId == hostelService.HostelId && hs.ServiceId == hostelService.ServiceId);
+
+                    if (existingHostelService == null)
+                    {
+                        await context.HostelService.AddAsync(hostelService);
+                    }
+                    else
+                    {
+                        existingHostelService.Status = hostelService.Status;
+                        context.HostelService.Update(existingHostelService);
+                    }
+                }
+
+				await context.SaveChangesAsync();
+            }
+		}
     }
 }
