@@ -26,7 +26,7 @@ namespace Service.Implement
 
         public async Task AddHostelServices(int hostelID, HostelServiceRequestDto hostelServiceRequestDto)
         {
-            var currentHostel = await _hostelRepository.GetHostelById(hostelID);
+            var currentHostel = await _hostelRepository.GetHostelDetailById(hostelID);
             if (currentHostel == null)
             {
                 throw new ServiceException("Hostel not found with this ID");
@@ -39,7 +39,7 @@ namespace Service.Implement
 
         public async Task ChangeHostelStatus(int hostelId, int status)
         {
-            var currentHostel = await _hostelRepository.GetHostelById(hostelId);
+            var currentHostel = await _hostelRepository.GetHostelDetailById(hostelId);
             if (currentHostel == null)
             {
                 throw new ServiceException("Hostel not found with this ID");
@@ -68,7 +68,7 @@ namespace Service.Implement
 
         public async Task<HostelResponseDto> GetHostelDetail(int hostelID)
         {
-            var hostelResponseDto = await _hostelRepository.GetHostelById(hostelID);
+            var hostelResponseDto = await _hostelRepository.GetHostelDetailById(hostelID);
             if (hostelResponseDto != null)
             {
                 var hostelServicesResponseDto = await _hostelRepository.GetHostelServices(hostelID);
@@ -90,7 +90,7 @@ namespace Service.Implement
 
         public async Task<HostelResponseDto> GetHostelDetailForOwner(int hostelID)
         {
-            var hostelResponseDto = await _hostelRepository.GetHostelById(hostelID);
+            var hostelResponseDto = await _hostelRepository.GetHostelDetailById(hostelID);
             if (hostelResponseDto != null)
             {
                 var hostelServicesResponseDto = await _hostelRepository.GetHostelServices(hostelID);
@@ -138,7 +138,7 @@ namespace Service.Implement
                 throw new ServiceException("Account not found with this ID");
             }
 
-            var currentHostel = await _hostelRepository.GetHostelById(hostelId);
+            var currentHostel = await _hostelRepository.GetHostelDetailById(hostelId);
             if (currentHostel == null)
             {
                 throw new ServiceException("Hostel not found with this ID");
@@ -154,7 +154,7 @@ namespace Service.Implement
 
         public async Task UploadHostelThumbnail(int hostelId, IFormFile formFile)
         {
-            var currentHostel = await _hostelRepository.GetHostelById(hostelId);
+            var currentHostel = await _hostelRepository.GetHostelDetailById(hostelId);
             if (currentHostel == null)
             {
                 throw new ServiceException("Hostel not found with this ID");

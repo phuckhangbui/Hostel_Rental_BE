@@ -39,7 +39,7 @@ namespace Repository.Implement
 			return _mapper.Map<IEnumerable<HostelResponseDto>>(hostels);
 		}
 
-		public async Task<HostelResponseDto> GetHostelById(int id)
+		public async Task<HostelResponseDto> GetHostelDetailById(int id)
 		{
 			var hostel = await HostelDao.Instance.GetHostelById(id);
 			
