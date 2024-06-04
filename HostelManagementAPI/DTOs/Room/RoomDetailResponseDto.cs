@@ -8,6 +8,7 @@ namespace DTOs.Room
 		public double? Width { get; set; }
 		public string? Description { get; set; }
 		public IList<string>? RoomImageUrls { get; set; }
+		public string? RenterName { get; set; }
 		public List<RoomServiceResponseDto> RoomServices { get; set; }
 	}
 }

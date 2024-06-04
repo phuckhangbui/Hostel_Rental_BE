@@ -75,6 +75,10 @@ namespace HostelManagementWebAPI.Controllers
                 var hostels = await _hostelService.GetHostelDetailForOwner(hostelId);
                 return Ok(hostels);
             }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
@@ -89,7 +93,11 @@ namespace HostelManagementWebAPI.Controllers
 				var hostels = await _hostelService.GetHostelDetail(hostelId);
 				return Ok(hostels);
 			}
-			catch (Exception ex)
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
 			{
 				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
 			}
