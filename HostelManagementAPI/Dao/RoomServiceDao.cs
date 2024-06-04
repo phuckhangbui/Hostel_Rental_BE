@@ -1,21 +1,16 @@
 ﻿using BusinessObject.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAO
 {
-    public class RoomServiceDao: BaseDAO<RoomService>
+    public class RoomServiceDao : BaseDAO<RoomService>
     {
         private static RoomServiceDao instance = null;
-        private readonly DataContext dataContext;
+        private static readonly object instacelock = new object();
+
 
         private RoomServiceDao()
         {
-            dataContext = new DataContext();
         }
 
         public static RoomServiceDao Instance
@@ -32,32 +27,34 @@ namespace DAO
 
         public async Task AddRoomServicesAsync(IEnumerable<RoomService> roomServices)
         {
+            var context = new DataContext();
             foreach (var roomService in roomServices)
             {
-                var existingRoomService = await dataContext.RoomService
+                var existingRoomService = await context.RoomService
                     .FirstOrDefaultAsync(rs => rs.RoomId == roomService.RoomId && rs.ServiceId == roomService.ServiceId);
 
                 if (existingRoomService == null)
                 {
-                    await dataContext.RoomService.AddAsync(roomService);
+                    await context.RoomService.AddAsync(roomService);
                 }
                 else
                 {
                     existingRoomService.Status = roomService.Status;
-                    dataContext.RoomService.Update(existingRoomService);
+                    context.RoomService.Update(existingRoomService);
                 }
             }
 
-            await dataContext.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
         public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
         {
-            var roomService = await dataContext.RoomService.FirstOrDefaultAsync(rs => rs.RoomId == roomId && rs.ServiceId == serviceId);
+            var context = new DataContext();
+            var roomService = await context.RoomService.FirstOrDefaultAsync(rs => rs.RoomId == roomId && rs.ServiceId == serviceId);
             if (roomService != null)
             {
-                dataContext.RoomService.Remove(roomService);
-                await dataContext.SaveChangesAsync();
+                context.RoomService.Remove(roomService);
+                await context.SaveChangesAsync();
             }
         }
     }

@@ -1,17 +1,16 @@
 ﻿using BusinessObject.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace DAO
 {
-    public class ContractDao: BaseDAO<Contract>
+    public class ContractDao : BaseDAO<Contract>
     {
         private static ContractDao instance = null;
-        private readonly DataContext dataContext;
+        private static readonly object instacelock = new object();
 
         private ContractDao()
         {
-            dataContext = new DataContext();
+
         }
 
         public static ContractDao Instance
@@ -28,12 +27,14 @@ namespace DAO
 
         public async Task<Contract> GetContractById(int id)
         {
-            return await dataContext.Contract.FirstOrDefaultAsync(c => c.ContractID == id);
+            var context = new DataContext();
+            return await context.Contract.FirstOrDefaultAsync(c => c.ContractID == id);
         }
 
         public async Task<IEnumerable<Contract>> GetContractsAsync()
         {
-            return await dataContext.Contract
+            var context = new DataContext();
+            return await context.Contract
                 .Include(c => c.Room)
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
@@ -44,7 +45,8 @@ namespace DAO
 
         public async Task<IEnumerable<Contract>> GetContractsByOwnerIDAsync(int ownerID)
         {
-            return await dataContext.Contract
+            var context = new DataContext();
+            return await context.Contract
                 .Include(c => c.Room)
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
@@ -56,7 +58,8 @@ namespace DAO
 
         public async Task<IEnumerable<Contract>> GetContractsByStudentIDAsync(int studentID)
         {
-            return await dataContext.Contract
+            var context = new DataContext();
+            return await context.Contract
                 .Include(c => c.Room)
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
@@ -68,7 +71,8 @@ namespace DAO
 
         public async Task<Contract> GetContractByContractIDAsync(int contractID)
         {
-            return await dataContext.Contract
+            var context = new DataContext();
+            return await context.Contract
                 .Include(c => c.Room)
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
