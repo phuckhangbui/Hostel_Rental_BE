@@ -8,10 +8,8 @@ namespace DTOs.AccountAuthentication
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         public int RoleId { get; set; }
 
-        [Required]
         public string Name { get; set; }
 
         [Required]
