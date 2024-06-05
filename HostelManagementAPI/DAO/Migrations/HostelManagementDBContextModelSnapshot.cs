@@ -42,11 +42,20 @@ namespace Repository.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("IsLoginWithGmail")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtpToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PackageStatus")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("varbinary(max)");
@@ -317,6 +326,24 @@ namespace Repository.Migrations
                     b.ToTable("Hostel");
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.HostelService", b =>
+                {
+                    b.Property<int>("HostelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("HostelId", "ServiceId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("HostelService");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
                 {
                     b.Property<int>("MemberShipID")
@@ -367,9 +394,6 @@ namespace Repository.Migrations
 
                     b.Property<double>("PackageFee")
                         .HasColumnType("float");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("MemberShipTransactionID");
 
@@ -640,6 +664,25 @@ namespace Repository.Migrations
                     b.Navigation("OwnerAccount");
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.HostelService", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Hostel", "Hostel")
+                        .WithMany("HostelServices")
+                        .HasForeignKey("HostelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObject.Models.Services", "Service")
+                        .WithMany("HostelServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Hostel");
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
                 {
                     b.HasOne("BusinessObject.Models.Account", "OwnerAccount")
@@ -757,6 +800,8 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
                 {
+                    b.Navigation("HostelServices");
+
                     b.Navigation("Rooms");
                 });
 
@@ -781,6 +826,8 @@ namespace Repository.Migrations
                     b.Navigation("BillPaymentDetail");
 
                     b.Navigation("ContractDetails");
+
+                    b.Navigation("HostelServices");
 
                     b.Navigation("RoomServices");
                 });

@@ -46,6 +46,12 @@ namespace Repository.Implement
             await AccountDAO.Instance.UpdateAsync(account);
         }
 
+        public async Task RemoveAccount(AccountDto accountDto)
+        {
+            var account = _mapper.Map<Account>(accountDto);
+            await AccountDAO.Instance.RemoveAsync(account);
+        }
+
         public async Task<AccountDto> GetAccountById(int id)
         {
             var account = await AccountDAO.Instance.GetAccountById(id);

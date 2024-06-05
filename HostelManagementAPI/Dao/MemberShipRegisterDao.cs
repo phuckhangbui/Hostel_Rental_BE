@@ -1,6 +1,5 @@
 ﻿using BusinessObject.Models;
 using DTOs.Dashboard;
-using DTOs.MemberShipRegisterTransaction;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -8,11 +7,11 @@ namespace DAO
     public class MemberShipRegisterDao : BaseDAO<MemberShipRegisterTransaction>
     {
         private static MemberShipRegisterDao instance = null;
-        private readonly DataContext dataContext;
+        private static readonly object instacelock = new object();
 
         public MemberShipRegisterDao()
         {
-            dataContext = new DataContext();
+
         }
 
         public static MemberShipRegisterDao Instance
@@ -30,23 +29,26 @@ namespace DAO
 
         public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllMemberShipTotalActiveAsync()
         {
-            return await dataContext.MembershipsRegisterTransaction
+            var context = new DataContext();
+            return await context.MembershipsRegisterTransaction
                 .ToListAsync();
         }
 
         public double GetProfitTotalAsync()
         {
-            var totalProfit = dataContext.MembershipsRegisterTransaction.Sum(x => x.PackageFee);
+            var context = new DataContext();
+            var totalProfit = context.MembershipsRegisterTransaction.Sum(x => x.PackageFee);
             return totalProfit;
         }
 
         public async Task<IEnumerable<AccountEachMemberShipDtos>> GetAmountAccountEachMemberShip()
         {
-            var reals = dataContext.MembershipsRegisterTransaction.Include(x => x.MemberShip).Select(x => new AccountEachMemberShipDtos
+            var context = new DataContext();
+            var reals = context.MembershipsRegisterTransaction.Include(x => x.MemberShip).Select(x => new AccountEachMemberShipDtos
             {
                 MemberShipID = x.MemberShipID,
                 MemberShipName = x.MemberShip.MemberShipName,
-                NumberOfMember = dataContext.Membership.Where(y => y.MemberShipID == x.MemberShipID).Count(),
+                NumberOfMember = context.Membership.Where(y => y.MemberShipID == x.MemberShipID).Count(),
             });
             return reals;
         }
@@ -55,7 +57,9 @@ namespace DAO
         {
             var context = new DataContext();
             var utils = new Utils();
-            var profit = context.MembershipsRegisterTransaction
+            DateTime date = DateTime.Now;
+            int year = date.Year;
+            var profit = context.MembershipsRegisterTransaction.Where(x => x.DateRegister.Value.Year == year)
         .GroupBy(x => x.DateRegister.Value.Month)
         .Select(group => new TypeMonthDtos
         {
@@ -67,7 +71,17 @@ namespace DAO
 
         public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllMembershipPackageInAccount(int accountID)
         {
-            var membersRegister = await dataContext.MembershipsRegisterTransaction.Include(z => z.MemberShip).Where(x => x.AccountID == accountID).OrderByDescending(x => x.DateRegister)
+            var context = new DataContext();
+            var membersRegister = await context.MembershipsRegisterTransaction.Include(z => z.MemberShip).Where(x => x.AccountID == accountID).OrderByDescending(x => x.DateRegister)
+                .ToListAsync();
+
+            return membersRegister;
+        }
+
+        public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllTransactionMembership()
+        {
+            var context = new DataContext();
+            var membersRegister = await context.MembershipsRegisterTransaction.Include(z => z.OwnerAccount).OrderByDescending(x => x.DateRegister)
                 .ToListAsync();
 
             return membersRegister;
