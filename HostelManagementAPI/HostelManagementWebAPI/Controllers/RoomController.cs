@@ -191,5 +191,19 @@ namespace HostelManagementWebAPI.Controllers
 
 
         }
-	}
+
+        [HttpGet("rooms/{roomId}/roomServices")]
+        public async Task<ActionResult> GetRoomServicesByRoomId(int roomId)
+        {
+            try
+            {
+                 var roomServices = await _roomService.GetRoomServicesByRoomIdAsync(roomId);
+                return Ok(roomServices);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+    }
 }

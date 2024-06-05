@@ -85,7 +85,12 @@ public class AutoMapperProfile : Profile
         CreateMap<ContractDetail, GetContractDetailsDto>()
             .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))
             .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice));
-
+        CreateMap<RoomService, RoomServiceResponseDto>()
+            .ForMember(dest => dest.ServiceID, opt => opt.MapFrom(src => src.Service.ServiceID))
+            .ForMember(dest => dest.TypeServiceID, opt => opt.MapFrom(src => src.Service.TypeServiceID))
+            .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))
+            .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
     }
 }

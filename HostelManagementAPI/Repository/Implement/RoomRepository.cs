@@ -4,6 +4,9 @@ using BusinessObject.Models;
 using DAO;
 using DTOs.Room;
 using Repository.Interface;
+using DTOs.HostelService;
+using DTOs.RoomService;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.Implement
 {
@@ -132,6 +135,12 @@ namespace Repository.Implement
         public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
         {
 			await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
+        }
+
+        public async Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
+        {
+            var roomServices = await RoomServiceDao.Instance.GetRoomServicesByRoomIdAsync(roomId);
+            return _mapper.Map<IEnumerable<RoomServiceResponseDto>>(roomServices);
         }
     }
 }

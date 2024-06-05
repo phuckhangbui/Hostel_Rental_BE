@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.RoomService;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -56,6 +57,15 @@ namespace DAO
                 context.RoomService.Remove(roomService);
                 await context.SaveChangesAsync();
             }
+        }
+        public async Task<IEnumerable<RoomService>> GetRoomServicesByRoomIdAsync(int roomId)
+        {
+            var context = new DataContext();
+
+            return await context.RoomService
+                .Include(rs => rs.Service)  
+                .Where(rs => rs.RoomId == roomId)
+                .ToListAsync();
         }
     }
 }

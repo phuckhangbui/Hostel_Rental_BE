@@ -1,4 +1,6 @@
-﻿using DTOs.Room;
+﻿using BusinessObject.Models;
+using DTOs.Room;
+using DTOs.RoomService;
 using Microsoft.AspNetCore.Http;
 
 namespace Service.Interface
@@ -15,6 +17,6 @@ namespace Service.Interface
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
 		Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
 		Task RemoveRoomServiceAsync(int roomId, int serviceId);
-
+        Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DTOs.Enum;
 using DTOs.Room;
+using DTOs.RoomService;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
 using Service.Exceptions;
@@ -148,6 +149,11 @@ namespace Service.Implement
         public Task RemoveRoomServiceAsync(int roomId, int serviceId)
         {
             return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
+        }
+
+        public Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
+        {
+			return _roomRepository.GetRoomServicesByRoomIdAsync(roomId);
         }
     }
 }
