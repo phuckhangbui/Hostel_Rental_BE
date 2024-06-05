@@ -13,7 +13,7 @@ namespace Service.Interface
         Task RegisterEmail(EmailRegisterDto emailRegisterDto);
         Task ConfirmOtp(AccountConfirmDto accountConfirmDto);
         Task ResendRegisterOtp(string email);
-        Task ForgetPassword(EmailRegisterDto emailRegisterDto);
+        Task ForgetPassword(string email);
         Task<AccountLoginDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos);
         Task<AccountLoginDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle);
         Task<AccountLoginDto> RegisterWithGoogle(RegisterWithGoogleDto registerWithGoogle);

@@ -177,6 +177,7 @@ namespace Service.Implement
             AccountDto newAccount = new AccountDto
             {
                 Email = emailRegisterDto.Email,
+                Name = emailRegisterDto.Name,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailRegisterDto.Password)),
                 PasswordSalt = hmac.Key,
                 CreatedDate = DateTime.Now,
@@ -196,15 +197,15 @@ namespace Service.Implement
             _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, otp));
         }
 
-        public async Task ForgetPassword(EmailRegisterDto emailRegisterDto)
+        public async Task ForgetPassword(string email)
         {
-            AccountDto accountDto = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(email);
             if (accountDto == null)
             {
                 throw new ServiceException("No account associate with this email");
             }
 
-            if ((bool)!accountDto.IsLoginWithGmail)
+            if ((bool)accountDto.IsLoginWithGmail == true)
             {
                 throw new ServiceException("Your account was registered using gmail service, there is no password");
             }
@@ -212,13 +213,12 @@ namespace Service.Implement
             Random random = new Random();
             var otp = random.Next(111111, 999999).ToString();
 
-            using var hmac = new HMACSHA512();
             accountDto.OtpToken = otp;
 
             await _accountRepository.UpdateAccount(accountDto);
 
             //send mail here for the passwords
-            _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, otp));
+            _mailService.SendMail(SendAccountPassword.SendInitPassword(email, otp));
         }
 
         public async Task<AccountLoginDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
@@ -226,7 +226,7 @@ namespace Service.Implement
             AccountDto accountDto = await _accountRepository.GetAccountByEmail(confirmPasswordDtos.Email);
             if (accountDto != null)
             {
-                if ((bool)!accountDto.IsLoginWithGmail)
+                if ((bool)accountDto.IsLoginWithGmail)
                 {
                     throw new ServiceException("Your account was registered using gmail service, there is no password");
                 }

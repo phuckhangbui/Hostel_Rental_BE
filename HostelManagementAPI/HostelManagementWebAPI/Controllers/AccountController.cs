@@ -102,12 +102,12 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPost("forget/password")]
-        public async Task<ActionResult> ForgetPassword(EmailRegisterDto emailRegisterDto)
+        [HttpGet("forget/password")]
+        public async Task<ActionResult> ForgetPassword(string email)
         {
             try
             {
-                await _accountService.ForgetPassword(emailRegisterDto);
+                await _accountService.ForgetPassword(email);
                 return Ok();
             }
             catch (ServiceException ex)

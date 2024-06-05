@@ -12,9 +12,6 @@ namespace DTOs.AccountAuthentication
         public string OtpToken { get; set; }
 
         [Required]
-        public string SystemPassword { get; set; }
-
-        [Required]
         public string NewPassword { get; set; }
     }
 }
