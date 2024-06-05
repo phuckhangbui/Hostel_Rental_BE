@@ -102,5 +102,19 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+        [HttpGet("services")]
+        public async Task<ActionResult> GetAllServices()
+        {
+            try
+            {
+                List<ServiceResponseDto> services = await _serviceService.GetServices();
+                return Ok(services);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace Service.Interface
         Task<bool> UpdateService(UpdateServiceDto updateService);
         Task<Services> GetServiceById(int id);
         Task<bool> CheckServiceExist(int id);
+        Task<List<ServiceResponseDto>> GetServices();
+
     }
 }
