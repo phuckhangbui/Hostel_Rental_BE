@@ -1,6 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.Room;
-using DTOs.RoomService;
+﻿using DTOs.Room;
 using Microsoft.AspNetCore.Http;
 
 namespace Service.Interface

@@ -30,7 +30,20 @@ namespace Repository.Implement
 				HostelID = createRoomRequestDto.HostelID,
 				Status = (int)RoomEnum.Available,
 				RoomImages = new List<RoomImage>(),
+				RoomServices = new List<RoomService>(),
 			};
+
+			foreach (var roomService in createRoomRequestDto.RoomServices)
+			{
+				var newRoomService = new RoomService
+				{
+					Status = (int)RoomServiceEnum.Active,
+					TypeServiceId = roomService.TypeServiceId,
+					Price = roomService.Price,
+				};
+
+				room.RoomServices.Add(newRoomService);
+			}
 
 			await RoomDao.Instance.CreateAsync(room);
 
