@@ -2,7 +2,7 @@
 
 namespace DTOs.Room
 {
-	public class UpdateRoomRequestDto
+	public class RoomRequestDto
 	{
         [Required]
         public string RoomName { get; set; }

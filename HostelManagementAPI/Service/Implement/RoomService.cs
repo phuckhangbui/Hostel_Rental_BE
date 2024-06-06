@@ -120,7 +120,7 @@ namespace Service.Implement
 			}
 		}
 
-		public async Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto)
+		public async Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto)
 		{
 			var room = await _roomRepository.GetRoomById(roomId);
 			if (room == null)

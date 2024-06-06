@@ -1,6 +1,6 @@
 ﻿namespace DTOs.Room
 {
-    public class UpdateRoomRequestDto : UpdateRoomRequestDto
+    public class UpdateRoomRequestDto : RoomRequestDto
     {
     }
 }

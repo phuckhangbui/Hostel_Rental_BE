@@ -19,7 +19,7 @@ namespace HostelManagementWebAPI.Controllers
 
 		[Authorize(Policy = "Owner")]
 		[HttpPut("rooms/{roomId}")]
-		public async Task<ActionResult> UpdateRoom(int roomId, [FromBody] UpdateRoomRequestDto updateRoomRequestDto)
+		public async Task<ActionResult> UpdateRoom(int roomId, [FromBody] RoomRequestDto updateRoomRequestDto)
 		{
 			try
 			{

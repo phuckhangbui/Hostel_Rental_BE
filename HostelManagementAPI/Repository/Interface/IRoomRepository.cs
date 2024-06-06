@@ -8,7 +8,7 @@ namespace Repository.Interface
 	{
 		Task<int> CreateRoom(CreateRoomRequestDto createRoomRequestDto);
 		Task<Room> GetRoomById(int roomId);
-		Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto);
+		Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto);
 		Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId);
 		Task<RoomDetailResponseDto> GetRoomDetailById(int roomId);
 		Task UpdateRoomStatus(int roomId, int status);

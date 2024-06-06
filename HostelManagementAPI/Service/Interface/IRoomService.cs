@@ -11,7 +11,7 @@ namespace Service.Interface
         Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId);
         Task <RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId);
 		Task ChangeRoomStatus(int roomId, int status);
-		Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto);
+		Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto);
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
 		//Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
 		//Task RemoveRoomServiceAsync(int roomId, int serviceId);

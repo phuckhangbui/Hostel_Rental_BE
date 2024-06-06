@@ -72,7 +72,7 @@ namespace Repository.Implement
 			return roomDetailDto;
 		}
 
-		public async Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto)
+		public async Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto)
 		{
 			var room = await RoomDao.Instance.GetRoomById(roomId);
 
