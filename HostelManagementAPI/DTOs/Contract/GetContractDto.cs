@@ -14,6 +14,6 @@
         public int Status { get; set; }
         public Double? RoomFee { get; set; }
         public Double? DepositFee { get; set; }
-        public List<GetContractDetailsDto> ContractDetails { get; set; }
+        public List<GetContractDetailsDto> ContractMemberDetails { get; set; }
     }
 }

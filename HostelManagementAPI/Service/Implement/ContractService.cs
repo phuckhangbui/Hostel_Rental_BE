@@ -34,12 +34,12 @@ namespace Service.Implement
         //    await _contractRepository.UpdateContract(currentContract);
         //}
 
-        //public async Task CreateContract(CreateContractDto contractDto)
-        //{
-        //    var contract = contractDto;
+        public async Task CreateContract(CreateContractDto contractDto)
+        {
+            var contract = contractDto;
 
-        //    await _contractRepository.CreateContract(contract);
-        //}
+            await _contractRepository.CreateContract(contract);
+        }
 
         //public async Task<GetContractDto> GetContractDetailByContractId(int contractId)
         //{
@@ -53,9 +53,8 @@ namespace Service.Implement
 
         public async Task<IEnumerable<GetContractDto>> GetContracts()
         {
-            //var contracts = await _contractRepository.GetContractsAsync();
-            //return _mapper.Map<List<GetContractDto>>(contracts);
-            throw new ServiceException("Not implement");
+            var contracts = await _contractRepository.GetContractsAsync();
+            return _mapper.Map<List<GetContractDto>>(contracts);
         }
 
         //public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)

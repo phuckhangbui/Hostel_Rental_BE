@@ -13,42 +13,41 @@ namespace Repository.Implement
 
     public class ContractRepository : IContractRepository
     {
-        //public async Task<bool> CreateContract(CreateContractDto contractDto)
-        //{
-        //    var contract = new Contract
-        //    {
-        //        OwnerAccountID = contractDto.OwnerAccountId,
-        //        StudentAccountID = contractDto.StudentAccountID,
-        //        RoomID = contractDto.RoomID,
-        //        CreatedDate = DateTime.Now,
-        //        DateEnd = contractDto.DateEnd,
-        //        DateSign = contractDto.DateSign,
-        //        DateStart = contractDto.DateStart,
-        //        ContractTerm = contractDto.ContractTerm,
-        //        Status = 0,
-        //        RoomFee = contractDto.RoomFee,
-        //        DepositFee = contractDto.DepositFee,
-        //        ContractDetails = new List<ContractDetail>()
-        //    };
+        public async Task<bool> CreateContract(CreateContractDto contractDto)
+        {
+            var contract = new Contract
+            {
+                OwnerAccountID = contractDto.OwnerAccountId,
+                StudentAccountID = contractDto.StudentAccountID,
+                RoomID = contractDto.RoomID,
+                CreatedDate = DateTime.Now,
+                DateEnd = contractDto.DateEnd,
+                DateSign = contractDto.DateSign,
+                DateStart = contractDto.DateStart,
+                ContractTerm = contractDto.ContractTerm,
+                Status = 0,
+                RoomFee = contractDto.RoomFee,
+                DepositFee = contractDto.DepositFee,
+            };
 
-        //    foreach (var detailDto in contractDto.ContractDetails)
-        //    {
-        //        var contractDetail = new ContractDetail
-        //        {
-        //            ServiceID = detailDto.ServiceID,
-        //        };
-        //        contract.ContractDetails.Add(contractDetail);
-        //    }
+            //foreach (var detailDto in contractDto.ContractDetails)
+            //{
+            //    var contractDetail = new ContractDetail
+            //    {
+            //        ServiceID = detailDto.ServiceID,
+            //    };
+            //    contract.ContractDetails.Add(contractDetail);
+            //}
 
-        //    await ContractDao.Instance.CreateAsync(contract);
+            await ContractDao.Instance.CreateAsync(contract);
 
-        //    return true;
-        //}
+            return true;
+        }
 
         public async Task<IEnumerable<Contract>> GetContractsAsync()
         {
-            //return await ContractDao.Instance.GetContractsAsync();
-            return null;
+            return await ContractDao.Instance.GetContractsAsync();
+            
         }
 
         //public async Task<Contract> GetContractById(int id)

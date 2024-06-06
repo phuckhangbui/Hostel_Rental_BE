@@ -31,17 +31,13 @@ namespace DAO
             return await context.Contract.FirstOrDefaultAsync(c => c.ContractID == id);
         }
 
-        //public async Task<IEnumerable<Contract>> GetContractsAsync()
-        //{
-        //    var context = new DataContext();
-        //    return await context.Contract
-        //        .Include(c => c.Room)
-        //        .Include(c => c.OwnerAccount)
-        //        .Include(c => c.StudentLeadAccount)
-        //        .Include(c => c.ContractDetails)  // Include ContractDetails
-        //            .ThenInclude(cd => cd.Service)  // Include Service within ContractDetails
-        //        .ToListAsync();
-        //}
+        public async Task<IEnumerable<Contract>> GetContractsAsync()
+        {
+            var context = new DataContext();
+            return await context.Contract
+                .Include(c => c.Members)
+                .ToListAsync();
+        }
 
         //public async Task<IEnumerable<Contract>> GetContractsByOwnerIDAsync(int ownerID)
         //{
