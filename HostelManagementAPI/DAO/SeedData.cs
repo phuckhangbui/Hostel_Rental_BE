@@ -10,10 +10,10 @@ public class SeedData
 {
     public static async Task SeedAccount(DataContext context)
     {
-        if (await context.Account.AnyAsync())
-        {
-            return;
-        }
+        //if (await context.Account.AnyAsync())
+        //{
+        //    return;
+        //}
 
         var accountData = await File.ReadAllTextAsync("AccountSeedData.json");
 
@@ -25,8 +25,11 @@ public class SeedData
         {
             using var hmac = new HMACSHA512();
 
-            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("123456"));
             account.PasswordSalt = hmac.Key;
+
+            account.CreatedDate = DateTime.Now;
+            account.IsLoginWithGmail = false;
 
             context.Account.Add(account);
         }
