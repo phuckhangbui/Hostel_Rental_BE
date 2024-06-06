@@ -10,7 +10,6 @@
         public string? Phone { get; set; }
         public string? CitizenCard { get; set; }
         public int? Gender { get; set; }
-        public string? Username { get; set; }
         public byte[]? PasswordSalt { get; set; }
         public byte[]? PasswordHash { get; set; }
         public DateTime? CreatedDate { get; set; }
@@ -28,6 +27,6 @@
         public IList<Notice> AccountNoticeReceive { get; set; }
         public IList<Contract> OwnerContract { get; set; }
         public IList<Contract> StudentContract { get; set; }
-        public IList<ContractMember> contractMembers { get; set; }
+        public IList<RoomAppointment> Appointments { get; set; }
     }
 }

@@ -12,21 +12,21 @@ namespace Service.Implement
     {
 		private readonly IRoomRepository _roomRepository;
 		private readonly IHostelRepository _hostelRepository;
-		private readonly IAccountRepository _accountRepository;
-		private readonly IContractRepository _contractRepository;
+		//private readonly IAccountRepository _accountRepository;
+		//private readonly IContractRepository _contractRepository;
 		private readonly ICloudinaryService _cloudinaryService;
 
 		public RoomService(
 			IRoomRepository roomRepository, 
 			IHostelRepository hostelRepository,
-			IAccountRepository accountRepository,
-			IContractRepository contractRepository,
+			//IAccountRepository accountRepository,
+			//IContractRepository contractRepository,
 			ICloudinaryService cloudinaryService)
 		{
 			_roomRepository = roomRepository;
 			_hostelRepository = hostelRepository;
-			_accountRepository = accountRepository;
-			_contractRepository = contractRepository;
+			//_accountRepository = accountRepository;
+			//_contractRepository = contractRepository;
 			_cloudinaryService = cloudinaryService;
 		}
 
@@ -62,13 +62,13 @@ namespace Service.Implement
 			var roomDetail =  await _roomRepository.GetRoomDetailById(roomId);
 			if (roomDetail.Status == (int)RoomEnum.Hiring)
 			{
-				var contracts = await _contractRepository.GetContractsAsync();
-				var currentContract = contracts.FirstOrDefault(c => c.RoomID == roomId && c.Status == 1);
-				if (currentContract != null)
-				{
-					var renterAcocunt = await _accountRepository.GetAccountById((int)currentContract.StudentAccountID);
-					roomDetail.RenterName = renterAcocunt.Name;
-				}
+				//var contracts = await _contractRepository.GetContractsAsync();
+				//var currentContract = contracts.FirstOrDefault(c => c.RoomID == roomId && c.Status == 1);
+				//if (currentContract != null)
+				//{
+				//	var renterAcocunt = await _accountRepository.GetAccountById((int)currentContract.StudentAccountID);
+				//	roomDetail.RenterName = renterAcocunt.Name;
+				//}
 			}
 
 			return roomDetail;
@@ -141,19 +141,19 @@ namespace Service.Implement
 			return await _roomRepository.GetRoomImagesByHostelId(hostelId);
         }
 
-        public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
-        {
-			return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
-        }
+   //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
+   //     {
+			//return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
+   //     }
 
-        public Task RemoveRoomServiceAsync(int roomId, int serviceId)
-        {
-            return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
-        }
+   //     public Task RemoveRoomServiceAsync(int roomId, int serviceId)
+   //     {
+   //         return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
+   //     }
 
-        public Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
-        {
-			return _roomRepository.GetRoomServicesByRoomIdAsync(roomId);
-        }
+   //     public Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
+   //     {
+			//return _roomRepository.GetRoomServicesByRoomIdAsync(roomId);
+   //     }
     }
 }

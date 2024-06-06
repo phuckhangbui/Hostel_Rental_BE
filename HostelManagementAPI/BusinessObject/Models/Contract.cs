@@ -18,8 +18,7 @@
         public Double? DepositFee { get; set; }
 
         public int Status { get; set; }
-
+        // chua nguoi o chung voi chu contract
         public IList<ContractMember> Members { get; set; }
-        public IList<ContractDetail> ContractDetails { get; set; }
     }
 }

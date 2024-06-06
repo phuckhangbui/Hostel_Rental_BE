@@ -14,6 +14,5 @@ namespace DTOs.Contract
         public int Status { get; set; }
         public double? RoomFee { get; set; }
         public double? DepositFee { get; set; }
-        public List<ContractDetailsDto> ContractDetails { get; set; }        
     }
 }

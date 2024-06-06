@@ -16,11 +16,7 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<AccountDto> GetAccountLoginByUsername(string username)
-        {
-            var account = await AccountDAO.Instance.GetAccountLoginByUsername(username);
-            return _mapper.Map<AccountDto>(account);
-        }
+
 
         public async Task<IEnumerable<AccountDto>> GetAllAsync()
         {

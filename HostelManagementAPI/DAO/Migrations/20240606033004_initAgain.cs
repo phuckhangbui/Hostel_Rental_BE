@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Repository.Migrations
+namespace DAO.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initAgain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,16 +17,22 @@ namespace Repository.Migrations
                 {
                     AccountID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<int>(type: "int", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CitizenCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<int>(type: "int", nullable: true),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    FirebaseToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true),
+                    PackageStatus = table.Column<int>(type: "int", nullable: true),
+                    IsLoginWithGmail = table.Column<bool>(type: "bit", nullable: true),
+                    OtpToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,7 +48,8 @@ namespace Repository.Migrations
                     MemberShipName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CapacityHostel = table.Column<int>(type: "int", nullable: true),
                     Month = table.Column<int>(type: "int", nullable: true),
-                    MemberShipFee = table.Column<double>(type: "float", nullable: true)
+                    MemberShipFee = table.Column<double>(type: "float", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -70,7 +78,9 @@ namespace Repository.Migrations
                     HostelName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HostelAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HostelDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountID = table.Column<int>(type: "int", nullable: true)
+                    AccountID = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true),
+                    Thumbnail = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -112,26 +122,6 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Permission",
-                columns: table => new
-                {
-                    PermissionID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountID = table.Column<int>(type: "int", nullable: false),
-                    RoleID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permission", x => x.PermissionID);
-                    table.ForeignKey(
-                        name: "FK_Permission_Account_AccountID",
-                        column: x => x.AccountID,
-                        principalTable: "Account",
-                        principalColumn: "AccountID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MembershipsRegisterTransaction",
                 columns: table => new
                 {
@@ -141,7 +131,7 @@ namespace Repository.Migrations
                     AccountID = table.Column<int>(type: "int", nullable: true),
                     DateRegister = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateExpire = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    PackageFee = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,23 +151,22 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Service",
+                name: "HostelImages",
                 columns: table => new
                 {
-                    ServiceID = table.Column<int>(type: "int", nullable: false)
+                    HostelImageID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeServiceID = table.Column<int>(type: "int", nullable: true),
-                    ServiceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ServicePrice = table.Column<double>(type: "float", nullable: true)
+                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HostelID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Service", x => x.ServiceID);
+                    table.PrimaryKey("PK_HostelImages", x => x.HostelImageID);
                     table.ForeignKey(
-                        name: "FK_Service_TypeService_TypeServiceID",
-                        column: x => x.TypeServiceID,
-                        principalTable: "TypeService",
-                        principalColumn: "TypeServiceID",
+                        name: "FK_HostelImages_Hostel_HostelID",
+                        column: x => x.HostelID,
+                        principalTable: "Hostel",
+                        principalColumn: "HostelID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -216,7 +205,9 @@ namespace Repository.Migrations
                     AccountID = table.Column<int>(type: "int", nullable: true),
                     RoomID = table.Column<int>(type: "int", nullable: true),
                     ComplainText = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateComplain = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateComplain = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true),
+                    DateUpdate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -241,36 +232,66 @@ namespace Repository.Migrations
                 {
                     ContractID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OwnerAccountAccountID = table.Column<int>(type: "int", nullable: false),
-                    AccountID = table.Column<int>(type: "int", nullable: true),
+                    OwnerAccountID = table.Column<int>(type: "int", nullable: true),
+                    StudentAccountID = table.Column<int>(type: "int", nullable: true),
                     RoomID = table.Column<int>(type: "int", nullable: true),
                     ContractTerm = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateSign = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RoomFee = table.Column<double>(type: "float", nullable: true),
+                    DepositFee = table.Column<double>(type: "float", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contract", x => x.ContractID);
                     table.ForeignKey(
-                        name: "FK_Contract_Account_AccountID",
-                        column: x => x.AccountID,
+                        name: "FK_Contract_Account_OwnerAccountID",
+                        column: x => x.OwnerAccountID,
                         principalTable: "Account",
                         principalColumn: "AccountID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Contract_Account_OwnerAccountAccountID",
-                        column: x => x.OwnerAccountAccountID,
+                        name: "FK_Contract_Account_StudentAccountID",
+                        column: x => x.StudentAccountID,
                         principalTable: "Account",
                         principalColumn: "AccountID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Contract_Room_RoomID",
                         column: x => x.RoomID,
                         principalTable: "Room",
                         principalColumn: "RoomID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RoomService",
+                columns: table => new
+                {
+                    RoomServiceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    TypeServiceId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoomService", x => x.RoomServiceId);
+                    table.ForeignKey(
+                        name: "FK_RoomService_Room_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Room",
+                        principalColumn: "RoomID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_RoomService_TypeService_TypeServiceId",
+                        column: x => x.TypeServiceId,
+                        principalTable: "TypeService",
+                        principalColumn: "TypeServiceID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -306,7 +327,8 @@ namespace Repository.Migrations
                     Year = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TotalAmount = table.Column<double>(type: "float", nullable: true),
-                    BillPaymentStatus = table.Column<int>(type: "int", nullable: true)
+                    BillPaymentStatus = table.Column<int>(type: "int", nullable: true),
+                    BillType = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -320,12 +342,41 @@ namespace Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContractMember",
+                columns: table => new
+                {
+                    ContractMemberD = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractID = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CitizenCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContractMember", x => x.ContractMemberD);
+                    table.ForeignKey(
+                        name: "FK_ContractMember_Account_AccountID",
+                        column: x => x.AccountID,
+                        principalTable: "Account",
+                        principalColumn: "AccountID");
+                    table.ForeignKey(
+                        name: "FK_ContractMember_Contract_ContractID",
+                        column: x => x.ContractID,
+                        principalTable: "Contract",
+                        principalColumn: "ContractID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContractDetail",
                 columns: table => new
                 {
                     ContractDetailID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ContractID = table.Column<int>(type: "int", nullable: true),
+                    RoomServiceId = table.Column<int>(type: "int", nullable: true),
                     ServiceID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -338,37 +389,10 @@ namespace Repository.Migrations
                         principalColumn: "ContractID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ContractDetail_Service_ServiceID",
-                        column: x => x.ServiceID,
-                        principalTable: "Service",
-                        principalColumn: "ServiceID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContractMember",
-                columns: table => new
-                {
-                    ContractMemberD = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ContractID = table.Column<int>(type: "int", nullable: true),
-                    AccountID = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContractMember", x => x.ContractMemberD);
-                    table.ForeignKey(
-                        name: "FK_ContractMember_Account_AccountID",
-                        column: x => x.AccountID,
-                        principalTable: "Account",
-                        principalColumn: "AccountID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ContractMember_Contract_ContractID",
-                        column: x => x.ContractID,
-                        principalTable: "Contract",
-                        principalColumn: "ContractID",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_ContractDetail_RoomService_RoomServiceId",
+                        column: x => x.RoomServiceId,
+                        principalTable: "RoomService",
+                        principalColumn: "RoomServiceId");
                 });
 
             migrationBuilder.CreateTable(
@@ -378,9 +402,9 @@ namespace Repository.Migrations
                     BillPaymentDetailID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BillPaymentID = table.Column<int>(type: "int", nullable: true),
-                    ServiceID = table.Column<int>(type: "int", nullable: true),
-                    OldNumberService = table.Column<int>(type: "int", nullable: true),
-                    NewNumberService = table.Column<int>(type: "int", nullable: true),
+                    RoomServiceID = table.Column<int>(type: "int", nullable: true),
+                    OldNumberService = table.Column<double>(type: "float", nullable: true),
+                    NewNumberService = table.Column<double>(type: "float", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true),
                     ServiceTotalAmount = table.Column<double>(type: "float", nullable: true)
                 },
@@ -394,10 +418,10 @@ namespace Repository.Migrations
                         principalColumn: "BillPaymentID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_BillPaymentDetail_Service_ServiceID",
-                        column: x => x.ServiceID,
-                        principalTable: "Service",
-                        principalColumn: "ServiceID",
+                        name: "FK_BillPaymentDetail_RoomService_RoomServiceID",
+                        column: x => x.RoomServiceID,
+                        principalTable: "RoomService",
+                        principalColumn: "RoomServiceId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -412,9 +436,9 @@ namespace Repository.Migrations
                 column: "BillPaymentID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillPaymentDetail_ServiceID",
+                name: "IX_BillPaymentDetail_RoomServiceID",
                 table: "BillPaymentDetail",
-                column: "ServiceID");
+                column: "RoomServiceID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Complain_AccountID",
@@ -427,14 +451,9 @@ namespace Repository.Migrations
                 column: "RoomID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contract_AccountID",
+                name: "IX_Contract_OwnerAccountID",
                 table: "Contract",
-                column: "AccountID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contract_OwnerAccountAccountID",
-                table: "Contract",
-                column: "OwnerAccountAccountID");
+                column: "OwnerAccountID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contract_RoomID",
@@ -442,14 +461,19 @@ namespace Repository.Migrations
                 column: "RoomID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Contract_StudentAccountID",
+                table: "Contract",
+                column: "StudentAccountID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ContractDetail_ContractID",
                 table: "ContractDetail",
                 column: "ContractID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContractDetail_ServiceID",
+                name: "IX_ContractDetail_RoomServiceId",
                 table: "ContractDetail",
-                column: "ServiceID");
+                column: "RoomServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContractMember_AccountID",
@@ -465,6 +489,11 @@ namespace Repository.Migrations
                 name: "IX_Hostel_AccountID",
                 table: "Hostel",
                 column: "AccountID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HostelImages_HostelID",
+                table: "HostelImages",
+                column: "HostelID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MembershipsRegisterTransaction_AccountID",
@@ -487,24 +516,24 @@ namespace Repository.Migrations
                 column: "NoticeAccountAccountID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permission_AccountID",
-                table: "Permission",
-                column: "AccountID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Room_HostelID",
                 table: "Room",
                 column: "HostelID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RoomService_RoomId",
+                table: "RoomService",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoomService_TypeServiceId",
+                table: "RoomService",
+                column: "TypeServiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RoomsImage_RoomID",
                 table: "RoomsImage",
                 column: "RoomID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Service_TypeServiceID",
-                table: "Service",
-                column: "TypeServiceID");
         }
 
         /// <inheritdoc />
@@ -523,13 +552,13 @@ namespace Repository.Migrations
                 name: "ContractMember");
 
             migrationBuilder.DropTable(
+                name: "HostelImages");
+
+            migrationBuilder.DropTable(
                 name: "MembershipsRegisterTransaction");
 
             migrationBuilder.DropTable(
                 name: "Notice");
-
-            migrationBuilder.DropTable(
-                name: "Permission");
 
             migrationBuilder.DropTable(
                 name: "RoomsImage");
@@ -538,7 +567,7 @@ namespace Repository.Migrations
                 name: "BillPayment");
 
             migrationBuilder.DropTable(
-                name: "Service");
+                name: "RoomService");
 
             migrationBuilder.DropTable(
                 name: "Membership");
