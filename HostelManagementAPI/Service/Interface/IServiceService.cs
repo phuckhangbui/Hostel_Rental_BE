@@ -10,6 +10,7 @@ namespace Service.Interface
         Task<Services> GetServiceById(int id);
         Task<bool> CheckServiceExist(int id);
         Task<List<ServiceResponseDto>> GetServices();
+        Task RemoveService(int serviceId);
 
     }
 }

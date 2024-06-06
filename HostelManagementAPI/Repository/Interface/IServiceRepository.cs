@@ -9,5 +9,7 @@ namespace Repository.Interface
         Task<bool> UpdateService(Services service);
         Task<Services> GetServiceById(int id);
         Task<List<ServiceResponseDto>> GetServices();
+        Task RemoveServiceAsync(int serviceId);
+
     }
 }

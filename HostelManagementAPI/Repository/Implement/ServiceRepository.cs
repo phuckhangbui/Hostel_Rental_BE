@@ -22,6 +22,11 @@ namespace Repository.Implement
             return ServiceDao.Instance.GetAllServicesAsync();
         }
 
+        public Task RemoveServiceAsync(int serviceId)
+        {
+            return ServiceDao.Instance.RemoveService(serviceId);
+        }
+
         public Task<bool> UpdateService(Services service)
         {
             return ServiceDao.Instance.UpdateAsync(service);

@@ -60,5 +60,10 @@ namespace Service.Implement
             
             return services;
         }
+
+        public async Task RemoveService(int serviceId)
+        {
+           await _serviceRepository.RemoveServiceAsync(serviceId);
+        }
     }
 }

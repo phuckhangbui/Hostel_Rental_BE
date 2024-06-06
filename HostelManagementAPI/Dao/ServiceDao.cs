@@ -54,5 +54,16 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task RemoveService(int serviceId)
+        {
+            var context = new DataContext();
+            var service = await context.Service.FirstOrDefaultAsync(s => s.ServiceID == serviceId);
+            if (service != null)
+            {
+                context.Service.Remove(service);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }
