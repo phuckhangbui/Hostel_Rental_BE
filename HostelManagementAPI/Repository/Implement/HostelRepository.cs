@@ -4,20 +4,19 @@ using BusinessObject.Models;
 using DAO;
 using DTOs.Hostel;
 using Repository.Interface;
-using DTOs.HostelService;
 
 namespace Repository.Implement
 {
-    public class HostelRepository : IHostelRepository
+	public class HostelRepository : IHostelRepository
 	{
 		private readonly IMapper _mapper;
 
-        public HostelRepository(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
+		public HostelRepository(IMapper mapper)
+		{
+			_mapper = mapper;
+		}
 
-        public async Task<int> CreateHostel(CreateHostelRequestDto createHostelRequestDto)
+		public async Task<int> CreateHostel(CreateHostelRequestDto createHostelRequestDto)
 		{
 			Hostel hostel = new Hostel
 			{
@@ -42,7 +41,7 @@ namespace Repository.Implement
 		public async Task<HostelResponseDto> GetHostelDetailById(int id)
 		{
 			var hostel = await HostelDao.Instance.GetHostelById(id);
-			
+
 			return _mapper.Map<HostelResponseDto>(hostel);
 		}
 
@@ -64,14 +63,14 @@ namespace Repository.Implement
 			await HostelDao.Instance.UpdateAsync(currentHostel);
 		}
 
-		public async Task UpdateHostelImage(int hostelId, string imageUrl)
-		{
-			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+		//public async Task UpdateHostelImage(int hostelId, string imageUrl)
+		//{
+		//	var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
 
-			currentHostel.Thumbnail = imageUrl;
+		//	currentHostel.Thumbnail = imageUrl;
 
-			await HostelDao.Instance.UpdateAsync(currentHostel);
-		}
+		//	await HostelDao.Instance.UpdateAsync(currentHostel);
+		//}
 
 		public async Task UpdateHostelStatus(int hostelId, int status)
 		{
@@ -82,37 +81,18 @@ namespace Repository.Implement
 			await HostelDao.Instance.UpdateAsync(currentHostel);
 		}
 
-        public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int id)
-        {
-            var hostel = await HostelDao.Instance.GetHostelById(id);
+		public async Task<HostelDetailAdminView> GetHostelDetailAdminView(int id)
+		{
+			var hostel = await HostelDao.Instance.GetHostelById(id);
 
-            return _mapper.Map<HostelDetailAdminView>(hostel);
-        }
+			return _mapper.Map<HostelDetailAdminView>(hostel);
+		}
 
-        public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
-        {
-            var hostels = await HostelDao.Instance.GetAllHostelsAsync();
+		public async Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView()
+		{
+			var hostels = await HostelDao.Instance.GetAllHostelsAsync();
 
-            return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
-        }
-
-        public async Task<IEnumerable<HostelServiceResponseDto>> GetHostelServices(int id)
-        {
-            var hostelSerices = await HostelDao.Instance.GetHostelServicesByHostelId(id);
-
-			return _mapper.Map<IEnumerable<HostelServiceResponseDto>>(hostelSerices);
-        }
-
-        public async Task AddHostelServices(int hostelId, HostelServiceRequestDto hostelServiceRequestDto)
-        {
-            var hostelServices = hostelServiceRequestDto.ServiceId.Select(serviceId => new HostelService
-            {
-                HostelId = hostelId,
-                ServiceId = serviceId,
-                Status = (int)HostelServiceEnum.Active,
-            });
-
-			await HostelDao.Instance.AddHostelServices(hostelServices);
-        }
-    }
+			return _mapper.Map<IEnumerable<HostelsAdminView>>(hostels);
+		}
+	}
 }

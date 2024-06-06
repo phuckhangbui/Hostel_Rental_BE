@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using DTOs.Enum;
 using BusinessObject.Models;
 using DAO;
@@ -7,17 +7,17 @@ using Repository.Interface;
 
 namespace Repository.Implement
 {
-    public class RoomRepository : IRoomRepository
-    {
+	public class RoomRepository : IRoomRepository
+	{
 		private readonly IMapper _mapper;
 
-        public RoomRepository(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
+		public RoomRepository(IMapper mapper)
+		{
+			_mapper = mapper;
+		}
 
 
-        public async Task<int> CreateRoom(CreateRoomRequestDto createRoomRequestDto)
+		public async Task<int> CreateRoom(CreateRoomRequestDto createRoomRequestDto)
 		{
 			Room room = new Room
 			{
@@ -52,7 +52,7 @@ namespace Repository.Implement
 		public async Task<RoomDetailResponseDto> GetRoomDetailById(int roomId)
 		{
 			var room = await RoomDao.Instance.GetRoomDetailById(roomId);
-			
+
 			var roomDetailDto = _mapper.Map<RoomDetailResponseDto>(room);
 			roomDetailDto.RoomImageUrls = room.RoomImages.Select(img => img.RoomUrl).ToList();
 
@@ -105,33 +105,33 @@ namespace Repository.Implement
 			await RoomDao.Instance.UpdateAsync(room);
 		}
 
-        public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)
-        {
-            var rooms = await RoomDao.Instance.GetRoomById(hostelId);
-            return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
-        }
+		public async Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId)
+		{
+			var rooms = await RoomDao.Instance.GetRoomById(hostelId);
+			return _mapper.Map<IEnumerable<RoomOfHostelAdminView>>(rooms);
+		}
 
-        public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
+		public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
 		{
 			List<string> imageUrls = await RoomDao.Instance.GetRoomImagesByHostelId(hostelId);
 			return imageUrls;
 		}
 
-        public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
-        {
-            var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
-            {
-                RoomId = roomServicesDto.RoomId,
-                ServiceId = serviceId,
-                Status = roomServicesDto.Status
-            });
+		//public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
+		//{
+		//	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
+		//	{
+		//		RoomId = roomServicesDto.RoomId,
+		//		ServiceId = serviceId,
+		//		Status = roomServicesDto.Status
+		//	});
 
-            await RoomServiceDao.Instance.AddRoomServicesAsync(roomServices);
-        }
+		//	await RoomServiceDao.Instance.AddRoomServicesAsync(roomServices);
+		//}
 
-        public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
-        {
-			await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
-        }
-    }
+		//public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
+		//{
+		//	await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
+		//}
+	}
 }

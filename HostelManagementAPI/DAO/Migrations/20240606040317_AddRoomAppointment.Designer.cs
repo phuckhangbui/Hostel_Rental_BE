@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Repository.Migrations
+namespace DAO.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240525092249_updateServiceTableName")]
-    partial class updateServiceTableName
+    [Migration("20240606040317_AddRoomAppointment")]
+    partial class AddRoomAppointment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,11 +45,20 @@ namespace Repository.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("IsLoginWithGmail")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtpToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PackageStatus")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("varbinary(max)");
@@ -60,14 +69,17 @@ namespace Repository.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountID");
 
@@ -86,6 +98,9 @@ namespace Repository.Migrations
                         .HasColumnType("float");
 
                     b.Property<int?>("BillPaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BillType")
                         .HasColumnType("int");
 
                     b.Property<int>("ContractID")
@@ -121,16 +136,16 @@ namespace Repository.Migrations
                     b.Property<int?>("BillPaymentID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NewNumberService")
-                        .HasColumnType("int");
+                    b.Property<double?>("NewNumberService")
+                        .HasColumnType("float");
 
-                    b.Property<int?>("OldNumberService")
-                        .HasColumnType("int");
+                    b.Property<double?>("OldNumberService")
+                        .HasColumnType("float");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ServiceID")
+                    b.Property<int?>("RoomServiceID")
                         .HasColumnType("int");
 
                     b.Property<double?>("ServiceTotalAmount")
@@ -140,7 +155,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("BillPaymentID");
 
-                    b.HasIndex("ServiceID");
+                    b.HasIndex("RoomServiceID");
 
                     b.ToTable("BillPaymentDetail");
                 });
@@ -162,7 +177,13 @@ namespace Repository.Migrations
                     b.Property<DateTime?>("DateComplain")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateUpdate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("RoomID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("ComplainID");
@@ -182,9 +203,6 @@ namespace Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractID"));
 
-                    b.Property<int?>("AccountID")
-                        .HasColumnType("int");
-
                     b.Property<string>("ContractTerm")
                         .HasColumnType("nvarchar(max)");
 
@@ -200,8 +218,14 @@ namespace Repository.Migrations
                     b.Property<DateTime?>("DateStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OwnerAccountAccountID")
+                    b.Property<double?>("DepositFee")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("OwnerAccountID")
                         .HasColumnType("int");
+
+                    b.Property<double?>("RoomFee")
+                        .HasColumnType("float");
 
                     b.Property<int?>("RoomID")
                         .HasColumnType("int");
@@ -209,57 +233,41 @@ namespace Repository.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int?>("StudentAccountID")
+                        .HasColumnType("int");
+
                     b.HasKey("ContractID");
 
-                    b.HasIndex("AccountID");
-
-                    b.HasIndex("OwnerAccountAccountID");
+                    b.HasIndex("OwnerAccountID");
 
                     b.HasIndex("RoomID");
+
+                    b.HasIndex("StudentAccountID");
 
                     b.ToTable("Contract");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.ContractDetail", b =>
-                {
-                    b.Property<int>("ContractDetailID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractDetailID"));
-
-                    b.Property<int?>("ContractID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ServiceID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ContractDetailID");
-
-                    b.HasIndex("ContractID");
-
-                    b.HasIndex("ServiceID");
-
-                    b.ToTable("ContractDetail");
-                });
-
             modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
                 {
-                    b.Property<int>("ContractMemberD")
+                    b.Property<int>("ContractMemberID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractMemberD"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractMemberID"));
 
-                    b.Property<int?>("AccountID")
-                        .HasColumnType("int");
+                    b.Property<string>("CitizenCard")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ContractID")
                         .HasColumnType("int");
 
-                    b.HasKey("ContractMemberD");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("AccountID");
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ContractMemberID");
 
                     b.HasIndex("ContractID");
 
@@ -289,11 +297,35 @@ namespace Repository.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("HostelID");
 
                     b.HasIndex("AccountID");
 
                     b.ToTable("Hostel");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.HostelImage", b =>
+                {
+                    b.Property<int>("HostelImageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HostelImageID"));
+
+                    b.Property<int>("HostelID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("HostelImageID");
+
+                    b.HasIndex("HostelID");
+
+                    b.ToTable("HostelImages");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
@@ -344,8 +376,8 @@ namespace Repository.Migrations
                     b.Property<int?>("MemberShipID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<double>("PackageFee")
+                        .HasColumnType("float");
 
                     b.HasKey("MemberShipTransactionID");
 
@@ -424,6 +456,35 @@ namespace Repository.Migrations
                     b.ToTable("Room");
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.RoomAppointment", b =>
+                {
+                    b.Property<int>("ViewRoomAppointmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ViewRoomAppointmentId"));
+
+                    b.Property<DateTime>("AppointmentTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ViewerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ViewRoomAppointmentId");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("ViewerId");
+
+                    b.ToTable("RoomAppointments");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
                 {
                     b.Property<int>("RoomImgID")
@@ -447,44 +508,31 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
                 {
-                    b.Property<int>("RoomId")
+                    b.Property<int>("RoomServiceId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomServiceId"));
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("RoomId", "ServiceId");
+                    b.Property<int>("TypeServiceId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ServiceId");
+                    b.HasKey("RoomServiceId");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("TypeServiceId");
 
                     b.ToTable("RoomService");
-                });
-
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
-                {
-                    b.Property<int>("ServiceID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceID"));
-
-                    b.Property<string>("ServiceName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("ServicePrice")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("TypeServiceID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ServiceID");
-
-                    b.HasIndex("TypeServiceID");
-
-                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
@@ -521,14 +569,14 @@ namespace Repository.Migrations
                         .HasForeignKey("BillPaymentID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
-                        .WithMany("BillPaymentDetail")
-                        .HasForeignKey("ServiceID")
+                    b.HasOne("BusinessObject.Models.RoomService", "RoomService")
+                        .WithMany("BillPaymentDetails")
+                        .HasForeignKey("RoomServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BillPayment");
 
-                    b.Navigation("Service");
+                    b.Navigation("RoomService");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Complain", b =>
@@ -550,20 +598,19 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.Contract", b =>
                 {
-                    b.HasOne("BusinessObject.Models.Account", "StudentLeadAccount")
-                        .WithMany("StudentContract")
-                        .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BusinessObject.Models.Account", "OwnerAccount")
                         .WithMany("OwnerContract")
-                        .HasForeignKey("OwnerAccountAccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerAccountID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BusinessObject.Models.Room", "Room")
                         .WithMany("RoomContract")
                         .HasForeignKey("RoomID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BusinessObject.Models.Account", "StudentLeadAccount")
+                        .WithMany("StudentContract")
+                        .HasForeignKey("StudentAccountID")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("OwnerAccount");
@@ -573,38 +620,14 @@ namespace Repository.Migrations
                     b.Navigation("StudentLeadAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.ContractDetail", b =>
-                {
-                    b.HasOne("BusinessObject.Models.Contract", "Contract")
-                        .WithMany("ContractDetails")
-                        .HasForeignKey("ContractID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("BusinessObject.Models.Services", "Service")
-                        .WithMany("ContractDetails")
-                        .HasForeignKey("ServiceID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Contract");
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
                 {
-                    b.HasOne("BusinessObject.Models.Account", "Student")
-                        .WithMany("contractMembers")
-                        .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany("Members")
                         .HasForeignKey("ContractID")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Contract");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
@@ -615,6 +638,17 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("OwnerAccount");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.HostelImage", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Hostel", "Hostel")
+                        .WithMany("Images")
+                        .HasForeignKey("HostelID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Hostel");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
@@ -662,6 +696,25 @@ namespace Repository.Migrations
                     b.Navigation("Hostel");
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.RoomAppointment", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Room", "Room")
+                        .WithMany("RoomAppointments")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObject.Models.Account", "Viewer")
+                        .WithMany("Appointments")
+                        .HasForeignKey("ViewerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Viewer");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
                 {
                     b.HasOne("BusinessObject.Models.Room", "Room")
@@ -680,23 +733,13 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
+                    b.HasOne("BusinessObject.Models.TypeService", "TypeService")
                         .WithMany("RoomServices")
-                        .HasForeignKey("ServiceId")
+                        .HasForeignKey("TypeServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Room");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
-                {
-                    b.HasOne("BusinessObject.Models.TypeService", "TypeService")
-                        .WithMany("Services")
-                        .HasForeignKey("TypeServiceID")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("TypeService");
                 });
@@ -709,6 +752,8 @@ namespace Repository.Migrations
 
                     b.Navigation("AccountNoticeReceive");
 
+                    b.Navigation("Appointments");
+
                     b.Navigation("Hostels");
 
                     b.Navigation("Memberships");
@@ -716,8 +761,6 @@ namespace Repository.Migrations
                     b.Navigation("OwnerContract");
 
                     b.Navigation("StudentContract");
-
-                    b.Navigation("contractMembers");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
@@ -727,13 +770,13 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.Contract", b =>
                 {
-                    b.Navigation("ContractDetails");
-
                     b.Navigation("Members");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Rooms");
                 });
 
@@ -746,6 +789,8 @@ namespace Repository.Migrations
                 {
                     b.Navigation("Complains");
 
+                    b.Navigation("RoomAppointments");
+
                     b.Navigation("RoomContract");
 
                     b.Navigation("RoomImages");
@@ -753,18 +798,14 @@ namespace Repository.Migrations
                     b.Navigation("RoomServices");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
+            modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
                 {
-                    b.Navigation("BillPaymentDetail");
-
-                    b.Navigation("ContractDetails");
-
-                    b.Navigation("RoomServices");
+                    b.Navigation("BillPaymentDetails");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
                 {
-                    b.Navigation("Services");
+                    b.Navigation("RoomServices");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,4 @@
 ﻿using DTOs.Hostel;
-using DTOs.HostelService;
 using Microsoft.AspNetCore.Http;
 
 namespace Service.Interface
@@ -13,9 +12,8 @@ namespace Service.Interface
         Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto);
         Task ChangeHostelStatus(int hostelId, int status);
         Task<IEnumerable<HostelResponseDto>> GetHostelsByOwner(int ownerId);
-        Task UploadHostelThumbnail(int hostelId, IFormFile formFile);
+        //Task UploadHostelThumbnail(int hostelId, IFormFile formFile);
         Task<HostelResponseDto> GetHostelDetail(int hostelID);
-        Task AddHostelServices (int hostelID, HostelServiceRequestDto hostelServiceRequestDto);
         Task<HostelResponseDto> GetHostelDetailForOwner(int hostelID);
     }
 }

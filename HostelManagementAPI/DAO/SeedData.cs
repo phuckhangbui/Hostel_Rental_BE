@@ -25,7 +25,6 @@ public class SeedData
         {
             using var hmac = new HMACSHA512();
 
-            account.Username = account.Username.ToLower();
             account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
             account.PasswordSalt = hmac.Key;
 
