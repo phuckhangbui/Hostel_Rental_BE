@@ -2,6 +2,7 @@ using API.Extensions;
 using HostelManagementWebAPI.Extensions;
 using Microsoft.OpenApi.Models;
 using Service;
+using Service.Vnpay;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ builder.Services.ApplicationServices(builder.Configuration);
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCloud")));
 
 ConfigurationHelper.Initialize(builder.Configuration);
+builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
+
 
 builder.Services.AddSwaggerGen(option =>
 {
