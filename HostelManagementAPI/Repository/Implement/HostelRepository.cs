@@ -63,14 +63,28 @@ namespace Repository.Implement
 			await HostelDao.Instance.UpdateAsync(currentHostel);
 		}
 
-		//public async Task UpdateHostelImage(int hostelId, string imageUrl)
-		//{
-		//	var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+		public async Task UpdateHostelImage(int hostelId, List<string> imageUrls)
+		{
+			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
 
-		//	currentHostel.Thumbnail = imageUrl;
+			if (currentHostel.Images == null)
+			{
+				currentHostel.Images = new List<HostelImage>();
+			}
 
-		//	await HostelDao.Instance.UpdateAsync(currentHostel);
-		//}
+            foreach (var imageUrl in imageUrls)
+            {
+                var hostelImage = new HostelImage
+                {
+                    ImageURL = imageUrl,
+                    HostelID = currentHostel.HostelID,
+                };
+
+                currentHostel.Images.Add(hostelImage);
+            }
+
+            await HostelDao.Instance.UpdateAsync(currentHostel);
+		}
 
 		public async Task UpdateHostelStatus(int hostelId, int status)
 		{

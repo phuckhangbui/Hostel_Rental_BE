@@ -31,6 +31,7 @@ namespace DAO
                 return await context.Hostel
                 .Include(x => x.OwnerAccount)
                 .Include(h => h.Rooms)
+                .Include(h => h.Images)
                 .FirstOrDefaultAsync(h => h.HostelID == id);
             }
         }
@@ -41,6 +42,7 @@ namespace DAO
             return await context.Hostel
                 .Include(h => h.OwnerAccount)
                 .Include(h => h.Rooms)
+                .Include(h => h.Images)
                 .ToListAsync();
         }
 
