@@ -5,7 +5,7 @@ namespace Repository.Interface
 {
     public interface IAccountRepository
     {
-        Task<AccountDto> GetAccountLoginByUsername(string username);
+
         Task<IEnumerable<AccountDto>> GetAllAsync();
         Task<AccountDto> GetAccountByEmail(string email);
         Task CreateAccount(AccountDto accountDto);

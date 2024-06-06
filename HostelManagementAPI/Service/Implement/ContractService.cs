@@ -10,12 +10,12 @@ namespace Service.Implement
     {
         private readonly IContractRepository _contractRepository;
         private readonly IAccountRepository _accountRepository;
-        private readonly IServiceRepository _serviceRepository;
+        //private readonly IServiceRepository _serviceRepository;
         private readonly IMapper _mapper;
 
         public ContractService(
-            IContractRepository contractRepository, 
-            IAccountRepository accountRepository, 
+            IContractRepository contractRepository,
+            IAccountRepository accountRepository,
             IMapper mapper)
         {
             _contractRepository = contractRepository;
@@ -31,7 +31,7 @@ namespace Service.Implement
                 throw new ServiceException("Contract not found with given ID");
             }
             currentContract.Status = status;
-            
+
             await _contractRepository.UpdateContract(currentContract);
         }
 
@@ -45,7 +45,7 @@ namespace Service.Implement
         public async Task<GetContractDto> GetContractDetailByContractId(int contractId)
         {
             var contract = await _contractRepository.GetContractDetailsByContractId(contractId);
-            if(contract == null)
+            if (contract == null)
             {
                 throw new ServiceException("Contract not found with this ID");
             }
@@ -54,14 +54,14 @@ namespace Service.Implement
 
         public async Task<IEnumerable<GetContractDto>> GetContracts()
         {
-            var contracts = await _contractRepository.GetContractsAsync(); 
-            return _mapper.Map<List<GetContractDto>>(contracts); 
+            var contracts = await _contractRepository.GetContractsAsync();
+            return _mapper.Map<List<GetContractDto>>(contracts);
 
         }
 
         public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
         {
-            var owner = await _accountRepository.GetAccountById(ownerId); 
+            var owner = await _accountRepository.GetAccountById(ownerId);
             if (owner == null)
             {
                 throw new ServiceException("Owner not found with this ID");

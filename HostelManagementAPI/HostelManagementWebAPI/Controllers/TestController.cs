@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Repository.Interface;
 using Service.Interface;
 
@@ -20,11 +19,5 @@ namespace HostelManagementWebAPI.Controllers
             _accountRepository = accountRepository;
         }
 
-        [HttpGet("/name")]
-        public async Task<ActionResult<Account>> GetAsync(string username)
-        {
-            var account = await _accountRepository.GetAccountLoginByUsername(username);
-            return Ok(account);
-        }
     }
 }

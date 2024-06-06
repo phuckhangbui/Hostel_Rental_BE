@@ -27,34 +27,34 @@ namespace Service.Implement
             _mailService = mailService;
         }
 
-        public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
-        {
-            AccountDto accountDto = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
-            if (accountDto == null || accountDto.Status == (int)AccountStatusEnum.Inactive || accountDto.RoleId != (int)AccountRoleEnum.Admin) // status block
-                return null;
-            else
-            {
-                using var hmac = new HMACSHA512(accountDto.PasswordSalt);
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != accountDto.PasswordHash[i])
-                    {
-                        return null;
-                    }
-                }
+        //public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
+        //{
+        //    AccountDto accountDto = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
+        //    if (accountDto == null || accountDto.Status == (int)AccountStatusEnum.Inactive || accountDto.RoleId != (int)AccountRoleEnum.Admin) // status block
+        //        return null;
+        //    else
+        //    {
+        //        using var hmac = new HMACSHA512(accountDto.PasswordSalt);
+        //        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+        //        for (int i = 0; i < computedHash.Length; i++)
+        //        {
+        //            if (computedHash[i] != accountDto.PasswordHash[i])
+        //            {
+        //                return null;
+        //            }
+        //        }
 
-                accountDto.Token = _tokenService.CreateToken(accountDto);
+        //        accountDto.Token = _tokenService.CreateToken(accountDto);
 
-                var refreshToken = _tokenService.GenerateRefreshToken();
-                accountDto.RefreshToken = refreshToken;
-                accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+        //        var refreshToken = _tokenService.GenerateRefreshToken();
+        //        accountDto.RefreshToken = refreshToken;
+        //        accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
 
-                await _accountRepository.UpdateAccount(accountDto);
-                return accountDto;
+        //        await _accountRepository.UpdateAccount(accountDto);
+        //        return accountDto;
 
-            }
-        }
+        //    }
+        //}
 
         public async Task<IEnumerable<AccountViewDto>> GetAllAccounts()
         {

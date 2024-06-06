@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Repository.Migrations
+namespace DAO.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240603080100_ChangeToPackageStatusInAccount")]
-    partial class ChangeToPackageStatusInAccount
+    [Migration("20240606033004_initAgain")]
+    partial class initAgain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,9 +81,6 @@ namespace Repository.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("AccountID");
 
                     b.ToTable("Account");
@@ -139,16 +136,16 @@ namespace Repository.Migrations
                     b.Property<int?>("BillPaymentID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NewNumberService")
-                        .HasColumnType("int");
+                    b.Property<double?>("NewNumberService")
+                        .HasColumnType("float");
 
-                    b.Property<int?>("OldNumberService")
-                        .HasColumnType("int");
+                    b.Property<double?>("OldNumberService")
+                        .HasColumnType("float");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ServiceID")
+                    b.Property<int?>("RoomServiceID")
                         .HasColumnType("int");
 
                     b.Property<double?>("ServiceTotalAmount")
@@ -158,7 +155,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("BillPaymentID");
 
-                    b.HasIndex("ServiceID");
+                    b.HasIndex("RoomServiceID");
 
                     b.ToTable("BillPaymentDetail");
                 });
@@ -261,6 +258,9 @@ namespace Repository.Migrations
                     b.Property<int?>("ContractID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RoomServiceId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ServiceID")
                         .HasColumnType("int");
 
@@ -268,7 +268,7 @@ namespace Repository.Migrations
 
                     b.HasIndex("ContractID");
 
-                    b.HasIndex("ServiceID");
+                    b.HasIndex("RoomServiceId");
 
                     b.ToTable("ContractDetail");
                 });
@@ -284,8 +284,17 @@ namespace Repository.Migrations
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
 
+                    b.Property<string>("CitizenCard")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ContractID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ContractMemberD");
 
@@ -327,6 +336,27 @@ namespace Repository.Migrations
                     b.HasIndex("AccountID");
 
                     b.ToTable("Hostel");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.HostelImage", b =>
+                {
+                    b.Property<int>("HostelImageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HostelImageID"));
+
+                    b.Property<int>("HostelID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("HostelImageID");
+
+                    b.HasIndex("HostelID");
+
+                    b.ToTable("HostelImages");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
@@ -480,44 +510,31 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
                 {
-                    b.Property<int>("RoomId")
+                    b.Property<int>("RoomServiceId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomServiceId"));
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RoomId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("RoomId", "ServiceId");
+                    b.Property<int>("TypeServiceId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ServiceId");
+                    b.HasKey("RoomServiceId");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("TypeServiceId");
 
                     b.ToTable("RoomService");
-                });
-
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
-                {
-                    b.Property<int>("ServiceID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceID"));
-
-                    b.Property<string>("ServiceName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("ServicePrice")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("TypeServiceID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ServiceID");
-
-                    b.HasIndex("TypeServiceID");
-
-                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
@@ -554,14 +571,14 @@ namespace Repository.Migrations
                         .HasForeignKey("BillPaymentID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
-                        .WithMany("BillPaymentDetail")
-                        .HasForeignKey("ServiceID")
+                    b.HasOne("BusinessObject.Models.RoomService", "RoomService")
+                        .WithMany("BillPaymentDetails")
+                        .HasForeignKey("RoomServiceID")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("BillPayment");
 
-                    b.Navigation("Service");
+                    b.Navigation("RoomService");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Complain", b =>
@@ -612,22 +629,20 @@ namespace Repository.Migrations
                         .HasForeignKey("ContractID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
-                        .WithMany("ContractDetails")
-                        .HasForeignKey("ServiceID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("BusinessObject.Models.RoomService", "RoomService")
+                        .WithMany()
+                        .HasForeignKey("RoomServiceId");
 
                     b.Navigation("Contract");
 
-                    b.Navigation("Service");
+                    b.Navigation("RoomService");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
                 {
-                    b.HasOne("BusinessObject.Models.Account", "Student")
+                    b.HasOne("BusinessObject.Models.Account", null)
                         .WithMany("contractMembers")
-                        .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("AccountID");
 
                     b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany("Members")
@@ -635,8 +650,6 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Contract");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
@@ -647,6 +660,17 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("OwnerAccount");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.HostelImage", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Hostel", "Hostel")
+                        .WithMany("Images")
+                        .HasForeignKey("HostelID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Hostel");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
@@ -712,23 +736,13 @@ namespace Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BusinessObject.Models.Services", "Service")
+                    b.HasOne("BusinessObject.Models.TypeService", "TypeService")
                         .WithMany("RoomServices")
-                        .HasForeignKey("ServiceId")
+                        .HasForeignKey("TypeServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Room");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
-                {
-                    b.HasOne("BusinessObject.Models.TypeService", "TypeService")
-                        .WithMany("Services")
-                        .HasForeignKey("TypeServiceID")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("TypeService");
                 });
@@ -766,6 +780,8 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Rooms");
                 });
 
@@ -785,18 +801,14 @@ namespace Repository.Migrations
                     b.Navigation("RoomServices");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Services", b =>
+            modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
                 {
-                    b.Navigation("BillPaymentDetail");
-
-                    b.Navigation("ContractDetails");
-
-                    b.Navigation("RoomServices");
+                    b.Navigation("BillPaymentDetails");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
                 {
-                    b.Navigation("Services");
+                    b.Navigation("RoomServices");
                 });
 #pragma warning restore 612, 618
         }
