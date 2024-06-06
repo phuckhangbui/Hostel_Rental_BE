@@ -31,55 +31,40 @@ namespace DAO
             return await context.Contract.FirstOrDefaultAsync(c => c.ContractID == id);
         }
 
-        //public async Task<IEnumerable<Contract>> GetContractsAsync()
-        //{
-        //    var context = new DataContext();
-        //    return await context.Contract
-        //        .Include(c => c.Room)
-        //        .Include(c => c.OwnerAccount)
-        //        .Include(c => c.StudentLeadAccount)
-        //        .Include(c => c.ContractDetails)  // Include ContractDetails
-        //            .ThenInclude(cd => cd.Service)  // Include Service within ContractDetails
-        //        .ToListAsync();
-        //}
+        public async Task<IEnumerable<Contract>> GetContractsAsync()
+        {
+            var context = new DataContext();
+            return await context.Contract
+                .Include(c => c.Members)
+                .ToListAsync();
+        }
 
-        //public async Task<IEnumerable<Contract>> GetContractsByOwnerIDAsync(int ownerID)
-        //{
-        //    var context = new DataContext();
-        //    return await context.Contract
-        //        .Include(c => c.Room)
-        //        .Include(c => c.OwnerAccount)
-        //        .Include(c => c.StudentLeadAccount)
-        //        .Include(c => c.ContractDetails)
-        //            .ThenInclude(cd => cd.Service)
-        //        .Where(c => c.OwnerAccountID == ownerID)
-        //        .ToListAsync();
-        //}
+        public async Task<IEnumerable<Contract>> GetContractsByOwnerIDAsync(int ownerID)
+        {
+            var context = new DataContext();
+            return await context.Contract
+                .Include(c => c.Members)
+                .Where(c => c.OwnerAccountID == ownerID)
+                .ToListAsync();
+        }
 
-        //public async Task<IEnumerable<Contract>> GetContractsByStudentIDAsync(int studentID)
-        //{
-        //    var context = new DataContext();
-        //    return await context.Contract
-        //        .Include(c => c.Room)
-        //        .Include(c => c.OwnerAccount)
-        //        .Include(c => c.StudentLeadAccount)
-        //        .Include(c => c.ContractDetails)
-        //            .ThenInclude(cd => cd.Service)
-        //        .Where(c => c.StudentAccountID == studentID)
-        //        .ToListAsync();
-        //}
+        public async Task<IEnumerable<Contract>> GetContractsByStudentIDAsync(int studentID)
+        {
+            var context = new DataContext();
+            return await context.Contract
+                .Include(c => c.Members)
+                .Where(c => c.StudentAccountID == studentID)
+                .ToListAsync();
+        }
 
-        //public async Task<Contract> GetContractByContractIDAsync(int contractID)
-        //{
-        //    var context = new DataContext();
-        //    return await context.Contract
-        //        .Include(c => c.Room)
-        //        .Include(c => c.OwnerAccount)
-        //        .Include(c => c.StudentLeadAccount)
-        //        .Include(c => c.ContractDetails)
-        //            .ThenInclude(cd => cd.Service)
-        //        .FirstOrDefaultAsync(c => c.ContractID == contractID);
-        //}
+        public async Task<Contract> GetContractByContractIDAsync(int contractID)
+        {
+            var context = new DataContext();
+            return await context.Contract
+                .Include(c => c.Members)
+
+                .FirstOrDefaultAsync(c => c.ContractID == contractID);
+        }
 
     }
 }

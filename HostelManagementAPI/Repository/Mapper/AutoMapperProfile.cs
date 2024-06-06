@@ -72,13 +72,17 @@ public class AutoMapperProfile : Profile
         CreateMap<Contract, GetContractDto>()
             .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
         CreateMap<Account, CustomerViewAccount>().ReverseMap();
-        //CreateMap<Contract, GetContractDto>()
-        //    .ForMember(dest => dest.ContractDetails, opt => opt.MapFrom(src => src.ContractDetails));
+        CreateMap<Contract, GetContractDto>()
+            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccountID))
+            .ForMember(dest => dest.StudentAccountID, opt => opt.MapFrom(src => src.StudentAccountID))
+            .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
+            .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
 
-        // CreateMap<ContractDetail, GetContractDetailsDto>()
-        //     .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))
-        //     .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice));
-        // CreateMap<RoomService, RoomServiceResponseDto>()
+        CreateMap<ContractMember, GetContractDetailsDto>()
+            .ForMember(dest => dest.ContractMemberID, opt => opt.MapFrom(src => src.ContractMemberID))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
+            .ForMember(dest => dest.CitizenCard, opt => opt.MapFrom(src => src.CitizenCard));
         //     .ForMember(dest => dest.ServiceID, opt => opt.MapFrom(src => src.Service.ServiceID))
         //     .ForMember(dest => dest.TypeServiceID, opt => opt.MapFrom(src => src.Service.TypeServiceID))
         //     .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))

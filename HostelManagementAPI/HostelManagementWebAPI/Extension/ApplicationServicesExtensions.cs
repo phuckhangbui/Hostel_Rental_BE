@@ -40,8 +40,8 @@ public static class ApplicationServicesExtensions
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
         services.AddScoped<IHostelService, HostelService>();
-        //services.AddScoped<IContractService, ContractService>();
-        //services.AddScoped<IContractRepository, ContractRepository>();
+        services.AddScoped<IContractService, ContractService>();
+        services.AddScoped<IContractRepository, ContractRepository>();
         //services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
