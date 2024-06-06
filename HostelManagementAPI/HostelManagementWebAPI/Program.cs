@@ -1,8 +1,7 @@
 using API.Extensions;
-using DAO;
 using HostelManagementWebAPI.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +17,8 @@ builder.Services.ApplicationServices(builder.Configuration);
 
 //builder.Services.AddDbContext<DataContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCloud")));
+
+ConfigurationHelper.Initialize(builder.Configuration);
 
 builder.Services.AddSwaggerGen(option =>
 {
