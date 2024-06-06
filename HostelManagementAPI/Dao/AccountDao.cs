@@ -25,12 +25,6 @@ namespace DAO
             }
         }
 
-        public async Task<Account> GetAccountLoginByUsername(string username)
-        {
-            var context = new DataContext();
-            return await context.Account.FirstOrDefaultAsync(x => x.Username == username);
-        }
-
         public override async Task<IEnumerable<Account>> GetAllAsync()
         {
             var context = new DataContext();

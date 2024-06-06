@@ -5,7 +5,8 @@
         public int ContractMemberD { get; set; }
         public Contract Contract { get; set; }
         public int? ContractID { get; set; }
-        public Account Student { get; set; }
-        public int? AccountID { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
+        public string? CitizenCard { get; set; }
     }
 }
