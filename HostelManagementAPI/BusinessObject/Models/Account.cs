@@ -27,6 +27,6 @@
         public IList<Notice> AccountNoticeReceive { get; set; }
         public IList<Contract> OwnerContract { get; set; }
         public IList<Contract> StudentContract { get; set; }
-        public IList<ContractMember> contractMembers { get; set; }
+        public IList<RoomAppointment> Appointments { get; set; }
     }
 }

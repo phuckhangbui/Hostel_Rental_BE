@@ -20,6 +20,5 @@
         public int Status { get; set; }
 
         public IList<ContractMember> Members { get; set; }
-        public IList<ContractDetail> ContractDetails { get; set; }
     }
 }

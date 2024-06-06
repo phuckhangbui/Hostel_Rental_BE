@@ -50,7 +50,6 @@ namespace DAO
         public DbSet<BillPaymentDetail> BillPaymentDetail { get; set; }
         public DbSet<Complain> Complain { get; set; }
         public DbSet<Contract> Contract { get; set; }
-        public DbSet<ContractDetail> ContractDetail { get; set; }
         public DbSet<ContractMember> ContractMember { get; set; }
         public DbSet<Hostel> Hostel { get; set; }
         public DbSet<MemberShip> Membership { get; set; }
@@ -61,6 +60,7 @@ namespace DAO
         public DbSet<HostelImage> HostelImages { get; set; }
         public DbSet<TypeService> TypeService { get; set; }
         public DbSet<RoomService> RoomService { get; set; }
+        public DbSet<RoomAppointment> RoomAppointments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -107,19 +107,12 @@ namespace DAO
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            modelBuilder.Entity<ContractDetail>()
-              .HasKey(contractdetail => contractdetail.ContractDetailID);
-
-            modelBuilder.Entity<ContractDetail>()
-                .Property(contractdetail => contractdetail.ContractDetailID)
-                .ValueGeneratedOnAdd()
-                .UseIdentityColumn();
 
             modelBuilder.Entity<ContractMember>()
-              .HasKey(contractmember => contractmember.ContractMemberD);
+              .HasKey(contractmember => contractmember.ContractMemberID);
 
             modelBuilder.Entity<ContractMember>()
-                .Property(contractmember => contractmember.ContractMemberD)
+                .Property(contractmember => contractmember.ContractMemberID)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
@@ -195,6 +188,14 @@ namespace DAO
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
+            modelBuilder.Entity<RoomAppointment>()
+             .HasKey(RoomAppointment => RoomAppointment.ViewRoomAppointmentId);
+
+            modelBuilder.Entity<RoomAppointment>()
+                .Property(RoomAppointment => RoomAppointment.ViewRoomAppointmentId)
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn();
+
 
             //one account have many hostel
             modelBuilder.Entity<Hostel>()
@@ -259,12 +260,6 @@ namespace DAO
                .HasForeignKey(contractmember => contractmember.ContractID)
                .OnDelete(DeleteBehavior.Restrict);
 
-            //one contract have many contract detail
-            modelBuilder.Entity<ContractDetail>()
-               .HasOne(contractdetail => contractdetail.Contract)
-               .WithMany(contract => contract.ContractDetails)
-               .HasForeignKey(contractdetail => contractdetail.ContractID)
-               .OnDelete(DeleteBehavior.Restrict);
 
             // one hostel have many room
             modelBuilder.Entity<Room>()
@@ -328,6 +323,17 @@ namespace DAO
                 .HasForeignKey(rs => rs.RoomId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<RoomAppointment>()
+                .HasOne(RoomAppointment => RoomAppointment.Room)
+                .WithMany(Room => Room.RoomAppointments)
+                .HasForeignKey(RoomAppointment => RoomAppointment.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RoomAppointment>()
+                 .HasOne(RoomAppointment => RoomAppointment.Viewer)
+                 .WithMany(a => a.Appointments)
+                 .HasForeignKey(RoomAppointment => RoomAppointment.ViewerId)
+                 .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

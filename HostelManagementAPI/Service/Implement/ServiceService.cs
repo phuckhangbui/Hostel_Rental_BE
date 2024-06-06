@@ -43,32 +43,6 @@
 //        {
 //            return _serviceRepository.GetServiceById(id);
 //        }
-
-<<<<<<< HEAD
-        public async Task<bool> CheckServiceExist(int id)
-        {
-            var service = await _serviceRepository.GetServiceById(id);
-            if(service == null)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public async Task<List<ServiceResponseDto>> GetServices()
-        {
-            List<ServiceResponseDto> services = await _serviceRepository.GetServices();
-            
-            return services;
-        }
-
-        public async Task RemoveService(int serviceId)
-        {
-           await _serviceRepository.RemoveServiceAsync(serviceId);
-        }
-    }
-}
-=======
 //        public async Task<bool> CheckServiceExist(int id)
 //        {
 //            var service = await _serviceRepository.GetServiceById(id);
@@ -80,4 +54,3 @@
 //        }
 //    }
 //}
->>>>>>> khang

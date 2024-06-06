@@ -2,7 +2,7 @@
 {
     public class ContractMember
     {
-        public int ContractMemberD { get; set; }
+        public int ContractMemberID { get; set; }
         public Contract Contract { get; set; }
         public int? ContractID { get; set; }
         public string? Name { get; set; }
