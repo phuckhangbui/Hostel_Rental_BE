@@ -19,17 +19,17 @@ public static class ApplicationServicesExtensions
 
         services.AddScoped<ITokenService, TokenService>();
 
-        //services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IMemberShipRepository, MemberShipRepository>();
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
         services.AddScoped<IHostelRepository, HostelRepository>();
         //services.AddScoped<IDashboardRepository, DashboardRepository>();
 
-        //services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IMemberShipService, MemberShipService>();
 
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
-        services.AddScoped<ITypeServiceService, TypeServiceService>();
+        //services.AddScoped<ITypeServiceService, TypeServiceService>();
 
         //services.AddScoped<IServiceRepository, ServiceRepository>();
         //services.AddScoped<IServiceService, ServiceService>();
