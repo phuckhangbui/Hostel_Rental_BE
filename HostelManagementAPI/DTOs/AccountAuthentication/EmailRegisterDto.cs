@@ -5,13 +5,11 @@ namespace DTOs.AccountAuthentication
     public class EmailRegisterDto
     {
         [Required]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         public int RoleId { get; set; }
 
-        [Required]
         public string Name { get; set; }
 
         [Required]

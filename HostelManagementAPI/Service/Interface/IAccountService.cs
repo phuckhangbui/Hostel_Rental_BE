@@ -12,7 +12,8 @@ namespace Service.Interface
         Task<AccountLoginDto> Login(EmailLoginDto login);
         Task RegisterEmail(EmailRegisterDto emailRegisterDto);
         Task ConfirmOtp(AccountConfirmDto accountConfirmDto);
-        Task ForgetPassword(EmailRegisterDto emailRegisterDto);
+        Task ResendRegisterOtp(string email);
+        Task ForgetPassword(string email);
         Task<AccountLoginDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos);
         Task<AccountLoginDto> LoginWithGoogle(LoginWithGoogleDto loginWithGoogle);
         Task<AccountLoginDto> RegisterWithGoogle(RegisterWithGoogleDto registerWithGoogle);

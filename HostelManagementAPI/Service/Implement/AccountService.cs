@@ -115,7 +115,7 @@ namespace Service.Implement
         public async Task ConfirmOtp(AccountConfirmDto accountConfirmDto)
         {
             AccountDto accountDto = await _accountRepository.GetAccountByEmail(accountConfirmDto.Email);
-            if (accountDto != null && accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm && (bool)accountDto.IsLoginWithGmail)
+            if (accountDto != null && accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm && (bool)!accountDto.IsLoginWithGmail)
             {
                 if (accountDto.OtpToken != accountConfirmDto.OtpToken)
                 {
@@ -132,6 +132,26 @@ namespace Service.Implement
             }
         }
 
+        public async Task ResendRegisterOtp(string email)
+        {
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(email);
+            if (accountDto != null && accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm && (bool)!accountDto.IsLoginWithGmail)
+            {
+                Random random = new Random();
+                var otp = random.Next(111111, 999999).ToString();
+
+                accountDto.OtpToken = otp;
+
+                await _accountRepository.UpdateAccount(accountDto);
+
+                _mailService.SendMail(SendAccountPassword.SendInitPassword(email, otp));
+            }
+            else
+            {
+                throw new ServiceException("The email does not need this function");
+            }
+        }
+
 
         public async Task RegisterEmail(EmailRegisterDto emailRegisterDto)
         {
@@ -141,9 +161,12 @@ namespace Service.Implement
                 throw new ServiceException("This email has already been used. Please choose other email");
             }
 
-            if (accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm)
+            if (accountDto != null)
             {
-                await _accountRepository.RemoveAccount(accountDto);
+                if (accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm)
+                {
+                    await _accountRepository.RemoveAccount(accountDto);
+                }
             }
 
             Random random = new Random();
@@ -154,6 +177,7 @@ namespace Service.Implement
             AccountDto newAccount = new AccountDto
             {
                 Email = emailRegisterDto.Email,
+                Name = emailRegisterDto.Name,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(emailRegisterDto.Password)),
                 PasswordSalt = hmac.Key,
                 CreatedDate = DateTime.Now,
@@ -170,19 +194,18 @@ namespace Service.Implement
 
             await _accountRepository.CreateAccount(newAccount);
 
-            //send mail here for the passwords
             _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, otp));
         }
 
-        public async Task ForgetPassword(EmailRegisterDto emailRegisterDto)
+        public async Task ForgetPassword(string email)
         {
-            AccountDto accountDto = await _accountRepository.GetAccountByEmail(emailRegisterDto.Email);
+            AccountDto accountDto = await _accountRepository.GetAccountByEmail(email);
             if (accountDto == null)
             {
                 throw new ServiceException("No account associate with this email");
             }
 
-            if ((bool)!accountDto.IsLoginWithGmail)
+            if ((bool)accountDto.IsLoginWithGmail == true)
             {
                 throw new ServiceException("Your account was registered using gmail service, there is no password");
             }
@@ -190,13 +213,12 @@ namespace Service.Implement
             Random random = new Random();
             var otp = random.Next(111111, 999999).ToString();
 
-            using var hmac = new HMACSHA512();
             accountDto.OtpToken = otp;
 
             await _accountRepository.UpdateAccount(accountDto);
 
             //send mail here for the passwords
-            _mailService.SendMail(SendAccountPassword.SendInitPassword(emailRegisterDto.Email, otp));
+            _mailService.SendMail(SendAccountPassword.SendInitPassword(email, otp));
         }
 
         public async Task<AccountLoginDto> ConfirmPassword(ConfirmPasswordDtos confirmPasswordDtos)
@@ -204,7 +226,7 @@ namespace Service.Implement
             AccountDto accountDto = await _accountRepository.GetAccountByEmail(confirmPasswordDtos.Email);
             if (accountDto != null)
             {
-                if ((bool)!accountDto.IsLoginWithGmail)
+                if ((bool)accountDto.IsLoginWithGmail)
                 {
                     throw new ServiceException("Your account was registered using gmail service, there is no password");
                 }

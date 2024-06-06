@@ -10,7 +10,8 @@ namespace Service.Implement
 	public class CloudinaryService : ICloudinaryService
 	{
 		private readonly Cloudinary cloudinary;
-		public CloudinaryService(IOptions<CloudinarySetting> config)
+        private readonly string uploadFolder;
+        public CloudinaryService(IOptions<CloudinarySetting> config)
 		{
 			var acc = new Account(
 				config.Value.CloudName,
@@ -19,7 +20,8 @@ namespace Service.Implement
 			);
 
 			cloudinary = new Cloudinary(acc);
-		}
+            uploadFolder = config.Value.UploadFolder;
+        }
 		public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
 		{
 			var uploadResult = new ImageUploadResult();
@@ -29,7 +31,7 @@ namespace Service.Implement
 				var uploadParams = new ImageUploadParams
 				{
 					File = new FileDescription(file.FileName, stream),
-					Folder = "PRN231_GroupProject"
+					Folder = uploadFolder,
 				};
 				uploadResult = await cloudinary.UploadAsync(uploadParams);
 			}

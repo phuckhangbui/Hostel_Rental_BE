@@ -46,6 +46,11 @@ namespace HostelManagementWebAPI.Controllers
         [HttpPost("register/email")]
         public async Task<ActionResult> Register(EmailRegisterDto emailRegisterDto)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(new ApiResponseStatus(400, "Invalid format"));
+            //}
+
             try
             {
                 await _accountService.RegisterEmail(emailRegisterDto);
@@ -61,7 +66,7 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPost("confirm/account")]
+        [HttpPost("otp/confirm")]
         public async Task<ActionResult> ConfirmAccount(AccountConfirmDto accountConfirmDto)
         {
             try
@@ -79,12 +84,30 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPost("forget/password")]
-        public async Task<ActionResult> ForgetPassword(EmailRegisterDto emailRegisterDto)
+        [HttpGet("otp/resend")]
+        public async Task<ActionResult> ResendOtp(string email)
         {
             try
             {
-                await _accountService.ForgetPassword(emailRegisterDto);
+                await _accountService.ResendRegisterOtp(email);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+        }
+
+        [HttpGet("forget/password")]
+        public async Task<ActionResult> ForgetPassword(string email)
+        {
+            try
+            {
+                await _accountService.ForgetPassword(email);
                 return Ok();
             }
             catch (ServiceException ex)

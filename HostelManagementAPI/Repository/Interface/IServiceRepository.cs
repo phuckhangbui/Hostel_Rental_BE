@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Service;
 
 namespace Repository.Interface
 {
@@ -7,6 +8,8 @@ namespace Repository.Interface
         Task<bool> CreateService(Services service);
         Task<bool> UpdateService(Services service);
         Task<Services> GetServiceById(int id);
-        Task<List<Services>> GetServices();
+        Task<List<ServiceResponseDto>> GetServices();
+        Task RemoveServiceAsync(int serviceId);
+
     }
 }

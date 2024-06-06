@@ -53,5 +53,17 @@ namespace Service.Implement
             }
             return true;
         }
+
+        public async Task<List<ServiceResponseDto>> GetServices()
+        {
+            List<ServiceResponseDto> services = await _serviceRepository.GetServices();
+            
+            return services;
+        }
+
+        public async Task RemoveService(int serviceId)
+        {
+           await _serviceRepository.RemoveServiceAsync(serviceId);
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using BusinessObject.Models;
+using DTOs.Service;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAO
 {
@@ -35,6 +37,33 @@ namespace DAO
                 service = context.Service.FirstOrDefault(x => x.ServiceID == id);
             }
             return service;
+        }
+
+        public async Task<List<ServiceResponseDto>> GetAllServicesAsync()
+        {
+            using (var context = new DataContext())
+            {
+                return await context.Service
+                    .Select(service => new ServiceResponseDto
+                    {
+                        ServiceID = service.ServiceID,
+                        TypeServiceID = service.TypeServiceID,
+                        ServiceName = service.ServiceName,
+                        ServicePrice = service.ServicePrice
+                    })
+                    .ToListAsync();
+            }
+        }
+
+        public async Task RemoveService(int serviceId)
+        {
+            var context = new DataContext();
+            var service = await context.Service.FirstOrDefaultAsync(s => s.ServiceID == serviceId);
+            if (service != null)
+            {
+                context.Service.Remove(service);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

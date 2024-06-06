@@ -1,5 +1,6 @@
 ﻿using DTOs.Enum;
 using DTOs.Room;
+using DTOs.RoomService;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
 using Service.Exceptions;
@@ -8,29 +9,35 @@ using Service.Interface;
 namespace Service.Implement
 {
     public class RoomService : IRoomService
-	{
+    {
 		private readonly IRoomRepository _roomRepository;
 		private readonly IHostelRepository _hostelRepository;
+		private readonly IAccountRepository _accountRepository;
+		private readonly IContractRepository _contractRepository;
 		private readonly ICloudinaryService _cloudinaryService;
-
-		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
-		{
-			return await _roomRepository.GetListRoomsByHostelId(hostelId);
-		}
 
 		public RoomService(
 			IRoomRepository roomRepository, 
 			IHostelRepository hostelRepository,
+			IAccountRepository accountRepository,
+			IContractRepository contractRepository,
 			ICloudinaryService cloudinaryService)
 		{
 			_roomRepository = roomRepository;
 			_hostelRepository = hostelRepository;
+			_accountRepository = accountRepository;
+			_contractRepository = contractRepository;
 			_cloudinaryService = cloudinaryService;
 		}
 
-		public async Task ChangeRoomStatus(int roomId, int status)
+        public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
+        {
+            return await _roomRepository.GetListRoomsByHostelId(hostelId);
+        }
+
+        public async Task ChangeRoomStatus(int roomId, int status)
 		{
-			var room = await _roomRepository.GetRoomDetailById(roomId);
+			var room = await _roomRepository.GetRoomById(roomId);
 			if (room == null)
 			{
 				throw new ServiceException("Room not found with this ID");
@@ -46,18 +53,30 @@ namespace Service.Implement
 
 		public async Task<RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId)
 		{
-			var room = await _roomRepository.GetRoomDetailById(roomId);
+			var room = await _roomRepository.GetRoomById(roomId);
 			if (room == null)
 			{
 				throw new ServiceException("Room not found with this ID");
 			}
 
-			return room;
+			var roomDetail =  await _roomRepository.GetRoomDetailById(roomId);
+			if (roomDetail.Status == (int)RoomEnum.Hiring)
+			{
+				var contracts = await _contractRepository.GetContractsAsync();
+				var currentContract = contracts.FirstOrDefault(c => c.RoomID == roomId && c.Status == 1);
+				if (currentContract != null)
+				{
+					var renterAcocunt = await _accountRepository.GetAccountById((int)currentContract.StudentAccountID);
+					roomDetail.RenterName = renterAcocunt.Name;
+				}
+			}
+
+			return roomDetail;
 		}
 
 		public async Task<CreateRoomResponseDto> CreateRoom(CreateRoomRequestDto createRoomRequestDto)
 		{
-			var hostel = await _hostelRepository.GetHostelById(createRoomRequestDto.HostelID);
+			var hostel = await _hostelRepository.GetHostelDetailById(createRoomRequestDto.HostelID);
 			if (hostel == null)
 			{
 				throw new ServiceException("Hostel not found with this ID");
@@ -70,7 +89,7 @@ namespace Service.Implement
 
 		public async Task UploadRoomImage(IFormFileCollection files, int roomId)
 		{
-			var room = await _roomRepository.GetRoomDetailById(roomId);
+			var room = await _roomRepository.GetRoomById(roomId);
 			if (room != null)
 			{
 				try
@@ -103,7 +122,7 @@ namespace Service.Implement
 
 		public async Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto)
 		{
-			var room = await _roomRepository.GetRoomDetailById(roomId);
+			var room = await _roomRepository.GetRoomById(roomId);
 			if (room == null)
 			{
 				throw new ServiceException("Room not found with this ID");
@@ -120,6 +139,21 @@ namespace Service.Implement
         public async Task<List<string>> GetRoomImagesByHostelId(int hostelId)
         {
 			return await _roomRepository.GetRoomImagesByHostelId(hostelId);
+        }
+
+        public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
+        {
+			return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
+        }
+
+        public Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        {
+            return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
+        }
+
+        public Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
+        {
+			return _roomRepository.GetRoomServicesByRoomIdAsync(roomId);
         }
     }
 }

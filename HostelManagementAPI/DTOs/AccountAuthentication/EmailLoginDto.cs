@@ -5,7 +5,7 @@ namespace DTOs.AccountAuthentication
     public class EmailLoginDto
     {
         [Required]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

@@ -69,5 +69,10 @@ namespace Repository.Implement
         {
             return await ContractDao.Instance.GetContractsByStudentIDAsync(studentId);
         }
+
+        public async Task<Contract> GetContractDetailsByContractId(int contractId)
+        {
+            return await ContractDao.Instance.GetContractByContractIDAsync(contractId);
+        }
     }
 }

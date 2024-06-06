@@ -1,4 +1,5 @@
-﻿using DTOs.Service;
+﻿using BusinessObject.Models;
+using DTOs.Service;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -101,6 +102,41 @@ namespace HostelManagementWebAPI.Controllers
             {
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
+        }
+        [HttpGet("services")]
+        public async Task<ActionResult> GetAllServices()
+        {
+            try
+            {
+                List<ServiceResponseDto> services = await _serviceService.GetServices();
+                return Ok(services);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpDelete("services/{serviceId}")]
+        public async Task<IActionResult> RemoveService(int serviceId)
+        {
+            try
+            {
+                var checkServiceExist = await _serviceService.CheckServiceExist(serviceId);
+                if (!checkServiceExist)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Service does not exist."));
+                }
+                await _serviceService.RemoveService(serviceId);
+                return Ok("Delete Service with ID: " + serviceId + " complete");
+            } catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            } catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+            
         }
     }
 }

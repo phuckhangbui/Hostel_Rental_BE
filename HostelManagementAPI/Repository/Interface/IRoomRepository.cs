@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Models;
 using DTOs.Room;
+using DTOs.RoomService;
 
 namespace Repository.Interface
 {
@@ -14,6 +15,8 @@ namespace Repository.Interface
 		Task UploadRoomImage(int roomId, List<string> imageUrls);
 		Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId);
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
-
+		Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
+        Task RemoveRoomServiceAsync(int roomId, int serviceId);
+        Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
     }
 }

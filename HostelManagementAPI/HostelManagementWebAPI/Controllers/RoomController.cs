@@ -63,7 +63,11 @@ namespace HostelManagementWebAPI.Controllers
 				var room = await _roomService.GetRoomDetailByRoomId(roomId);
 				return Ok(room);
 			}
-			catch (Exception ex)
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
 			{
 				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
 			}
@@ -77,7 +81,11 @@ namespace HostelManagementWebAPI.Controllers
 				var rooms = await _roomService.GetListRoomsByHostelId(hostelId);
 				return Ok(rooms);
 			}
-			catch (Exception ex)
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
 			{
 				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
 			}
@@ -138,6 +146,59 @@ namespace HostelManagementWebAPI.Controllers
             {
                 List<string> hostels = await _roomService.GetRoomImagesByHostelId(hostelId);
                 return Ok(hostels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPost("roomServiceAdd")]
+
+        public async Task<IActionResult> AddRoomServices([FromBody] AddRoomServicesDto roomServicesDto)
+        {
+            try
+            {
+                await _roomService.AddRoomService(roomServicesDto);
+                return Ok("Add Room Services Complete!");
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpDelete("{roomId}/{serviceId}")]
+        public async Task<IActionResult> RemoveRoomService(int roomId, int serviceId)
+		{
+			try
+			{
+				await _roomService.RemoveRoomServiceAsync(roomId, serviceId);
+				return Ok();
+			}
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+
+
+        }
+
+        [HttpGet("rooms/{roomId}/roomServices")]
+        public async Task<ActionResult> GetRoomServicesByRoomId(int roomId)
+        {
+            try
+            {
+                 var roomServices = await _roomService.GetRoomServicesByRoomIdAsync(roomId);
+                return Ok(roomServices);
             }
             catch (Exception ex)
             {
