@@ -22,7 +22,7 @@ public static class ApplicationServicesExtensions
         //services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IMemberShipRepository, MemberShipRepository>();
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
-        //services.AddScoped<IHostelRepository, HostelRepository>();
+        services.AddScoped<IHostelRepository, HostelRepository>();
         //services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         //services.AddScoped<IRoomService, RoomService>();
@@ -39,7 +39,7 @@ public static class ApplicationServicesExtensions
 
         services.Configure<CloudinarySetting>(config.GetSection("CloudinarySettings"));
         services.AddScoped<ICloudinaryService, CloudinaryService>();
-        //services.AddScoped<IHostelService, HostelService>();
+        services.AddScoped<IHostelService, HostelService>();
         //services.AddScoped<IContractService, ContractService>();
         //services.AddScoped<IContractRepository, ContractRepository>();
         //services.AddScoped<IDashboardService, DashboardService>();

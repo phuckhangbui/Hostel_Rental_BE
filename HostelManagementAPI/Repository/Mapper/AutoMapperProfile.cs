@@ -52,11 +52,6 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0))
             .ForMember(dest => dest.NumOfTotalRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
-        //CreateMap<HostelService, HostelServiceResponseDto>()
-        //    .ForMember(dest => dest.ServiceID, opt => opt.MapFrom(src => src.Service.ServiceID))
-        //    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))
-        //    .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice))
-        //    .ForMember(dest => dest.TypeServiceID, opt => opt.MapFrom(src => src.Service.TypeServiceID));
         CreateMap<Hostel, HostelsAdminView>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty));

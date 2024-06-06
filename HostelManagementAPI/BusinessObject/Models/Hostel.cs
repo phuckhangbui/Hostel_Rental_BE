@@ -9,7 +9,6 @@
         public int? AccountID { get; set; }
         public Account OwnerAccount { get; set; }
         public int? Status { get; set; }
-        public string? Thumbnail { get; set; }
         public IList<Room>? Rooms { get; set; }
         public IList<HostelImage>? Images { get; set; }
     }
