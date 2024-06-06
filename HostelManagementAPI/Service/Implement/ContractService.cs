@@ -41,15 +41,15 @@ namespace Service.Implement
             await _contractRepository.CreateContract(contract);
         }
 
-        //public async Task<GetContractDto> GetContractDetailByContractId(int contractId)
-        //{
-        //    var contract = await _contractRepository.GetContractDetailsByContractId(contractId);
-        //    if (contract == null)
-        //    {
-        //        throw new ServiceException("Contract not found with this ID");
-        //    }
-        //    return _mapper.Map<GetContractDto>(contract);
-        //}
+        public async Task<GetContractDto> GetContractDetailByContractId(int contractId)
+        {
+            var contract = await _contractRepository.GetContractDetailsByContractId(contractId);
+            if (contract == null)
+            {
+                throw new ServiceException("Contract not found with this ID");
+            }
+            return _mapper.Map<GetContractDto>(contract);
+        }
 
         public async Task<IEnumerable<GetContractDto>> GetContracts()
         {
@@ -57,27 +57,27 @@ namespace Service.Implement
             return _mapper.Map<List<GetContractDto>>(contracts);
         }
 
-        //public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
-        //{
-        //    var owner = await _accountRepository.GetAccountById(ownerId);
-        //    if (owner == null)
-        //    {
-        //        throw new ServiceException("Owner not found with this ID");
-        //    }
-        //    var contracts = await _contractRepository.GetContractByOwnerId(ownerId);
-        //    return _mapper.Map<List<GetContractDto>>(contracts);
-        //}
+        public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
+        {
+            var owner = await _accountRepository.GetAccountById(ownerId);
+            if (owner == null)
+            {
+                throw new ServiceException("Owner not found with this ID");
+            }
+            var contracts = await _contractRepository.GetContractByOwnerId(ownerId);
+            return _mapper.Map<List<GetContractDto>>(contracts);
+        }
 
-        //public async Task<IEnumerable<GetContractDto>> GetContractsByStudentId(int studentId)
-        //{
-        //    var student = await _accountRepository.GetAccountById(studentId);
-        //    if (student == null)
-        //    {
-        //        throw new ServiceException("Student not found with this ID");
-        //    }
-        //    var contracts = await _contractRepository.GetContractByStudentId(studentId);
-        //    return _mapper.Map<List<GetContractDto>>(contracts);
-        //}
+        public async Task<IEnumerable<GetContractDto>> GetContractsByStudentId(int studentId)
+        {
+            var student = await _accountRepository.GetAccountById(studentId);
+            if (student == null)
+            {
+                throw new ServiceException("Student not found with this ID");
+            }
+            var contracts = await _contractRepository.GetContractByStudentId(studentId);
+            return _mapper.Map<List<GetContractDto>>(contracts);
+        }
 
         //public async Task UpdateContract(UpdateContractDto contractDto)
         //{
