@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240606035516_deleteContractDetail")]
+    partial class deleteContractDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,6 +297,9 @@ namespace DAO.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("HostelID");
 
                     b.HasIndex("AccountID");
@@ -448,35 +454,6 @@ namespace DAO.Migrations
                     b.HasIndex("HostelID");
 
                     b.ToTable("Room");
-                });
-
-            modelBuilder.Entity("BusinessObject.Models.RoomAppointment", b =>
-                {
-                    b.Property<int>("ViewRoomAppointmentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ViewRoomAppointmentId"));
-
-                    b.Property<DateTime>("AppointmentTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ViewerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ViewRoomAppointmentId");
-
-                    b.HasIndex("RoomId");
-
-                    b.HasIndex("ViewerId");
-
-                    b.ToTable("RoomAppointments");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
@@ -690,25 +667,6 @@ namespace DAO.Migrations
                     b.Navigation("Hostel");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.RoomAppointment", b =>
-                {
-                    b.HasOne("BusinessObject.Models.Room", "Room")
-                        .WithMany("RoomAppointments")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObject.Models.Account", "Viewer")
-                        .WithMany("Appointments")
-                        .HasForeignKey("ViewerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-
-                    b.Navigation("Viewer");
-                });
-
             modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
                 {
                     b.HasOne("BusinessObject.Models.Room", "Room")
@@ -746,8 +704,6 @@ namespace DAO.Migrations
 
                     b.Navigation("AccountNoticeReceive");
 
-                    b.Navigation("Appointments");
-
                     b.Navigation("Hostels");
 
                     b.Navigation("Memberships");
@@ -782,8 +738,6 @@ namespace DAO.Migrations
             modelBuilder.Entity("BusinessObject.Models.Room", b =>
                 {
                     b.Navigation("Complains");
-
-                    b.Navigation("RoomAppointments");
 
                     b.Navigation("RoomContract");
 

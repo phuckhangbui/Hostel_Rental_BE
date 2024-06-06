@@ -72,8 +72,8 @@ public class AutoMapperProfile : Profile
         CreateMap<Contract, GetContractDto>()
             .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
         CreateMap<Account, CustomerViewAccount>().ReverseMap();
-        CreateMap<Contract, GetContractDto>()
-            .ForMember(dest => dest.ContractDetails, opt => opt.MapFrom(src => src.ContractDetails));
+        //CreateMap<Contract, GetContractDto>()
+        //    .ForMember(dest => dest.ContractDetails, opt => opt.MapFrom(src => src.ContractDetails));
 
         // CreateMap<ContractDetail, GetContractDetailsDto>()
         //     .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))
