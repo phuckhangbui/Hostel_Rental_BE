@@ -212,6 +212,11 @@ namespace Service.Implement
                 throw new ServiceException("Your account was registered using gmail service, there is no password");
             }
 
+            if (accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm)
+            {
+                throw new ServiceException("Your account has not been confirm yet, please navigate to the register page again");
+            }
+
             Random random = new Random();
             var otp = random.Next(111111, 999999).ToString();
 
