@@ -1,5 +1,4 @@
 ﻿using DTOs.Hostel;
-using DTOs.HostelService;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -141,47 +140,28 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-		[Authorize(Policy = "Owner")]
-		[HttpPost("hostels/{hostelId}/images")]
-		public async Task<ActionResult> UploadImage(int hostelId, IFormFile formFile)
-		{
-			try
-			{
-				if (formFile == null || formFile.Length == 0)
-				{
-					return BadRequest(new ApiResponseStatus(400, "Invalid image file."));
-				}
+		//[Authorize(Policy = "Owner")]
+		//[HttpPost("hostels/{hostelId}/images")]
+		//public async Task<ActionResult> UploadImage(int hostelId, IFormFile formFile)
+		//{
+		//	try
+		//	{
+		//		if (formFile == null || formFile.Length == 0)
+		//		{
+		//			return BadRequest(new ApiResponseStatus(400, "Invalid image file."));
+		//		}
 
-				await _hostelService.UploadHostelThumbnail(hostelId, formFile);
-				return Ok(new ApiResponseStatus(200, "Image uploaded successfully."));
-			}
-			catch (ServiceException ex)
-			{
-				return BadRequest(new ApiResponseStatus(400, ex.Message));
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-			}
-		}
-
-        [Authorize(Policy = "Owner")]
-        [HttpPost("hostels/{hostelId}/services")]
-        public async Task<ActionResult> AddHostelServices(int hostelId, [FromBody] HostelServiceRequestDto hostelServiceRequestDto)
-        {
-            try
-            {
-                await _hostelService.AddHostelServices(hostelId, hostelServiceRequestDto);
-                return Ok();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(new ApiResponseStatus(400, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-            }
-        }
+		//		await _hostelService.UploadHostelThumbnail(hostelId, formFile);
+		//		return Ok(new ApiResponseStatus(200, "Image uploaded successfully."));
+		//	}
+		//	catch (ServiceException ex)
+		//	{
+		//		return BadRequest(new ApiResponseStatus(400, ex.Message));
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+		//	}
+		//}
     }
 }
