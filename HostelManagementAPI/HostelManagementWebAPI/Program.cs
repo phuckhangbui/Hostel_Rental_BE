@@ -72,6 +72,7 @@ app.UseAuthorization();
 //    var context = services.GetRequiredService<DataContext>();
 //    await context.Database.MigrateAsync();
 //    await SeedData.SeedAccount(context);
+//    await SeedData.SeedHostel(context);
 //}
 //catch (Exception ex)
 //{
