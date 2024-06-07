@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Account;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,10 +11,10 @@ public class SeedData
 {
     public static async Task SeedAccount(DataContext context)
     {
-        //if (await context.Account.AnyAsync())
-        //{
-        //    return;
-        //}
+        if (await context.Account.AnyAsync())
+        {
+            return;
+        }
 
         var accountData = await File.ReadAllTextAsync("AccountSeedData.json");
 
@@ -32,6 +33,26 @@ public class SeedData
             account.IsLoginWithGmail = false;
 
             context.Account.Add(account);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task SeedHostel(DataContext context)
+    {
+        //if(await context.Hostel.AnyAsync())
+        //{
+        //    return;
+        //}
+
+        var hostelData = await File.ReadAllTextAsync("HostelSeedData.json");
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        var hostels = JsonSerializer.Deserialize<List<Hostel>>(hostelData);
+
+        foreach (var hostel in hostels)
+        {
+            context.Hostel.Add(hostel);
         }
 
         await context.SaveChangesAsync();
