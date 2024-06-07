@@ -8,6 +8,7 @@ using DTOs.Hostel;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
+using DTOs.RoomAppointment;
 using DTOs.RoomService;
 using DTOs.TypeService;
 
@@ -85,6 +86,14 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
             .ForMember(dest => dest.CitizenCard, opt => opt.MapFrom(src => src.CitizenCard));
+        CreateMap<RoomAppointment, GetAppointmentDto>()
+            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.RoomName))
+            .ForMember(dest => dest.RoomFee, opt => opt.MapFrom(src => src.Room.RoomFee))
+            .ForMember(dest => dest.ViewerName, opt => opt.MapFrom(src => src.Viewer.Name))
+            .ForMember(dest => dest.ViewerPhone, opt => opt.MapFrom(src => src.Viewer.Phone))
+            .ForMember(dest => dest.ViewerEmail, opt => opt.MapFrom(src => src.Viewer.Email))
+            .ForMember(dest => dest.ViewerCitizenCard, opt => opt.MapFrom(src => src.Viewer.CitizenCard));
+        CreateMap<CreateRoomAppointmentDto, RoomAppointment>();
         //     .ForMember(dest => dest.ServiceID, opt => opt.MapFrom(src => src.Service.ServiceID))
         //     .ForMember(dest => dest.TypeServiceID, opt => opt.MapFrom(src => src.Service.TypeServiceID))
         //     .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.ServiceName))

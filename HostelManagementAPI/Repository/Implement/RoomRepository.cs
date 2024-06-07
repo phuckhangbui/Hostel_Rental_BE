@@ -4,6 +4,7 @@ using BusinessObject.Models;
 using DAO;
 using DTOs.Room;
 using Repository.Interface;
+using DTOs.RoomAppointment;
 
 namespace Repository.Implement
 {
@@ -130,21 +131,47 @@ namespace Repository.Implement
 			return imageUrls;
 		}
 
-		//public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
-		//{
-		//	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
-		//	{
-		//		RoomId = roomServicesDto.RoomId,
-		//		ServiceId = serviceId,
-		//		Status = roomServicesDto.Status
-		//	});
+        public async Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync()
+        {
+            var appointments = await RoomAppointmentDao.Instance.GetRoomAppointmentsAsync();
+			return appointments;
+        }
 
-		//	await RoomServiceDao.Instance.AddRoomServicesAsync(roomServices);
-		//}
+        public async Task<GetAppointmentDto> GetAppointmentById(int id)
+        {
+            var appointmentDetails = await RoomAppointmentDao.Instance.GetRoomAppointmentByIdAsync(id);
+			return appointmentDetails;
+        }
 
-		//public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
-		//{
-		//	await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
-		//}
-	}
+        public async Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto)
+        {
+			RoomAppointment room = new RoomAppointment
+			{
+				RoomId = createRoomAppointmentDto.RoomId,
+				ViewerId = createRoomAppointmentDto.ViewerId,
+				AppointmentTime = DateTime.Now,
+				Status = createRoomAppointmentDto.Status,
+			};
+            var roomAppointment = _mapper.Map<RoomAppointment>(room);
+			
+			await RoomAppointmentDao.Instance.CreateAsync(roomAppointment);
+        }
+
+        //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
+        //{
+        //	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
+        //	{
+        //		RoomId = roomServicesDto.RoomId,
+        //		ServiceId = serviceId,
+        //		Status = roomServicesDto.Status
+        //	});
+
+        //	await RoomServiceDao.Instance.AddRoomServicesAsync(roomServices);
+        //}
+
+        //public async Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        //{
+        //	await RoomServiceDao.Instance.RemoveRoomServiceAsync(roomId, serviceId);
+        //}
+    }
 }
