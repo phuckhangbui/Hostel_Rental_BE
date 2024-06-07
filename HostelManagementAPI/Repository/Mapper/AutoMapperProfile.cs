@@ -8,6 +8,7 @@ using DTOs.Hostel;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using DTOs.Room;
+using DTOs.RoomService;
 using DTOs.TypeService;
 
 namespace Repository.Mapper;
@@ -37,22 +38,22 @@ public class AutoMapperProfile : Profile
         CreateMap<MemberShipRegisterTransaction, ViewTransactionMembership>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount.Name))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount.Email));
-        //CreateMap<Room, RoomDetailResponseDto>()
-        //    .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
-        //    .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore())
-        //    .ForMember(dest => dest.RoomServices, opt => opt.MapFrom(src => src.RoomServices.Select(rs => new RoomServiceResponseDto
-        //    {
-        //        ServiceID = rs.Service.ServiceID,
-        //        ServiceName = rs.Service.ServiceName,
-        //        ServicePrice = rs.Service.ServicePrice,
-        //        Status = rs.Status,
-        //        TypeServiceID = rs.Service.TypeServiceID
-        //    })));
+        CreateMap<Room, RoomDetailResponseDto>()
+            .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
+            .ForMember(dest => dest.RoomImageUrls, opt => opt.Ignore())
+            .ForMember(dest => dest.RoomServices, opt => opt.MapFrom(src => src.RoomServices.Select(rs => new RoomServiceResponseDto
+            {
+                RoomServiceId = rs.RoomServiceId,
+                ServiceName = rs.TypeService.TypeName,
+                ServicePrice = rs.Price,
+                Status = rs.Status,
+                TypeServiceID = rs.TypeService.TypeServiceID,
+            })));
         CreateMap<Hostel, HostelResponseDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.NumOfAvailableRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count(r => r.Status == (int)RoomEnum.Available) : 0))
             .ForMember(dest => dest.NumOfTotalRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0))
-            .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Images != null && src.Images.Any() ? src.Images.First().ImageURL : string.Empty));
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images != null ? src.Images.Select(img => img.ImageURL).ToList() : new List<string>()));
         CreateMap<Hostel, HostelsAdminView>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Name : string.Empty))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty));
