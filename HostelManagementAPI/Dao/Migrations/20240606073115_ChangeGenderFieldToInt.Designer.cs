@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240606073115_ChangeGenderFieldToInt")]
+    partial class ChangeGenderFieldToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -282,9 +285,6 @@ namespace DAO.Migrations
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CreateDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("HostelAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -292,9 +292,6 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HostelName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HostelType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
@@ -424,9 +421,6 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomID"));
-
-                    b.Property<double?>("Area")
-                        .HasColumnType("float");
 
                     b.Property<int?>("Capacity")
                         .HasColumnType("int");

@@ -1,5 +1,7 @@
 ﻿using BusinessObject.Models;
+using DAO;
 using DTOs.Room;
+using DTOs.RoomAppointment;
 using DTOs.RoomService;
 
 namespace Repository.Interface
@@ -8,15 +10,20 @@ namespace Repository.Interface
 	{
 		Task<int> CreateRoom(CreateRoomRequestDto createRoomRequestDto);
 		Task<Room> GetRoomById(int roomId);
-		Task UpdateRoom(int roomId, UpdateRoomRequestDto updateRoomRequestDto);
+		Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto);
 		Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId);
 		Task<RoomDetailResponseDto> GetRoomDetailById(int roomId);
 		Task UpdateRoomStatus(int roomId, int status);
 		Task UploadRoomImage(int roomId, List<string> imageUrls);
 		Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId);
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
-		//Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
-	 //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
-  //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
+		Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync();
+		Task<GetAppointmentDto> GetAppointmentById(int id);
+		Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
+
+
+        //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
+        //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
+        //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
     }
 }

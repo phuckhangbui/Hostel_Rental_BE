@@ -12,5 +12,7 @@ namespace DTOs.Hostel
 		public string HostelDescription { get; set; }
 		[Required]
 		public int AccountID { get; set; }
+		[Required]
+		public string HostelType { get; set; }
 	}
 }

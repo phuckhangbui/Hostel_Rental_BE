@@ -10,7 +10,8 @@
 		public string? OwnerName { get; set; }
 		public int? Status { get; set; }
 		public int? NumOfAvailableRoom { get; set; }
-		public string? Thumbnail {  get; set; }
+		public List<string>? Images {  get; set; }
 		public int? NumOfTotalRoom { get; set; }
-	}
+        public string? HostelType { get; set; }
+    }
 }

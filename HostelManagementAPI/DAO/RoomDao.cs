@@ -49,7 +49,7 @@ namespace DAO
                 return await context.Room
                     .Include(r => r.RoomImages)
                     .Include(r => r.RoomServices)
-                        //.ThenInclude(rs => rs.Service)
+                        .ThenInclude(rs => rs.TypeService)
                     .FirstOrDefaultAsync(r => r.RoomID == roomId);
             }
         }

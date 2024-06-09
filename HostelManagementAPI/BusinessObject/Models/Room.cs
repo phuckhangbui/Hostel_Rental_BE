@@ -7,6 +7,7 @@
         public int? Capacity { get; set; }
         public double? Lenght { get; set; }
         public double? Width { get; set; }
+        public double? Area { get; set; }
         public string? Description { get; set; }
         public double? RoomFee { get; set; }
         public Hostel Hostel { get; set; }
