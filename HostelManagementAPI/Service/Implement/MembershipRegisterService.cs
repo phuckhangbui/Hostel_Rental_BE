@@ -1,4 +1,5 @@
-﻿using DTOs.Enum;
+﻿using DTOs;
+using DTOs.Enum;
 using DTOs.Membership;
 using DTOs.MemberShipRegisterTransaction;
 using Repository.Interface;
@@ -38,5 +39,24 @@ namespace Service.Implement
             return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId, registerMemberShipDto.MembershipId, (double)membership.MemberShipFee);
         }
 
+        public async Task<MemberShipRegisterTransactionDto> ConfirmTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
+        {
+            var membershipTransaction = await _membershipRegisterRepository.GetMembershipTransactionBaseOnTnxRef(vnPayReturnUrlDto.TnxRef);
+
+
+            if (vnPayReturnUrlDto == null)
+            {
+                throw new ServiceException("No transaction match");
+            }
+            var membership = await _memberShipRepository.GetMembershipById((int)membershipTransaction.MemberShipID);
+
+            membershipTransaction.Status = (int)MembershipRegisterEnum.Done;
+            membershipTransaction.DateRegister = DateTime.Now;
+            membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
+
+            await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
+
+            return membershipTransaction;
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Service.Interface;
 using Service.Vnpay;
+using System.Collections.Specialized;
+using System.Web;
 
 
 namespace Service.Implement
@@ -25,7 +27,7 @@ namespace Service.Implement
             vnpay.AddRequestData("vnp_BankCode", "VNBANK");
             vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", "VND");
-            vnpay.AddRequestData("vnp_IpAddr", "https://localhost:44383");
+            vnpay.AddRequestData("vnp_IpAddr", "https://localhost:7050");
             vnpay.AddRequestData("vnp_Locale", "vn");
 
             vnpay.AddRequestData("vnp_OrderInfo", orderInfo);
@@ -37,6 +39,38 @@ namespace Service.Implement
             string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
 
             return paymentUrl;
+        }
+
+        public bool ConfirmReturnUrl(string url, string tnxRef, VnPayProperties vnPayProperties)
+        {
+            NameValueCollection queryParams = HttpUtility.ParseQueryString(HttpUtility.UrlDecode(url));
+
+            Dictionary<string, string> vnpayData = queryParams.AllKeys.ToDictionary(k => k, k => queryParams[k]);
+            string vnp_HashSecret = vnPayProperties.HashSecret;
+
+            VnPayLibrary vnpay = new VnPayLibrary();
+
+            foreach (var kvp in vnpayData)
+            {
+                //get all querystring data
+                if (!string.IsNullOrEmpty(kvp.Key) && kvp.Key.StartsWith("vnp_"))
+                {
+                    vnpay.AddResponseData(kvp.Key, kvp.Value);
+                }
+            }
+
+            string vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
+            string vnp_TransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
+            string vnp_SecureHash = vnpayData["vnp_SecureHash"];
+            bool checkSignature = vnpay.ValidateSignature(vnp_SecureHash, vnp_HashSecret);
+
+            if (checkSignature && vnp_ResponseCode == "00" && vnp_TransactionStatus == "00" && vnpay.GetResponseData("vnp_TxnRef") == tnxRef)
+            {
+                return true;
+            }
+
+            return false;
+
         }
     }
 }

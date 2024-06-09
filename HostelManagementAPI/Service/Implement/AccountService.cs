@@ -184,7 +184,7 @@ namespace Service.Implement
                 PasswordSalt = hmac.Key,
                 CreatedDate = DateTime.Now,
                 Status = (int)AccountStatusEnum.Register_But_Not_Confirm,
-                RoleId = emailRegisterDto.RoleId, // k sure cho docs
+                RoleId = emailRegisterDto.RoleId,
                 IsLoginWithGmail = false,
                 OtpToken = otp,
             };
