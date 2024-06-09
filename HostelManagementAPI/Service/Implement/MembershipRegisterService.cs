@@ -36,6 +36,7 @@ namespace Service.Implement
             {
                 throw new ServiceException("this membership package now is not available");
             }
+
             return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId, registerMemberShipDto.MembershipId, (double)membership.MemberShipFee);
         }
 
@@ -51,8 +52,18 @@ namespace Service.Implement
             var membership = await _memberShipRepository.GetMembershipById((int)membershipTransaction.MemberShipID);
 
             membershipTransaction.Status = (int)MembershipRegisterEnum.Done;
-            membershipTransaction.DateRegister = DateTime.Now;
-            membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
+
+            DateTime? expireDate = membershipTransaction.DateExpire;
+
+
+            if (expireDate == null)
+            {
+                membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
+            }
+            else if (expireDate?.DayOfYear > DateTime.Now.DayOfYear)
+            {
+                membershipTransaction.DateExpire = expireDate?.AddMonths((int)membership.Month);
+            }
 
             await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
 

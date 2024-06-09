@@ -395,5 +395,14 @@ namespace Service.Implement
         {
             return await _accountRepository.GetDetailMemberShipRegisterInformation(accountid);
         }
+
+        public async Task UpdateAccountPackageStatus(int accountId, int status)
+        {
+            var account = await _accountRepository.GetAccountById(accountId);
+
+            account.PackageStatus = status;
+
+            await _accountRepository.UpdateAccount(account);
+        }
     }
 }

@@ -25,5 +25,6 @@ namespace Service.Interface
         Task<CustomerViewAccount> GetAccountProfileById(int id);
         Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip();
         Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountId);
+        Task UpdateAccountPackageStatus(int accountId, int status);
     }
 }

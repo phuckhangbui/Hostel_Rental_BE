@@ -1,4 +1,5 @@
 ﻿using DTOs;
+using DTOs.Enum;
 using DTOs.Membership;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
@@ -113,6 +114,8 @@ namespace HostelManagementWebAPI.Controllers
         [HttpPost("register/confirm-payment")]
         public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
         {
+            int accountId = GetLoginAccountId();
+
             try
             {
                 if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
@@ -121,6 +124,8 @@ namespace HostelManagementWebAPI.Controllers
                 }
 
                 await _memberShipRegisteredService.ConfirmTransaction(vnPayReturnUrlDto);
+
+                await _accountService.UpdateAccountPackageStatus(accountId, (int)AccountPackageStatusEnum.Active);
                 return Ok();
             }
             catch (ServiceException ex)
