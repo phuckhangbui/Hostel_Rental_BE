@@ -1,4 +1,5 @@
-﻿using DTOs.MemberShipRegisterTransaction;
+﻿using DTOs.Membership;
+using DTOs.MemberShipRegisterTransaction;
 
 namespace Service.Interface
 {
@@ -6,5 +7,6 @@ namespace Service.Interface
     {
         Task<IEnumerable<ViewHistoryMemberShipDtos>> GetAllMembershipPackageInAccount(int accountID);
         Task<IEnumerable<ViewTransactionMembership>> GetAllTransactionInAdmin();
+        Task<MemberShipRegisterTransactionDto> RegisterMembership(RegisterMemberShipDto registerMemberShipDto);
     }
 }

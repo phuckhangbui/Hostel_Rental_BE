@@ -100,5 +100,6 @@ public class AutoMapperProfile : Profile
         //     .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice))
         //     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
+        CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>();
     }
 }
