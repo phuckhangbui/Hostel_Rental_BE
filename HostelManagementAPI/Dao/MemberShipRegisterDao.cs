@@ -86,5 +86,14 @@ namespace DAO
 
             return membersRegister;
         }
+
+        public async Task<MemberShipRegisterTransaction> GetMembershipTnxRef(string tnxRef)
+        {
+
+            var context = new DataContext();
+            var membersRegister = await context.MembershipsRegisterTransaction.FirstOrDefaultAsync(m => m.TnxRef == tnxRef);
+
+            return membersRegister;
+        }
     }
 }

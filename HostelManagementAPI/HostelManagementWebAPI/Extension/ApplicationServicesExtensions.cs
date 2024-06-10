@@ -23,6 +23,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMemberShipRepository, MemberShipRepository>();
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
         services.AddScoped<IHostelRepository, HostelRepository>();
+        services.AddScoped<IVnpayService, VnpayService>();
         //services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<IRoomService, RoomService>();

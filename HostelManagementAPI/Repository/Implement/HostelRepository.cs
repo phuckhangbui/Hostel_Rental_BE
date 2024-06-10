@@ -18,13 +18,17 @@ namespace Repository.Implement
 
 		public async Task<int> CreateHostel(CreateHostelRequestDto createHostelRequestDto)
 		{
-			Hostel hostel = new Hostel
+            var hostelType = Enum.Parse<HostelTypeEnum>(createHostelRequestDto.HostelType);
+
+            Hostel hostel = new Hostel
 			{
 				HostelName = createHostelRequestDto.HostelName,
 				HostelAddress = createHostelRequestDto.HostelAddress,
 				HostelDescription = createHostelRequestDto.HostelDescription,
 				AccountID = createHostelRequestDto.AccountID,
 				Status = (int)HostelEnum.Available,
+				HostelType = HostelTypeExtensions.ToFriendlyString(hostelType),
+				CreateDate = DateTime.Now,
 			};
 
 			await HostelDao.Instance.CreateAsync(hostel);
@@ -55,22 +59,38 @@ namespace Repository.Implement
 		public async Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto)
 		{
 			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+            var hostelType = Enum.Parse<HostelTypeEnum>(updateHostelRequestDto.HostelType);
 
-			currentHostel.HostelName = updateHostelRequestDto.HostelName;
+            currentHostel.HostelName = updateHostelRequestDto.HostelName;
 			currentHostel.HostelDescription = updateHostelRequestDto.HostelDescription;
 			currentHostel.HostelAddress = updateHostelRequestDto.HostelAddress;
+			currentHostel.HostelType = HostelTypeExtensions.ToFriendlyString(hostelType);
 
 			await HostelDao.Instance.UpdateAsync(currentHostel);
 		}
 
-		//public async Task UpdateHostelImage(int hostelId, string imageUrl)
-		//{
-		//	var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
+		public async Task UpdateHostelImage(int hostelId, List<string> imageUrls)
+		{
+			var currentHostel = await HostelDao.Instance.GetHostelById(hostelId);
 
-		//	currentHostel.Thumbnail = imageUrl;
+			if (currentHostel.Images == null)
+			{
+				currentHostel.Images = new List<HostelImage>();
+			}
 
-		//	await HostelDao.Instance.UpdateAsync(currentHostel);
-		//}
+            foreach (var imageUrl in imageUrls)
+            {
+                var hostelImage = new HostelImage
+                {
+                    ImageURL = imageUrl,
+                    HostelID = currentHostel.HostelID,
+                };
+
+                currentHostel.Images.Add(hostelImage);
+            }
+
+            await HostelDao.Instance.UpdateAsync(currentHostel);
+		}
 
 		public async Task UpdateHostelStatus(int hostelId, int status)
 		{

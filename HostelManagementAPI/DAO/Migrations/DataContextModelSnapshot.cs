@@ -282,6 +282,9 @@ namespace DAO.Migrations
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("HostelAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -289,6 +292,9 @@ namespace DAO.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HostelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HostelType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
@@ -373,6 +379,12 @@ namespace DAO.Migrations
                     b.Property<double>("PackageFee")
                         .HasColumnType("float");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TnxRef")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("MemberShipTransactionID");
 
                     b.HasIndex("AccountID");
@@ -418,6 +430,9 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomID"));
+
+                    b.Property<double?>("Area")
+                        .HasColumnType("float");
 
                     b.Property<int?>("Capacity")
                         .HasColumnType("int");
