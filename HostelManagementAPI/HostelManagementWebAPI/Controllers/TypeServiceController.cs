@@ -1,8 +1,6 @@
-﻿using BusinessObject.Models;
-using DTOs.TypeService;
+﻿using DTOs.TypeService;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -98,6 +96,24 @@ namespace HostelManagementWebAPI.Controllers
                 }
 
                 return BadRequest(new ApiResponseStatus(400, "Update type service failed"));
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("type-services")]
+        public async Task<ActionResult> GetTypeServices()
+        {
+            try
+            {
+                var typeService = await _typeServiceService.GetAllTypeService();
+                return Ok(typeService);
             }
             catch (ServiceException ex)
             {

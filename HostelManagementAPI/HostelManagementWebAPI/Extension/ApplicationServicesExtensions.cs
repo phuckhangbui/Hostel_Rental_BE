@@ -30,7 +30,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IMemberShipService, MemberShipService>();
 
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
-        //services.AddScoped<ITypeServiceService, TypeServiceService>();
+        services.AddScoped<ITypeServiceService, TypeServiceService>();
 
         //services.AddScoped<IServiceRepository, ServiceRepository>();
         //services.AddScoped<IServiceService, ServiceService>();

@@ -29,6 +29,7 @@ namespace Repository.Implement
 				Description = createRoomRequestDto.Description,
 				RoomFee = createRoomRequestDto.RoomFee,
 				HostelID = createRoomRequestDto.HostelID,
+				Area = createRoomRequestDto.Width * createRoomRequestDto.Length,
 				Status = (int)RoomEnum.Available,
 				RoomImages = new List<RoomImage>(),
 				RoomServices = new List<RoomService>(),
