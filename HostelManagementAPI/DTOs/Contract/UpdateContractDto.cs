@@ -5,9 +5,6 @@ namespace DTOs.Contract
 {
     public class UpdateContractDto
     {
-        [Required]
-        public int ContractID { get; set; }
-        public int OwnerAccountId { get; set; }
         public int? StudentAccountID { get; set; }
         public int? RoomID { get; set; }
         public string? ContractTerm { get; set; }
