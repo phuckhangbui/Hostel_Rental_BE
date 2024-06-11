@@ -20,7 +20,7 @@ namespace Repository.Interface
 		Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync();
 		Task<GetAppointmentDto> GetAppointmentById(int id);
 		Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
-
+		Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
 
         //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
         //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
