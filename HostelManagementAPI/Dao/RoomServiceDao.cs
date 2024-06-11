@@ -82,5 +82,16 @@ namespace DAO
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<RoomService>> GetRoomServicesIsSelected(int roomId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.RoomService
+                    .Include(rs => rs.TypeService)
+                    .Where(rs => rs.RoomId == roomId && rs.IsSelected == true)
+                    .ToListAsync();
+            }
+        }
     }
 }

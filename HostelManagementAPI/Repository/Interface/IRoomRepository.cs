@@ -21,6 +21,7 @@ namespace Repository.Interface
 		Task<GetAppointmentDto> GetAppointmentById(int id);
 		Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
 		Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
+		Task <IEnumerable<RoomService>> GetRoomServicesIsSelected(int roomId);
 
         //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
         //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
