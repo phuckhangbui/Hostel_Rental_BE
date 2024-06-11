@@ -24,7 +24,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITypeServiceRepository, TypeServiceRepository>();
         services.AddScoped<IHostelRepository, HostelRepository>();
         services.AddScoped<IVnpayService, VnpayService>();
-        //services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IMemberShipService, MemberShipService>();
@@ -43,7 +43,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IHostelService, HostelService>();
         services.AddScoped<IContractService, ContractService>();
         services.AddScoped<IContractRepository, ContractRepository>();
-        //services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 

@@ -6,6 +6,7 @@ namespace Repository.Interface
     {
         Task<Dashboard> GetStatiticDashboar();
         Task<IEnumerable<AccountEachMemberShipDtos>> GetAmountAccountEachMemberShip();
-        Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth();
+        Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth(int year);
+        Task<IEnumerable<AccountMonthDtos>> GetAmountAccountEachMonth(int year);
     }
 }

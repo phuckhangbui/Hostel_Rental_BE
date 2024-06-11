@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Dashboard;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -61,5 +62,17 @@ namespace DAO
             return await context.Account.Include(x => x.Hostels).FirstOrDefaultAsync(x => x.AccountID == id);
         }
 
+        public async Task<IEnumerable<AccountMonthDtos>> GetAmountAccountEachMonth(int year)
+        {
+            var context = new DataContext();
+            var profit = context.Account.Where(x => x.CreatedDate.Value.Year == year)
+        .GroupBy(x => x.CreatedDate.Value.Month)
+        .Select(group => new AccountMonthDtos
+        {
+            Month = new DateTime(1, group.Key, 1).ToString("MMMM"),
+            NumberOfAccount = group.Count()
+        });
+            return profit;
+        }
     }
 }
