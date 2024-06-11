@@ -1,6 +1,6 @@
 ﻿namespace DTOs.Enum
 {
-    public enum HostelServiceEnum
+    public enum RoomServiceEnum
     {
         Active = 0,
         Inactive = 1,

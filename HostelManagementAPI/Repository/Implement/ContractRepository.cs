@@ -55,10 +55,10 @@ namespace Repository.Implement
             return await ContractDao.Instance.GetContractById(id);
         }
 
-        //public async Task UpdateContract(Contract contract)
-        //{
-        //    await ContractDao.Instance.UpdateAsync(contract);
-        //}
+        public async Task UpdateContract(Contract contract)
+        {
+            await ContractDao.Instance.UpdateAsync(contract);
+        }
 
         public async Task<IEnumerable<Contract>> GetContractByOwnerId(int ownerId)
         {
