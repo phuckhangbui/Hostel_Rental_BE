@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Contract;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -29,6 +30,26 @@ namespace DAO
         {
             var context = new DataContext();
             return await context.ContractMember.ToListAsync();
+        }
+
+        public async Task AddContractMembersAsync(CreateListContractMemberDto createListContractMemberDto)
+        {
+            var context = new DataContext();
+
+            foreach (var memberDto in createListContractMemberDto.Members)
+            {
+                var member = new ContractMember
+                {
+                    Name = memberDto.Name,
+                    Phone = memberDto.Phone,
+                    CitizenCard = memberDto.CitizenCard,
+                    ContractID = createListContractMemberDto.ContractID
+                };
+
+                context.ContractMember.Add(member);
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -8,7 +8,6 @@ namespace DTOs.Contract
 {
     public class CreateContractMemberDto
     {
-        public int? ContractID { get; set; }
         public string? Name { get; set; }
         public string? Phone { get; set; }
         public string? CitizenCard { get; set; }
