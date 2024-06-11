@@ -47,6 +47,11 @@ namespace Service.Implement
                 throw new ServiceException("Account not found with this ID");
             }
 
+            if (!Enum.TryParse(typeof(HostelTypeEnum), createHostelRequestDto.HostelType, out var hostelTypeEnum) || !Enum.IsDefined(typeof(HostelTypeEnum), hostelTypeEnum))
+            {
+                throw new ServiceException("Invalid hostel type provided.");
+            }
+
             var newHostelId = await _hostelRepository.CreateHostel(createHostelRequestDto);
 
             return new CreateHostelResponseDto { HostelID = newHostelId };
@@ -100,10 +105,6 @@ namespace Service.Implement
             {
                 throw new ServiceException("Account not found with this ID");
             }
-            //if (ownerAccount.Hostels == null)
-            //{
-            //    return null;
-            //}
 
             return await _hostelRepository.GetOwnerHostels(ownerId);
         }

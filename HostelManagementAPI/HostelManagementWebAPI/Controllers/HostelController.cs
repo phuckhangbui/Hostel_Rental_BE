@@ -1,4 +1,5 @@
-﻿using DTOs.Hostel;
+﻿using DTOs.Enum;
+using DTOs.Hostel;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,27 @@ namespace HostelManagementWebAPI.Controllers
             _hostelService = hostelService;
         }
 
-		[Authorize(Policy = "Owner")]
+        [HttpGet("hostels/types")]
+        public ActionResult<IEnumerable<HostelTypeResponseDto>> GetHostelTypes()
+        {
+            try
+            {
+                var hostelTypes = new List<HostelTypeResponseDto>();
+                foreach (HostelTypeEnum hostelType in Enum.GetValues(typeof(HostelTypeEnum)))
+                {
+                    var friendlyString = hostelType.ToFriendlyString();
+                    hostelTypes.Add(new HostelTypeResponseDto { Key = hostelType.ToString(), Value = friendlyString });
+                }
+
+                return Ok(hostelTypes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
 		[HttpPost("hostels")]
         public async Task<ActionResult> Create([FromBody] CreateHostelRequestDto createHostelRequestDto)
         {

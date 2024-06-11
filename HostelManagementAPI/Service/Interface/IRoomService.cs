@@ -1,4 +1,6 @@
-﻿using DTOs.Room;
+﻿using DAO;
+using DTOs.Room;
+using DTOs.RoomAppointment;
 using Microsoft.AspNetCore.Http;
 
 namespace Service.Interface
@@ -13,8 +15,13 @@ namespace Service.Interface
 		Task ChangeRoomStatus(int roomId, int status);
 		Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto);
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
-		//Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
-		//Task RemoveRoomServiceAsync(int roomId, int serviceId);
-  //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
+        Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync();
+        Task<GetAppointmentDto> GetAppointmentById(int id);
+        Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
+
+
+        //Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
+        //Task RemoveRoomServiceAsync(int roomId, int serviceId);
+        //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
     }
 }

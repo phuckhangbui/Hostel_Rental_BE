@@ -1,5 +1,6 @@
 ﻿using DTOs.Enum;
 using DTOs.Room;
+using DTOs.RoomAppointment;
 using DTOs.RoomService;
 using Microsoft.AspNetCore.Http;
 using Repository.Interface;
@@ -141,19 +142,34 @@ namespace Service.Implement
 			return await _roomRepository.GetRoomImagesByHostelId(hostelId);
         }
 
-   //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
-   //     {
-			//return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
-   //     }
+        public async Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync()
+        {
+            return await _roomRepository.GetRoomAppointmentsAsync();
+        }
 
-   //     public Task RemoveRoomServiceAsync(int roomId, int serviceId)
-   //     {
-   //         return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
-   //     }
+        public async Task<GetAppointmentDto> GetAppointmentById(int id)
+        {
+            return await _roomRepository.GetAppointmentById(id);
+        }
 
-   //     public Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
-   //     {
-			//return _roomRepository.GetRoomServicesByRoomIdAsync(roomId);
-   //     }
+        public async Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto)
+        {
+			await _roomRepository.CreateRoomAppointmentAsync(createRoomAppointmentDto);
+        }
+
+        //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
+        //     {
+        //return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
+        //     }
+
+        //     public Task RemoveRoomServiceAsync(int roomId, int serviceId)
+        //     {
+        //         return _roomRepository.RemoveRoomServiceAsync(roomId, serviceId);
+        //     }
+
+        //     public Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId)
+        //     {
+        //return _roomRepository.GetRoomServicesByRoomIdAsync(roomId);
+        //     }
     }
 }
