@@ -9,6 +9,7 @@
         public TypeService? TypeService { get; set; }
         public int TypeServiceId { get; set; }
         public double? Price { get; set; }
+        public bool? IsSelected { get; set; }
         public IList<BillPaymentDetail> BillPaymentDetails { get; set; }
 
 
