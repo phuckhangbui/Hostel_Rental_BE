@@ -57,6 +57,7 @@ namespace Service.Implement
             return _mapper.Map<List<GetContractDto>>(contracts);
         }
 
+
         public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
         {
             var owner = await _accountRepository.GetAccountById(ownerId);

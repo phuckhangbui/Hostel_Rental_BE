@@ -1,5 +1,4 @@
 ﻿using DTOs.Contract;
-using DTOs.Hostel;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -8,7 +7,7 @@ using Service.Interface;
 namespace HostelManagementWebAPI.Controllers
 {
     [ApiController]
-    public class ContractController: BaseApiController
+    public class ContractController : BaseApiController
     {
         private readonly IContractService _contractService;
 
@@ -126,5 +125,7 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+
     }
 }
