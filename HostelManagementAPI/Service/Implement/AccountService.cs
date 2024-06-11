@@ -27,34 +27,29 @@ namespace Service.Implement
             _mailService = mailService;
         }
 
-        //public async Task<AccountDto> GetAccountLoginByUsername(LoginDto loginDto)
-        //{
-        //    AccountDto accountDto = await _accountRepository.GetAccountLoginByUsername(loginDto.Username);
-        //    if (accountDto == null || accountDto.Status == (int)AccountStatusEnum.Inactive || accountDto.RoleId != (int)AccountRoleEnum.Admin) // status block
-        //        return null;
-        //    else
-        //    {
-        //        using var hmac = new HMACSHA512(accountDto.PasswordSalt);
-        //        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-        //        for (int i = 0; i < computedHash.Length; i++)
-        //        {
-        //            if (computedHash[i] != accountDto.PasswordHash[i])
-        //            {
-        //                return null;
-        //            }
-        //        }
+        private AccountDto AdminLogin(EmailLoginDto emailLoginDto)
+        {
+            var adminEmail = ConfigurationHelper.config.GetSection("AdminAccount:Email").Value;
+            var adminPassword = ConfigurationHelper.config.GetSection("AdminAccount:Password").Value;
 
-        //        accountDto.Token = _tokenService.CreateToken(accountDto);
+            if (emailLoginDto.Email.Equals(adminEmail) && emailLoginDto.Password == (adminPassword))
+            {
+                var accountDto = new AccountDto
+                {
+                    AccountId = 0,
+                    Email = emailLoginDto.Email,
+                    Name = "System Admin",
+                    RoleId = (int)AccountRoleEnum.Admin
+                };
+                accountDto.Token = _tokenService.CreateToken(accountDto);
 
-        //        var refreshToken = _tokenService.GenerateRefreshToken();
-        //        accountDto.RefreshToken = refreshToken;
-        //        accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+                return accountDto;
+            }
 
-        //        await _accountRepository.UpdateAccount(accountDto);
-        //        return accountDto;
+            return null;
+        }
 
-        //    }
-        //}
+
 
         public async Task<IEnumerable<AccountViewDto>> GetAllAccounts()
         {
@@ -69,6 +64,13 @@ namespace Service.Implement
 
         public async Task<AccountLoginDto> Login(EmailLoginDto login)
         {
+            var adminAccount = AdminLogin(login);
+            if (adminAccount != null)
+            {
+                return _mapper.Map<AccountLoginDto>(adminAccount);
+            }
+
+
             AccountDto accountDto = await _accountRepository.GetAccountByEmail(login.Email);
 
             if (accountDto != null)
@@ -106,7 +108,7 @@ namespace Service.Implement
                     accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
                     await _accountRepository.UpdateAccount(accountDto);
 
-                    return _mapper.Map<AccountLoginDto>(accountDto); ;
+                    return _mapper.Map<AccountLoginDto>(accountDto);
                 }
             }
             throw new ServiceException("No account associate with this email");
@@ -182,7 +184,7 @@ namespace Service.Implement
                 PasswordSalt = hmac.Key,
                 CreatedDate = DateTime.Now,
                 Status = (int)AccountStatusEnum.Register_But_Not_Confirm,
-                RoleId = emailRegisterDto.RoleId, // k sure cho docs
+                RoleId = emailRegisterDto.RoleId,
                 IsLoginWithGmail = false,
                 OtpToken = otp,
             };
@@ -208,6 +210,11 @@ namespace Service.Implement
             if ((bool)accountDto.IsLoginWithGmail == true)
             {
                 throw new ServiceException("Your account was registered using gmail service, there is no password");
+            }
+
+            if (accountDto.Status == (int)AccountStatusEnum.Register_But_Not_Confirm)
+            {
+                throw new ServiceException("Your account has not been confirm yet, please navigate to the register page again");
             }
 
             Random random = new Random();
@@ -387,6 +394,15 @@ namespace Service.Implement
         public async Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid)
         {
             return await _accountRepository.GetDetailMemberShipRegisterInformation(accountid);
+        }
+
+        public async Task UpdateAccountPackageStatus(int accountId, int status)
+        {
+            var account = await _accountRepository.GetAccountById(accountId);
+
+            account.PackageStatus = status;
+
+            await _accountRepository.UpdateAccount(account);
         }
     }
 }

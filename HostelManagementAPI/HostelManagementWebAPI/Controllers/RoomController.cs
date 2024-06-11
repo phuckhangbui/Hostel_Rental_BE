@@ -1,4 +1,5 @@
 ﻿using DTOs.Room;
+using DTOs.RoomAppointment;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -153,56 +154,115 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-  //      [HttpPost("roomServiceAdd")]
-  //      public async Task<IActionResult> AddRoomServices([FromBody] AddRoomServicesDto roomServicesDto)
-  //      {
-  //          try
-  //          {
-  //              await _roomService.AddRoomService(roomServicesDto);
-  //              return Ok("Add Room Services Complete!");
-  //          }
-  //          catch (ServiceException ex)
-  //          {
-  //              return BadRequest(new ApiResponseStatus(400, ex.Message));
-  //          }
-  //          catch (Exception ex)
-  //          {
-  //              return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-  //          }
-  //      }
+        [HttpGet("rooms/appointment")]
+        public async Task<ActionResult> GetRoomAppointmentList()
+        {
+            try
+            {
+                var roomAppointments = await _roomService.GetRoomAppointmentsAsync();
+                return Ok(roomAppointments);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
 
-  //      [HttpDelete("{roomId}/{serviceId}")]
-  //      public async Task<IActionResult> RemoveRoomService(int roomId, int serviceId)
-		//{
-		//	try
-		//	{
-		//		await _roomService.RemoveRoomServiceAsync(roomId, serviceId);
-		//		return Ok();
-		//	}
-  //          catch (ServiceException ex)
-  //          {
-  //              return BadRequest(new ApiResponseStatus(400, ex.Message));
-  //          }
-  //          catch (Exception ex)
-  //          {
-  //              return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-  //          }
+        [HttpPost("rooms/appointment")]
+        public async Task<ActionResult> CreateRoomAppointment([FromBody] CreateRoomAppointmentDto createRoomAppointmentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _roomService.CreateRoomAppointmentAsync(createRoomAppointmentDto);
+                return Ok(createRoomAppointmentDto);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("rooms/appointment/details/{appointmentId}")]
+        public async Task<ActionResult> GetApppointmentDetails(int appointmentId)
+        {
+            try
+            {
+                var appointment = await _roomService.GetAppointmentById(appointmentId);
+                if (appointment == null)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Appointment not found"));
+                }
+                return Ok(appointment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        //      [HttpPost("roomServiceAdd")]
+        //      public async Task<IActionResult> AddRoomServices([FromBody] AddRoomServicesDto roomServicesDto)
+        //      {
+        //          try
+        //          {
+        //              await _roomService.AddRoomService(roomServicesDto);
+        //              return Ok("Add Room Services Complete!");
+        //          }
+        //          catch (ServiceException ex)
+        //          {
+        //              return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //          }
+        //          catch (Exception ex)
+        //          {
+        //              return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //          }
+        //      }
+
+        //      [HttpDelete("{roomId}/{serviceId}")]
+        //      public async Task<IActionResult> RemoveRoomService(int roomId, int serviceId)
+        //{
+        //	try
+        //	{
+        //		await _roomService.RemoveRoomServiceAsync(roomId, serviceId);
+        //		return Ok();
+        //	}
+        //          catch (ServiceException ex)
+        //          {
+        //              return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //          }
+        //          catch (Exception ex)
+        //          {
+        //              return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //          }
 
 
-  //      }
+        //      }
 
-  //      [HttpGet("rooms/{roomId}/roomServices")]
-  //      public async Task<ActionResult> GetRoomServicesByRoomId(int roomId)
-  //      {
-  //          try
-  //          {
-  //               var roomServices = await _roomService.GetRoomServicesByRoomIdAsync(roomId);
-  //              return Ok(roomServices);
-  //          }
-  //          catch (Exception ex)
-  //          {
-  //              return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-  //          }
-  //      }
+        //      [HttpGet("rooms/{roomId}/roomServices")]
+        //      public async Task<ActionResult> GetRoomServicesByRoomId(int roomId)
+        //      {
+        //          try
+        //          {
+        //               var roomServices = await _roomService.GetRoomServicesByRoomIdAsync(roomId);
+        //              return Ok(roomServices);
+        //          }
+        //          catch (Exception ex)
+        //          {
+        //              return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //          }
+        //      }
     }
 }

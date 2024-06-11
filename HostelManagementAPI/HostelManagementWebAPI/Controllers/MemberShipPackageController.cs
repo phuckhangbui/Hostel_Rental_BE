@@ -1,4 +1,5 @@
-﻿using HostelManagementWebAPI.MessageStatusResponse;
+﻿using DTOs.Membership;
+using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -33,5 +34,7 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+      
     }
 }
