@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+﻿using DTOs;
 using DTOs.BillPayment;
 using DTOs.Enum;
 using Repository.Interface;
@@ -27,7 +28,7 @@ namespace Service.Implement
         {
             var contractId = createBillPaymentRequestDto.ContractId;
 
-            var currentContract= await _contractRepository.GetContractById(contractId);
+            var currentContract = await _contractRepository.GetContractById(contractId);
             if (currentContract == null)
             {
                 throw new ServiceException("Contract not found with this ID");
@@ -43,7 +44,7 @@ namespace Service.Implement
                 //    throw new ServiceException("Contract is not active yet");
                 //}
 
-                int monthsSinceStart = ((currentDate.Year - currentContract.DateStart.Value.Year) * 12) + 
+                int monthsSinceStart = ((currentDate.Year - currentContract.DateStart.Value.Year) * 12) +
                     currentDate.Month - currentContract.DateStart.Value.Month;
                 var billingMonth = currentContract.DateStart.Value.AddMonths(monthsSinceStart);
 
@@ -133,6 +134,55 @@ namespace Service.Implement
                     }
                 }
             }
+        }
+
+        public async Task<BillPaymentDto> CreateDepositPayment(DepositRoomInputDto depositRoomInputDto, int accountId)
+        {
+            var contract = await _contractRepository.GetContractById(depositRoomInputDto.ContractId);
+
+
+
+            var billpayment = new BillPaymentDto
+            {
+                ContractId = contract.ContractID,
+                BillAmount = contract.DepositFee,
+                TotalAmount = contract.DepositFee,
+                BillType = (int)BillType.Deposit,
+                BillPaymentStatus = (int)BillPaymentStatus.Pending,
+                CreatedDate = DateTime.Now,
+                TnxRef = DateTime.Now.Ticks.ToString(),
+            };
+
+            billpayment = await _billPaymentRepository.CreateBillPayment(billpayment);
+
+            return billpayment;
+        }
+
+        public async Task<BillPaymentDto> ConfirmDepositTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
+        {
+            var billPayment = await _billPaymentRepository.GetBillPaymentByTnxRef(vnPayReturnUrlDto.TnxRef);
+
+            if (billPayment == null)
+            {
+                throw new ServiceException("No bill match");
+            }
+
+
+            if (vnPayReturnUrlDto == null)
+            {
+                throw new ServiceException("No transaction match");
+            }
+
+            if (billPayment.BillPaymentStatus != (int)BillPaymentStatus.Pending)
+            {
+                throw new ServiceException("Billpayment has been paid");
+            }
+
+            billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+
+            await _billPaymentRepository.UpdateBillPayment(billPayment);
+
+            return billPayment;
         }
     }
 }

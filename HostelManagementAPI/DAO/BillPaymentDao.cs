@@ -46,6 +46,21 @@ namespace DAO
                     .OrderByDescending(d => d.BillPayment.CreatedDate)
                     .FirstOrDefaultAsync();
             }
+
+        }
+
+        public async Task<BillPayment> GetBillPayment(int id)
+        {
+            DataContext context = new DataContext();
+
+            return await context.BillPayment.FindAsync(id);
+        }
+
+        public async Task<BillPayment> GetBillPaymentByTnxRef(string tnxRef)
+        {
+            DataContext context = new DataContext();
+
+            return await context.BillPayment.FirstOrDefaultAsync(b => b.TnxRef == tnxRef);
         }
     }
 }

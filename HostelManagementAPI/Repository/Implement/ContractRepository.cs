@@ -1,9 +1,8 @@
-﻿using BusinessObject.Models;
+﻿using AutoMapper;
+using BusinessObject.Models;
 using DAO;
 using DTOs.Contract;
-using DTOs.Room;
 using Repository.Interface;
-using AutoMapper;
 
 namespace Repository.Implement
 {
@@ -86,5 +85,11 @@ namespace Repository.Implement
             var contract = await ContractDao.Instance.GetContractByContractIDAsync(contractId);
             return _mapper.Map<GetContractDto>(contract);
         }
+        public async Task UpdateContract(GetContractDto getContractDto)
+        {
+            var contract = _mapper.Map<Contract>(getContractDto);
+            await ContractDao.Instance.UpdateAsync(contract);
+        }
+
     }
 }

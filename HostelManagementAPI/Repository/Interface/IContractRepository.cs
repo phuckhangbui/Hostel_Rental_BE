@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.Contract;
+﻿using DTOs.Contract;
 
 
 namespace Repository.Interface
@@ -13,6 +12,7 @@ namespace Repository.Interface
         Task<IEnumerable<GetContractDto>> GetContractByOwnerId(int ownerId);
         Task<IEnumerable<GetContractDto>> GetContractByStudentId(int studentId);
         Task<GetContractDto> GetContractDetailsByContractId(int contractId);
+        Task UpdateContract(GetContractDto getContractDto);
 
 
     }

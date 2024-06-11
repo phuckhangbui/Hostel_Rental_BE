@@ -16,8 +16,8 @@
         public DateTime? DateSign { get; set; }
         public Double? RoomFee { get; set; }
         public Double? DepositFee { get; set; }
-
         public int Status { get; set; }
+
         // chua nguoi o chung voi chu contract
         public IList<ContractMember> Members { get; set; }
     }
