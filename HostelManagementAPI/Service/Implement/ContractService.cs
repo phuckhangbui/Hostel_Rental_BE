@@ -22,14 +22,15 @@ namespace Service.Implement
             _mapper = mapper;
         }
 
-        public async Task ChangeContractStatus(int contractId, int status)
+        public async Task ChangeContractStatus(int contractId, int status, DateTime datesigned)
         {
-            var currentContract = await _contractRepository.GetContractById(contractId);
+            var currentContract = await _contractRepository.GetContractDetailsByContractId(contractId);
             if (currentContract == null)
             {
                 throw new ServiceException("Contract not found with given ID");
             }
             currentContract.Status = status;
+            currentContract.DateSign = datesigned;
 
             await _contractRepository.UpdateContract(currentContract);
         }
@@ -37,66 +38,33 @@ namespace Service.Implement
         public async Task CreateContract(CreateContractDto contractDto)
         {
             var contract = contractDto;
-
             await _contractRepository.CreateContract(contract);
         }
 
         public async Task<GetContractDto> GetContractDetailByContractId(int contractId)
         {
-            var contract = await _contractRepository.GetContractDetailsByContractId(contractId);
-            if (contract == null)
-            {
-                throw new ServiceException("Contract not found with this ID");
-            }
-            return _mapper.Map<GetContractDto>(contract);
+            return await _contractRepository.GetContractDetailsByContractId(contractId);
         }
 
         public async Task<IEnumerable<GetContractDto>> GetContracts()
         {
-            var contracts = await _contractRepository.GetContractsAsync();
-            return _mapper.Map<List<GetContractDto>>(contracts);
+            return await _contractRepository.GetContractsAsync();
         }
+
 
         public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
         {
-            var owner = await _accountRepository.GetAccountById(ownerId);
-            if (owner == null)
-            {
-                throw new ServiceException("Owner not found with this ID");
-            }
-            var contracts = await _contractRepository.GetContractByOwnerId(ownerId);
-            return _mapper.Map<List<GetContractDto>>(contracts);
+            return await _contractRepository.GetContractByOwnerId(ownerId);
         }
 
         public async Task<IEnumerable<GetContractDto>> GetContractsByStudentId(int studentId)
         {
-            var student = await _accountRepository.GetAccountById(studentId);
-            if (student == null)
-            {
-                throw new ServiceException("Student not found with this ID");
-            }
-            var contracts = await _contractRepository.GetContractByStudentId(studentId);
-            return _mapper.Map<List<GetContractDto>>(contracts);
+            return await _contractRepository.GetContractByStudentId(studentId);
         }
 
-        public async Task UpdateContract(UpdateContractDto contractDto)
+        public async Task UpdateContract(int id, UpdateContractDto contractDto)
         {
-            var currentContract = await _contractRepository.GetContractById(contractDto.ContractID);
-            if (currentContract == null)
-            {
-                throw new ServiceException("Contract not found with given ID");
-            }
-            currentContract.OwnerAccountID = contractDto.OwnerAccountId;
-            currentContract.StudentAccountID = contractDto.StudentAccountID;
-            currentContract.RoomID = contractDto.RoomID;
-            currentContract.ContractTerm = contractDto.ContractTerm;
-            currentContract.DateEnd = DateTime.Parse(contractDto.DateEnd);
-            currentContract.DateSign = DateTime.Parse(contractDto.DateSign);
-            currentContract.Status = contractDto.Status;
-            currentContract.RoomFee = contractDto.RoomFee;
-            currentContract.DepositFee = contractDto.DepositFee;
-
-            await _contractRepository.UpdateContract(currentContract);
+            await _contractRepository.UpdateContract(id, contractDto);
         }
 
 
