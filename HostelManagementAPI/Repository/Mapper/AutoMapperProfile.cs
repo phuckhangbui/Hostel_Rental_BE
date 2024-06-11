@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
 using DTOs.Account;
+using DTOs.BillPayment;
 using DTOs.Complain;
 using DTOs.Contract;
 using DTOs.Enum;
@@ -83,11 +84,11 @@ public class AutoMapperProfile : Profile
         //    .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
         CreateMap<Contract, GetContractDto>()
             .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccountID))
-            .ForMember(dest => dest.OwnerAccountName, opt => opt.MapFrom(src => src.OwnerAccount.Name)) 
+            .ForMember(dest => dest.OwnerAccountName, opt => opt.MapFrom(src => src.OwnerAccount.Name))
             .ForMember(dest => dest.StudentAccountID, opt => opt.MapFrom(src => src.StudentAccountID))
-            .ForMember(dest => dest.StudentLeadAccountName, opt => opt.MapFrom(src => src.StudentLeadAccount.Name)) 
+            .ForMember(dest => dest.StudentLeadAccountName, opt => opt.MapFrom(src => src.StudentLeadAccount.Name))
             .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
-            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.RoomName)) 
+            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.RoomName))
             .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
 
         CreateMap<ContractMember, GetContractDetailsDto>()
@@ -110,5 +111,7 @@ public class AutoMapperProfile : Profile
         //     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
         CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>().ReverseMap();
+
+        CreateMap<BillPayment, BillPaymentDto>().ReverseMap();
     }
 }

@@ -51,6 +51,7 @@ namespace Service.Implement
             return await _contractRepository.GetContractsAsync();
         }
 
+
         public async Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId)
         {
             return await _contractRepository.GetContractByOwnerId(ownerId);
