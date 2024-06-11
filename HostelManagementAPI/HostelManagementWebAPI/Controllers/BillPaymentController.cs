@@ -1,4 +1,6 @@
-﻿using DTOs.BillPayment;
+﻿using DTOs;
+using DTOs.BillPayment;
+using DTOs.Enum;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +27,20 @@ namespace HostelManagementWebAPI.Controllers
             _vnpayService = vnpayService;
         }
 
-        [HttpPost("/deposit")]
-        [Authorize(Policy = "User")]
+        [Authorize(Policy = "Member")]
+        [HttpPost("deposit")]
         public async Task<ActionResult> DepositRoom(DepositRoomInputDto depositRoomInputDto)
         {
             int accountId = GetLoginAccountId();
             try
             {
+                var contract = await _contractService.GetContractDetailByContractId(depositRoomInputDto.ContractId);
+
+                if (contract == null || contract?.Status != (int)ContractStatusEnum.pending || contract?.DepositFee == null || contract?.StudentAccountID != accountId)
+                {
+                    throw new ServiceException("The contract is not suitable for deposited");
+                }
+
                 var billPayment = await _billPaymentService.CreateDepositPayment(depositRoomInputDto, accountId);
 
                 string paymentUrl = _vnpayService.CreateVnpayPaymentLink(billPayment.TnxRef, (double)billPayment.TotalAmount, depositRoomInputDto.ReturnUrl, "Room deposit", _vnPayProperties);
@@ -52,5 +61,33 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Member")]
+        [HttpPost("deposit/confirm-payment")]
+        public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        {
+            int accountId = GetLoginAccountId();
+
+            try
+            {
+                if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+                {
+                    return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
+                }
+
+                var billPayment = await _billPaymentService.ConfirmDepositTransaction(vnPayReturnUrlDto);
+
+                await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed);
+
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
     }
 }

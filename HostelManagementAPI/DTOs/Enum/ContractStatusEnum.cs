@@ -2,8 +2,7 @@
 {
     public enum ContractStatusEnum
     {
-        pending_deposit = 0,
-        deposited = 1,
-        finish = 2,
+        pending = 0,
+        signed = 1,
     }
 }

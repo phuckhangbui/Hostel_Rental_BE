@@ -1,4 +1,5 @@
-﻿using DTOs.BillPayment;
+﻿using DTOs;
+using DTOs.BillPayment;
 using DTOs.Enum;
 using Repository.Interface;
 using Service.Exceptions;
@@ -22,10 +23,6 @@ namespace Service.Implement
             var contract = await _contractRepository.GetContractById(depositRoomInputDto.ContractId);
 
 
-            if (contract == null || contract?.Status != (int)ContractStatusEnum.pending_deposit || contract?.DepositFee == null || contract?.StudentAccountID != accountId)
-            {
-                throw new ServiceException("The contract is not suitable for deposited");
-            }
 
             var billpayment = new BillPaymentDto
             {
@@ -33,6 +30,7 @@ namespace Service.Implement
                 BillAmount = contract.DepositFee,
                 TotalAmount = contract.DepositFee,
                 BillType = (int)BillType.Deposit,
+                BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 CreatedDate = DateTime.Now,
                 TnxRef = DateTime.Now.Ticks.ToString(),
             };
@@ -40,6 +38,33 @@ namespace Service.Implement
             billpayment = await _billPaymentRepository.CreateBillPayment(billpayment);
 
             return billpayment;
+        }
+
+        public async Task<BillPaymentDto> ConfirmDepositTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
+        {
+            var billPayment = await _billPaymentRepository.GetBillPaymentByTnxRef(vnPayReturnUrlDto.TnxRef);
+
+            if (billPayment == null)
+            {
+                throw new ServiceException("No bill match");
+            }
+
+
+            if (vnPayReturnUrlDto == null)
+            {
+                throw new ServiceException("No transaction match");
+            }
+
+            if (billPayment.BillPaymentStatus != (int)BillPaymentStatus.Pending)
+            {
+                throw new ServiceException("Billpayment has been paid");
+            }
+
+            billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+
+            await _billPaymentRepository.UpdateBillPayment(billPayment);
+
+            return billPayment;
         }
     }
 }
