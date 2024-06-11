@@ -12,7 +12,7 @@ namespace Service.Interface
         Task UpdateHostel(int hostelId, UpdateHostelRequestDto updateHostelRequestDto);
         Task ChangeHostelStatus(int hostelId, int status);
         Task<IEnumerable<HostelResponseDto>> GetHostelsByOwner(int ownerId);
-        //Task UploadHostelThumbnail(int hostelId, IFormFile formFile);
+        Task UploadHostelImages(int hostelId, IFormFileCollection files);
         Task<HostelResponseDto> GetHostelDetail(int hostelID);
         Task<HostelResponseDto> GetHostelDetailForOwner(int hostelID);
     }
