@@ -4,8 +4,11 @@
     {
         public int ContractID { get; set; }
         public int OwnerAccountId { get; set; }
+        public string OwnerAccountName { get; set; }
         public int? StudentAccountID { get; set; }
+        public string StudentLeadAccountName { get; set; }
         public int? RoomID { get; set; }
+        public string RoomName { get; set; } 
         public string? ContractTerm { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? DateStart { get; set; }

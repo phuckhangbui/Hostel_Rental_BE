@@ -35,6 +35,9 @@ namespace DAO
         {
             var context = new DataContext();
             return await context.Contract
+                .Include(c => c.OwnerAccount) 
+                .Include(c => c.StudentLeadAccount) 
+                .Include(c => c.Room) 
                 .Include(c => c.Members)
                 .ToListAsync();
         }
@@ -43,6 +46,9 @@ namespace DAO
         {
             var context = new DataContext();
             return await context.Contract
+                .Include(c => c.OwnerAccount)
+                .Include(c => c.StudentLeadAccount)
+                .Include(c => c.Room)
                 .Include(c => c.Members)
                 .Where(c => c.OwnerAccountID == ownerID)
                 .ToListAsync();
@@ -52,6 +58,9 @@ namespace DAO
         {
             var context = new DataContext();
             return await context.Contract
+                .Include(c => c.OwnerAccount)
+                .Include(c => c.StudentLeadAccount)
+                .Include(c => c.Room)
                 .Include(c => c.Members)
                 .Where(c => c.StudentAccountID == studentID)
                 .ToListAsync();
