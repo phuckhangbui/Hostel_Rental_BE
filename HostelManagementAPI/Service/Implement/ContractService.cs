@@ -3,7 +3,6 @@ using DTOs.Contract;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
-using System.Diagnostics.Contracts;
 
 namespace Service.Implement
 {
@@ -23,17 +22,18 @@ namespace Service.Implement
             _mapper = mapper;
         }
 
-        //public async Task ChangeContractStatus(int contractId, int status)
-        //{
-        //    var currentContract = await _contractRepository.GetContractById(contractId);
-        //    if (currentContract == null)
-        //    {
-        //        throw new ServiceException("Contract not found with given ID");
-        //    }
-        //    currentContract.Status = status;
+        public async Task ChangeContractStatus(int contractId, int status, DateTime datesigned)
+        {
+            var currentContract = await _contractRepository.GetContractDetailsByContractId(contractId);
+            if (currentContract == null)
+            {
+                throw new ServiceException("Contract not found with given ID");
+            }
+            currentContract.Status = status;
+            currentContract.DateSign = datesigned;
 
-        //    await _contractRepository.UpdateContract(contractId, mapContract);
-        //}
+            await _contractRepository.UpdateContract(currentContract);
+        }
 
         public async Task CreateContract(CreateContractDto contractDto)
         {

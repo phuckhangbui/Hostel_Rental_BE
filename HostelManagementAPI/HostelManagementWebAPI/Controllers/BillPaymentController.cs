@@ -28,7 +28,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("deposit")]
+        [HttpPost("billPayment/deposit")]
         public async Task<ActionResult> DepositRoom(DepositRoomInputDto depositRoomInputDto)
         {
             int accountId = GetLoginAccountId();
@@ -62,7 +62,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("deposit/confirm-payment")]
+        [HttpPost("billPayment/deposit/confirm-payment")]
         public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
         {
             int accountId = GetLoginAccountId();
@@ -76,7 +76,7 @@ namespace HostelManagementWebAPI.Controllers
 
                 var billPayment = await _billPaymentService.ConfirmDepositTransaction(vnPayReturnUrlDto);
 
-                await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed);
+                await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
 
                 return Ok();
             }

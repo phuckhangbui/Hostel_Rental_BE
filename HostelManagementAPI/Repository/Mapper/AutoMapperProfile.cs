@@ -90,6 +90,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.RoomName))
             .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
+        CreateMap<GetContractDto, Contract>();
 
         CreateMap<ContractMember, GetContractDetailsDto>()
             .ForMember(dest => dest.ContractMemberID, opt => opt.MapFrom(src => src.ContractMemberID))
@@ -103,6 +104,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ViewerPhone, opt => opt.MapFrom(src => src.Viewer.Phone))
             .ForMember(dest => dest.ViewerEmail, opt => opt.MapFrom(src => src.Viewer.Email))
             .ForMember(dest => dest.ViewerCitizenCard, opt => opt.MapFrom(src => src.Viewer.CitizenCard));
+        //CreateMap<UpdateContractDto, GetContractDto>().ReverseMap();
         CreateMap<CreateRoomAppointmentDto, RoomAppointment>();
         //     .ForMember(dest => dest.ServiceID, opt => opt.MapFrom(src => src.Service.ServiceID))
         //     .ForMember(dest => dest.TypeServiceID, opt => opt.MapFrom(src => src.Service.TypeServiceID))
