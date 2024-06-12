@@ -1,5 +1,4 @@
 ﻿using DTOs.Contract;
-using DTOs.Hostel;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
@@ -8,7 +7,7 @@ using Service.Interface;
 namespace HostelManagementWebAPI.Controllers
 {
     [ApiController]
-    public class ContractController: BaseApiController
+    public class ContractController : BaseApiController
     {
         private readonly IContractService _contractService;
 
@@ -32,11 +31,11 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPut("contracts")]
-        public async Task<ActionResult> Update([FromBody] UpdateContractDto contractDto)
+        public async Task<ActionResult> Update(int key, [FromBody] UpdateContractDto contractDto)
         {
             try
             {
-                await _contractService.UpdateContract(contractDto);
+                await _contractService.UpdateContract(key, contractDto);
                 return Ok();
             }
             catch (ServiceException ex)
@@ -67,23 +66,23 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPut("contracts/{contractId}/status")]
-        public async Task<ActionResult> ChangeContractStatus(int contractId, int status)
-        {
-            try
-            {
-                await _contractService.ChangeContractStatus(contractId, status);
-                return Ok();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(new ApiResponseStatus(400, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-            }
-        }
+        //[HttpPut("contracts/{contractId}/status")]
+        //public async Task<ActionResult> ChangeContractStatus(int contractId, int status)
+        //{
+        //    try
+        //    {
+        //        await _contractService.ChangeContractStatus(contractId, status);
+        //        return Ok();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //    }
+        //}
 
         [HttpGet("owner/contracts/{ownerId}")]
         public async Task<ActionResult> GetContractsByOwnerId(int ownerId)
@@ -120,6 +119,24 @@ namespace HostelManagementWebAPI.Controllers
             {
                 var contracts = await _contractService.GetContractDetailByContractId(contractId);
                 return Ok(contracts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPost("contracts/contractsMember")]
+        public async Task<ActionResult> CreateContractMembers([FromBody] CreateListContractMemberDto createListContractMemberDto)
+        {
+            try
+            {
+                await _contractService.AddContractMember(createListContractMemberDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
             }
             catch (Exception ex)
             {

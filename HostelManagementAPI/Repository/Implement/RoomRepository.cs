@@ -5,6 +5,7 @@ using DAO;
 using DTOs.Room;
 using Repository.Interface;
 using DTOs.RoomAppointment;
+using DTOs.RoomService;
 
 namespace Repository.Implement
 {
@@ -156,6 +157,16 @@ namespace Repository.Implement
             var roomAppointment = _mapper.Map<RoomAppointment>(room);
 			
 			await RoomAppointmentDao.Instance.CreateAsync(roomAppointment);
+        }
+
+        public async Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates)
+        {
+            await RoomServiceDao.Instance.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
+        }
+
+        public async Task<IEnumerable<RoomService>> GetRoomServicesIsSelected(int roomId)
+        {
+			return await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

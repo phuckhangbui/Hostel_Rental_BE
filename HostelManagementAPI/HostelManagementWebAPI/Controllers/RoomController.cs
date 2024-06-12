@@ -1,5 +1,6 @@
 ﻿using DTOs.Room;
 using DTOs.RoomAppointment;
+using DTOs.RoomService;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -210,6 +211,25 @@ namespace HostelManagementWebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPut("rooms/service-update-select-status/{roomId}")]
+        public async Task<IActionResult> UpdateRoomServices(int roomId, [FromBody] List<RoomServiceUpdateDto> updates)
+        {
+            if (updates == null || updates.Count == 0)
+            {
+                return BadRequest("No updates provided.");
+            }
+
+            try
+            {
+                await _roomService.UpdateRoomServicesIsSelectStatusAsync(roomId, updates);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
 
