@@ -27,77 +27,77 @@ namespace HostelManagementWebAPI.Controllers
             _vnpayService = vnpayService;
         }
 
-        //[HttpPost("bill-payment/monthly")]
-        //public async Task<ActionResult> Create([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
-        //{
-        //    try
-        //    {
-        //        await _billPaymentService.CreateBillPaymentMonthly(createBillPaymentRequestDto);
-        //        return Ok();
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-        //    }
-        //}
+        [HttpPost("bill-payment/monthly")]
+        public async Task<ActionResult> CreateBillPaymentMonthly([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
+        {
+            try
+            {
+                await _billPaymentService.CreateBillPaymentMonthly(createBillPaymentRequestDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
 
-        //[HttpGet("bill-payment/last-month-bill/{contractId}")]
-        //public async Task<ActionResult> GetLastBillPayment(int contractId)
-        //{
-        //    try
-        //    {
-        //        var result = await _billPaymentService.GetLastMonthBillPayment(contractId);
-        //        return Ok(result);
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-        //    }
-        //}
+        [HttpGet("bill-payment/last-month-bill/{contractId}")]
+        public async Task<ActionResult> GetLastBillPayment(int contractId)
+        {
+            try
+            {
+                var result = await _billPaymentService.GetLastMonthBillPayment(contractId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
 
-        //[HttpGet("bill-payment/contract/{contractId}")]
-        //public async Task<ActionResult> GetBillPaymentsByContract(int contractId)
-        //{
-        //    try
-        //    {
-        //        var result = await _billPaymentService.GetBillPaymentsByContractId(contractId);
-        //        return Ok(result);
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-        //    }
-        //}
+        [HttpGet("bill-payment/contract/{contractId}")]
+        public async Task<ActionResult> GetBillPaymentsByContract(int contractId)
+        {
+            try
+            {
+                var result = await _billPaymentService.GetBillPaymentsByContractId(contractId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
 
-        //[HttpGet("bill-payment/{billPaymentId}")]
-        //public async Task<ActionResult> GetBillPaymentDetail(int billPaymentId)
-        //{
-        //    try
-        //    {
-        //        var result = await _billPaymentService.GetBillPaymentDetail(billPaymentId);
-        //        return Ok(result);
-        //    }
-        //    catch (ServiceException ex)
-        //    {
-        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-        //    }
-        //}
+        [HttpGet("bill-payment/{billPaymentId}")]
+        public async Task<ActionResult> GetBillPaymentDetail(int billPaymentId)
+        {
+            try
+            {
+                var result = await _billPaymentService.GetBillPaymentDetail(billPaymentId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
 
         [Authorize(Policy = "Member")]
         [HttpPost("bill-payment/deposit")]
@@ -134,7 +134,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("bill-payment/monthly")]
+        [HttpPost("bill-payment/pay/monthly")]
         public async Task<ActionResult> MonthlyBillPayment(MonthlyBillPaymentInputDto monthlyBillPaymentInputDto)
         {
             int accountId = GetLoginAccountId();
