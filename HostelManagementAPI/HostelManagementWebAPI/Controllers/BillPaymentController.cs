@@ -81,6 +81,24 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [HttpGet("bill-payment/{billPaymentId}")]
+        public async Task<ActionResult> GetBillPaymentDetail(int billPaymentId)
+        {
+            try
+            {
+                var result = await _billPaymentService.GetBillPaymentDetail(billPaymentId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         [Authorize(Policy = "Member")]
         [HttpPost("billPayment/deposit")]
         public async Task<ActionResult> DepositRoom(DepositRoomInputDto depositRoomInputDto)

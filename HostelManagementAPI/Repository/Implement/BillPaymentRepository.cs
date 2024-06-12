@@ -172,5 +172,18 @@ namespace Repository.Implement
 
             return _mapper.Map<IEnumerable<BillPaymentDto>>(billPayments);
         }
+
+        public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
+        {
+            var billPayment = await BillPaymentDao.Instance.GetBillPayment(billPaymentId);
+            var billPaymentDto = _mapper.Map<BillPaymentDto>(billPayment);
+
+            var billPaymentDetail = await BillPaymentDao.Instance.GetBillPaymentDetail(billPaymentId);
+            var billPaymentDetailDtos = _mapper.Map<IEnumerable<BillPaymentDetailResponseDto>>(billPaymentDetail);
+
+            billPaymentDto.BillPaymentDetails = (List<BillPaymentDetailResponseDto>)billPaymentDetailDtos;
+
+            return billPaymentDto;
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace Service.Interface
         Task<BillPaymentDto> ConfirmDepositTransaction(VnPayReturnUrlDto vnPayReturnUrlDto);
         Task<BillPaymentDto> GetLastMonthBillPayment(int contractId);
         Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId);
+        Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId);
     }
 }

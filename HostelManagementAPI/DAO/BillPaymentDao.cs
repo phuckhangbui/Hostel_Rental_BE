@@ -84,5 +84,17 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task<IEnumerable<BillPaymentDetail>> GetBillPaymentDetail(int billPaymentId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.BillPaymentDetail
+                 .Where(d => d.BillPaymentID == billPaymentId)
+                 .Include(d => d.RoomService)
+                 .Include(d => d.RoomService.TypeService)
+                 .ToListAsync();
+            }
+        }
     }
 }

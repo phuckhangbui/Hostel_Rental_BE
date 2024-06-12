@@ -135,5 +135,16 @@ namespace Service.Implement
 
             return billPayment;
         }
+
+        public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
+        {
+            var billPayment = await _billPaymentRepository.GetBillPaymentById(billPaymentId);
+            if (billPayment == null)
+            {
+                throw new ServiceException("Bill payment not found with this ID");
+            }
+
+            return await _billPaymentRepository.GetBillPaymentDetail(billPaymentId);
+        }
     }
 }
