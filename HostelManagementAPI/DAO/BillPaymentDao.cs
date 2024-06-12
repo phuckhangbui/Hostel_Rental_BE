@@ -43,10 +43,22 @@ namespace DAO
             {
                 return await context.BillPaymentDetail
                     .Where(d => d.RoomServiceID == roomServiceId)
+                    .Include(d => d.RoomService)
+                    .Include(d => d.RoomService.TypeService)
                     .OrderByDescending(d => d.BillPayment.CreatedDate)
                     .FirstOrDefaultAsync();
             }
+        }
 
+        public async Task<BillPayment> GetLastBillPayment(int contractId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.BillPayment
+                    .Where(b => b.ContractId == contractId)
+                    .OrderByDescending(d => d.CreatedDate)
+                    .FirstOrDefaultAsync();
+            }
         }
 
         public async Task<BillPayment> GetBillPayment(int id)
@@ -61,6 +73,28 @@ namespace DAO
             DataContext context = new DataContext();
 
             return await context.BillPayment.FirstOrDefaultAsync(b => b.TnxRef == tnxRef);
+        }
+
+        public async Task<IEnumerable<BillPayment>> GetBillPaymentByContractId(int contractId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.BillPayment
+                    .Where(b => b.ContractId == contractId)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<BillPaymentDetail>> GetBillPaymentDetail(int billPaymentId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.BillPaymentDetail
+                 .Where(d => d.BillPaymentID == billPaymentId)
+                 .Include(d => d.RoomService)
+                 .Include(d => d.RoomService.TypeService)
+                 .ToListAsync();
+            }
         }
     }
 }

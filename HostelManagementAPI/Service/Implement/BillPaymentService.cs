@@ -1,4 +1,3 @@
-﻿using BusinessObject.Models;
 ﻿using DTOs;
 using DTOs.BillPayment;
 using DTOs.Enum;
@@ -15,13 +14,37 @@ namespace Service.Implement
         private readonly IRoomRepository _roomRepository;
 
         public BillPaymentService(
-            IBillPaymentRepository billPaymentRepository, 
+            IBillPaymentRepository billPaymentRepository,
             IContractRepository contractRepository,
             IRoomRepository roomRepository)
         {
             _billPaymentRepository = billPaymentRepository;
             _contractRepository = contractRepository;
             _roomRepository = roomRepository;
+        }
+
+        public async Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId)
+        {
+            var currentContract = await _contractRepository.GetContractById(contractId);
+            if (currentContract == null)
+            {
+                throw new ServiceException("Contract not found with this ID");
+            }
+
+            return await _billPaymentRepository.GetBillPaymentsByContractId(contractId);
+        }
+
+        public async Task<BillPaymentDto> GetLastMonthBillPayment(int contractId)
+        {
+            var currentContract = await _contractRepository.GetContractById(contractId);
+            if (currentContract == null) 
+            {
+                throw new ServiceException("Contract not found with this ID");
+            }
+
+            var roomId = currentContract.RoomID;
+
+            return await _billPaymentRepository.GetLastMonthBillPayment(contractId, (int)roomId);
         }
 
         public async Task CreateBillPaymentMonthly(CreateBillPaymentRequestDto createBillPaymentRequestDto)
@@ -54,85 +77,13 @@ namespace Service.Implement
                 {
                     throw new ServiceException("A bill for this month already exists.");
                 }
-                else
+
+                var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
+                if (hiredRoom != null)
                 {
-                    var hiredRoom = await _roomRepository.GetRoomById((int)currentContract.RoomID);
-                    if (hiredRoom != null)
-                    {
-                        double totalAmount = (double)hiredRoom.RoomFee;
-                        var billPaymentDetails = new List<BillPaymentDetail>();
-                        var selectedServices = await _roomRepository.GetRoomServicesIsSelected((int)currentContract.RoomID);
-
-                        foreach (var service in selectedServices)
-                        {
-                            //Serivce fix price per month
-                            if (service.TypeService.Unit.Equals("Month")) {
-                                totalAmount += service.Price ?? 0;
-
-                                var billPaymentDetail = new BillPaymentDetail
-                                {
-                                    RoomServiceID = service.RoomServiceId,
-                                    OldNumberService = 0,
-                                    NewNumberService = 0,
-                                    Quantity = 1,
-                                    ServiceTotalAmount = service.Price ?? 0
-                                };
-
-                                billPaymentDetails.Add(billPaymentDetail);
-                            }
-                            else
-                            {
-                                //Get last bill payment
-                                double oldNumberService = 0;
-                                var lastBillPayment = await _billPaymentRepository.GetLastBillPaymentDetail(service.RoomServiceId);
-                                if (lastBillPayment != null)
-                                {
-                                    oldNumberService = lastBillPayment.NewNumberService ?? 0;
-                                }
-
-                                //
-                                var serviceReading = createBillPaymentRequestDto.ServiceReadings
-                                    .FirstOrDefault(sr => sr.RoomServiceId == service.RoomServiceId);
-                                if (serviceReading == null)
-                                {
-                                    throw new Exception($"No new number service value provided for RoomServiceId {service.RoomServiceId}");
-                                }
-
-                                //Calculate usage service => total price
-                                double newNumberService = serviceReading.NewNumberService;
-                                double usage = newNumberService - oldNumberService;
-                                double serviceTotalAmount = usage * (service.Price ?? 0);
-
-                                var billPaymentDetail = new BillPaymentDetail
-                                {
-                                    RoomServiceID = service.RoomServiceId,
-                                    OldNumberService = oldNumberService,
-                                    NewNumberService = newNumberService,
-                                    Quantity = (int)usage,
-                                    ServiceTotalAmount = serviceTotalAmount
-                                };
-
-                                billPaymentDetails.Add(billPaymentDetail);
-                                totalAmount += serviceTotalAmount;
-                            }
-                        }
-
-                        var billPayment = new BillPayment
-                        {
-                            ContractId = currentContract.ContractID,
-                            BillAmount = (double)hiredRoom.RoomFee,
-                            Month = billingMonth.Month,
-                            Year = billingMonth.Year,
-                            CreatedDate = DateTime.Now,
-                            TotalAmount = totalAmount,
-                            BillPaymentStatus = (int)BillPaymentStatus.Pending,
-                            BillType = createBillPaymentRequestDto.BillType,
-                            Details = billPaymentDetails
-                        };
-
-                        await _billPaymentRepository.CreateBillPaymentMonthly(billPayment);
-                    }
+                    await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, createBillPaymentRequestDto, billingMonth);
                 }
+
             }
         }
 
@@ -183,6 +134,17 @@ namespace Service.Implement
             await _billPaymentRepository.UpdateBillPayment(billPayment);
 
             return billPayment;
+        }
+
+        public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
+        {
+            var billPayment = await _billPaymentRepository.GetBillPaymentById(billPaymentId);
+            if (billPayment == null)
+            {
+                throw new ServiceException("Bill payment not found with this ID");
+            }
+
+            return await _billPaymentRepository.GetBillPaymentDetail(billPaymentId);
         }
     }
 }
