@@ -168,6 +168,11 @@ namespace Repository.Implement
         {
 			return await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
         }
+        public async Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId)
+        {
+            var service = await RoomServiceDao.Instance.GetRoomServicesByRoom(roomId);
+            return _mapper.Map<IEnumerable<RoomServiceView>>(service);
+        }
 
         public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
         {

@@ -167,6 +167,11 @@ namespace Service.Implement
 			return await _roomRepository.GetApppointmentToCreateContract(roomID);
         }
 
+        public async Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId)
+        {
+			return await _roomRepository.GetRoomServicesByRoom(roomId);
+        }
+
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
         //     {
         //return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
