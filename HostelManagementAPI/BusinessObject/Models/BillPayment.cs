@@ -9,6 +9,7 @@
         public int? Month { get; set; }
         public int? Year { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public DateTime? PaidDate { get; set; }
         public double? TotalAmount { get; set; }
         public int? BillPaymentStatus { get; set; }
         public int? BillType { get; set; } //1 deposit, 2 monthly payment
