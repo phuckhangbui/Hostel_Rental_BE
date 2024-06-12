@@ -107,5 +107,15 @@ namespace DAO
 
             return appointment;
         }
+
+        public async Task UpdateAppointmentRoom(int? roomID)
+        {
+            var context = new DataContext();
+            var appointment = await context.RoomAppointments
+                .Where(ra => ra.RoomId == roomID && ra.Status == (int)AppointmentStatus.View)
+                .FirstOrDefaultAsync();
+            appointment.Status = (int)AppointmentStatus.Accept;
+            await UpdateAsync(appointment);
+        }
     }
 }

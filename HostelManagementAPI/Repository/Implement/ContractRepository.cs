@@ -2,6 +2,7 @@
 using BusinessObject.Models;
 using DAO;
 using DTOs.Contract;
+using DTOs.Enum;
 using Repository.Interface;
 
 namespace Repository.Implement
@@ -16,26 +17,25 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateContract(CreateContractDto contractDto)
+        public async Task<int> CreateContract(CreateContractDto contractDto)
         {
             var contract = new Contract
             {
-                OwnerAccountID = contractDto.OwnerAccountId,
+                OwnerAccountID = contractDto.OwnerAccountID,
                 StudentAccountID = contractDto.StudentAccountID,
                 RoomID = contractDto.RoomID,
                 CreatedDate = DateTime.Now,
                 DateEnd = contractDto.DateEnd,
-                DateSign = contractDto.DateSign,
                 DateStart = contractDto.DateStart,
                 ContractTerm = contractDto.ContractTerm,
-                Status = 0,
+                Status = (int)ContractStatusEnum.pending,
                 RoomFee = contractDto.RoomFee,
                 DepositFee = contractDto.DepositFee,
             };
 
             await ContractDao.Instance.CreateAsync(contract);
 
-            return true;
+            return contract.ContractID;
         }
 
         public async Task<IEnumerable<GetContractDto>> GetContractsAsync()

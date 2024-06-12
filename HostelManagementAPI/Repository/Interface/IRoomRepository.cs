@@ -23,6 +23,7 @@ namespace Repository.Interface
 		Task <IEnumerable<RoomServiceResponseDto>> GetRoomServicesIsSelected(int roomId);
         Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID);
 		Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId);
+        Task UpdateAppointmentRoom(int? roomID);
         //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
         //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
         //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
