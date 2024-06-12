@@ -162,6 +162,11 @@ namespace Service.Implement
             await _roomRepository.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
         }
 
+        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
+        {
+			return await _roomRepository.GetApppointmentToCreateContract(roomID);
+        }
+
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
         //     {
         //return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;

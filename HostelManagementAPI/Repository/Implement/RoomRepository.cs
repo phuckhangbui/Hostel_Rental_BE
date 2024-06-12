@@ -169,6 +169,12 @@ namespace Repository.Implement
 			return await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
         }
 
+        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
+        {
+            var appointmentDetails = await RoomAppointmentDao.Instance.GetApppointmentToCreateContract(roomID);
+            return appointmentDetails;
+        }
+
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
         //{
         //	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
