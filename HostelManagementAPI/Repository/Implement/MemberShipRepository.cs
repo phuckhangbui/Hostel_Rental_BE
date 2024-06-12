@@ -119,7 +119,7 @@ namespace Repository.Implement
 
         public async Task<GetMemberShipDto> GetDetailMemberShip(int packageID)
         {
-            var membership = MemberShipDao.Instance.GetMemberShipById(packageID);
+            var membership = await MemberShipDao.Instance.GetMemberShipById(packageID);
             return _mapper.Map<GetMemberShipDto>(membership);
         }
     }

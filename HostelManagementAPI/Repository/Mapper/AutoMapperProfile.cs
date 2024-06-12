@@ -122,5 +122,8 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ServiceType, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.TypeName : null))
             .ForMember(dest => dest.ServiceUnit, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.Unit : null))
             .ReverseMap();
+
+        CreateMap<RoomService, RoomServiceView>()
+        .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName));
     }
 }

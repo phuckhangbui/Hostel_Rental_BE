@@ -19,9 +19,15 @@ namespace Service.Implement
             return memberships;
         }
 
-        public async Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth()
+        public async Task<IEnumerable<AccountMonthDtos>> GetAmountAccountEachMonth(int year)
         {
-            var profits = await _dashboardRepository.GetAmountProfitEachMonth();
+            var profits = await _dashboardRepository.GetAmountAccountEachMonth(year);
+            return profits;
+        }
+
+        public async Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth(int year)
+        {
+            var profits = await _dashboardRepository.GetAmountProfitEachMonth(year);
             return profits;
         }
 
