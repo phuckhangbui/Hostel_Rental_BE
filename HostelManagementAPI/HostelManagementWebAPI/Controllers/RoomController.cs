@@ -93,7 +93,25 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[Authorize(Policy = "Owner")]
+        [HttpGet("rooms/member/{hostelId}/list")]
+        public async Task<ActionResult> GetListRoomByHostelIdForMember(int hostelId)
+        {
+            try
+            {
+                var rooms = await _roomService.GetListRoomByHostelIdForMember(hostelId);
+                return Ok(rooms);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
 		[HttpPost("rooms")]
 		public async Task<ActionResult> Create([FromBody] CreateRoomRequestDto createRoomRequestDto)
 		{

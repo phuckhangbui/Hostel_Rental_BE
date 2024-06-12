@@ -36,6 +36,12 @@ namespace Service.Implement
             return await _roomRepository.GetListRoomsByHostelId(hostelId);
         }
 
+        public async Task<IEnumerable<RoomListResponseDto>> GetListRoomByHostelIdForMember(int hostelId)
+        {
+			var rooms = await _roomRepository.GetListRoomsByHostelId(hostelId);
+            return rooms.Where(r => r.Status == (int)RoomEnum.Available || r.Status == (int)RoomEnum.Viewing);
+        }
+
         public async Task ChangeRoomStatus(int roomId, int status)
 		{
 			var room = await _roomRepository.GetRoomById(roomId);

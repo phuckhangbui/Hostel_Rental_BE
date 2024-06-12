@@ -11,6 +11,7 @@ namespace Service.Interface
 		Task<CreateRoomResponseDto> CreateRoom(CreateRoomRequestDto createRoomRequestDto);
 		Task UploadRoomImage(IFormFileCollection files, int roomId);
 		Task <IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId);
+        Task<IEnumerable<RoomListResponseDto>> GetListRoomByHostelIdForMember(int hostelId);
         Task<IEnumerable<RoomOfHostelAdminView>> GetHostelDetailWithRoomAdminView(int hostelId);
         Task <RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId);
 		Task ChangeRoomStatus(int roomId, int status);
