@@ -164,9 +164,10 @@ namespace Repository.Implement
             await RoomServiceDao.Instance.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
         }
 
-        public async Task<IEnumerable<RoomService>> GetRoomServicesIsSelected(int roomId)
+        public async Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesIsSelected(int roomId)
         {
-			return await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
+			var selectedServices =  await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
+			return _mapper.Map<IEnumerable<RoomServiceResponseDto>>(selectedServices);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

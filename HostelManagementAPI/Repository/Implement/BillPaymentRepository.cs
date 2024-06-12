@@ -3,6 +3,9 @@ using DAO;
 ﻿using AutoMapper;
 using DTOs.BillPayment;
 using Repository.Interface;
+using DTOs.Enum;
+using DTOs.Contract;
+using DTOs.Room;
 
 namespace Repository.Implement
 {
@@ -15,18 +18,94 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task CreateBillPaymentMonthly(BillPayment billPayment)
+        public async Task CreateBillPaymentMonthly(
+            RoomDetailResponseDto hiredRoomDto,
+            GetContractDto currentContractDto, 
+            CreateBillPaymentRequestDto createBillPaymentRequestDto,
+            DateTime billingMonth)
         {
+            double totalAmount = (double)hiredRoomDto.RoomFee;
+            var billPaymentDetails = new List<BillPaymentDetail>();
+            var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
+
+            foreach (var service in selectedServices)
+            {
+                //Serivce fix price per month
+                if (service.TypeService.Unit.Equals("Month"))
+                {
+                    totalAmount += service.Price ?? 0;
+
+                    var billPaymentDetail = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        OldNumberService = 0,
+                        NewNumberService = 0,
+                        Quantity = 1,
+                        ServiceTotalAmount = service.Price,
+                    };
+
+                    billPaymentDetails.Add(billPaymentDetail);
+                }
+                else
+                {
+                    //Get last bill payment
+                    double oldNumberService = 0;
+                    var lastBillPayment = await BillPaymentDao.Instance.GetLastBillPaymentDetail(service.RoomServiceId);
+                    if (lastBillPayment != null)
+                    {
+                        oldNumberService = lastBillPayment.NewNumberService ?? 0;
+                    }
+
+                    //
+                    var serviceReading = createBillPaymentRequestDto.ServiceReadings
+                        .FirstOrDefault(sr => sr.RoomServiceId == service.RoomServiceId);
+                    if (serviceReading == null)
+                    {
+                        throw new Exception($"No new number service value provided for RoomServiceId {service.RoomServiceId}");
+                    }
+
+                    //Calculate usage service => total price
+                    double newNumberService = serviceReading.NewNumberService;
+                    double usage = newNumberService - oldNumberService;
+                    double serviceTotalAmount = usage * (service.Price ?? 0);
+
+                    var billPaymentDetail = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        OldNumberService = oldNumberService,
+                        NewNumberService = newNumberService,
+                        Quantity = (int)usage,
+                        ServiceTotalAmount = serviceTotalAmount
+                    };
+
+                    billPaymentDetails.Add(billPaymentDetail);
+                    totalAmount += serviceTotalAmount;
+                }
+            }
+
+            var billPayment = new BillPayment
+            {
+                ContractId = currentContractDto.ContractID,
+                BillAmount = (double)hiredRoomDto.RoomFee,
+                Month = billingMonth.Month,
+                Year = billingMonth.Year,
+                CreatedDate = DateTime.Now,
+                TotalAmount = totalAmount,
+                BillPaymentStatus = (int)BillPaymentStatus.Pending,
+                BillType = createBillPaymentRequestDto.BillType,
+                Details = billPaymentDetails
+            };
+
             await BillPaymentDao.Instance.CreateAsync(billPayment);
         }
 
-        public async Task<BillPayment> GetCurrentMonthBillPayment(int contractId, int month, int year)
+        public async Task<BillPaymentDto> GetCurrentMonthBillPayment(int contractId, int month, int year)
         {
             
             var currentBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contractId, month, year);
             if (currentBillPayment != null)
             {
-                return currentBillPayment;
+                return _mapper.Map<BillPaymentDto>(currentBillPayment);
             }
 
             return null;
