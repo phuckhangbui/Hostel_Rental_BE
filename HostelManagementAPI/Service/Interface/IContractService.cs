@@ -11,6 +11,6 @@ namespace Service.Interface
         Task<IEnumerable<GetContractDto>> GetContractsByOwnerId(int ownerId);
         Task<IEnumerable<GetContractDto>> GetContractsByStudentId(int studentId);
         Task<GetContractDto> GetContractDetailByContractId(int contractId);
-
+        Task AddContractMember(CreateListContractMemberDto createListContractMemberDto);
     }
 }

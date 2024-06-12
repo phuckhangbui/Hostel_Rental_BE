@@ -67,7 +67,10 @@ namespace Service.Implement
             await _contractRepository.UpdateContract(id, contractDto);
         }
 
-
+        public async Task AddContractMember(CreateListContractMemberDto createListContractMemberDto)
+        {
+            await _contractRepository.AddContractMember(createListContractMemberDto);
+        }
 
     }
 }

@@ -13,7 +13,6 @@ namespace Repository.Interface
         Task<IEnumerable<GetContractDto>> GetContractByStudentId(int studentId);
         Task<GetContractDto> GetContractDetailsByContractId(int contractId);
         Task UpdateContract(GetContractDto getContractDto);
-
-
+        Task AddContractMember(CreateListContractMemberDto contractMemberDto);
     }
 }

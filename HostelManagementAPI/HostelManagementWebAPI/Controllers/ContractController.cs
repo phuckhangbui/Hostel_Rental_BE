@@ -126,6 +126,22 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-
+        [HttpPost("contracts/contractsMember")]
+        public async Task<ActionResult> CreateContractMembers([FromBody] CreateListContractMemberDto createListContractMemberDto)
+        {
+            try
+            {
+                await _contractService.AddContractMember(createListContractMemberDto);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
     }
 }

@@ -91,5 +91,9 @@ namespace Repository.Implement
             await ContractDao.Instance.UpdateAsync(contract);
         }
 
+        public async Task AddContractMember(CreateListContractMemberDto createListContractMemberDto)
+        {
+            await ContractMemberDao.Instance.AddContractMembersAsync(createListContractMemberDto);
+        }
     }
 }
