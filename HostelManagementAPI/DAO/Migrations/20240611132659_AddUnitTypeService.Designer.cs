@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240611132659_AddUnitTypeService")]
+    partial class AddUnitTypeService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,9 +111,6 @@ namespace DAO.Migrations
 
                     b.Property<int?>("Month")
                         .HasColumnType("int");
-
-                    b.Property<string>("TnxRef")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("TotalAmount")
                         .HasColumnType("float");

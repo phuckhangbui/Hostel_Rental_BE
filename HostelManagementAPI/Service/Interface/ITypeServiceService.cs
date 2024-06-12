@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.TypeService;
+﻿using DTOs.TypeService;
 
 namespace Service.Interface
 {

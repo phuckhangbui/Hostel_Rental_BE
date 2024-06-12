@@ -1,18 +1,21 @@
-﻿using BusinessObject.Models;
+﻿using AutoMapper;
+using BusinessObject.Models;
 using DAO;
 using DTOs.Contract;
 using Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.Implement
 {
 
     public class ContractRepository : IContractRepository
     {
+        private readonly IMapper _mapper;
+
+        public ContractRepository(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         public async Task<bool> CreateContract(CreateContractDto contractDto)
         {
             var contract = new Contract
@@ -30,49 +33,67 @@ namespace Repository.Implement
                 DepositFee = contractDto.DepositFee,
             };
 
-            //foreach (var detailDto in contractDto.ContractDetails)
-            //{
-            //    var contractDetail = new ContractDetail
-            //    {
-            //        ServiceID = detailDto.ServiceID,
-            //    };
-            //    contract.ContractDetails.Add(contractDetail);
-            //}
-
             await ContractDao.Instance.CreateAsync(contract);
 
             return true;
         }
 
-        public async Task<IEnumerable<Contract>> GetContractsAsync()
+        public async Task<IEnumerable<GetContractDto>> GetContractsAsync()
         {
-            return await ContractDao.Instance.GetContractsAsync();
-            
+            var contract = await ContractDao.Instance.GetContractsAsync();
+
+            return _mapper.Map<IEnumerable<GetContractDto>>(contract);
         }
 
-        public async Task<Contract> GetContractById(int id)
+        public async Task<GetContractDto> GetContractById(int id)
         {
-            return await ContractDao.Instance.GetContractById(id);
+            var contract = await ContractDao.Instance.GetContractById(id);
+
+            return _mapper.Map<GetContractDto>(contract);
         }
 
-        public async Task UpdateContract(Contract contract)
+        public async Task UpdateContract(int id, UpdateContractDto contractDto)
         {
+            var currentContract = await ContractDao.Instance.GetContractById(id);
+
+            currentContract.StudentAccountID = contractDto.StudentAccountID;
+            currentContract.RoomID = contractDto.RoomID;
+            currentContract.ContractTerm = contractDto.ContractTerm;
+            currentContract.DateEnd = DateTime.Parse(contractDto.DateEnd);
+            currentContract.DateSign = DateTime.Parse(contractDto.DateSign);
+            currentContract.Status = contractDto.Status;
+            currentContract.RoomFee = contractDto.RoomFee;
+            currentContract.DepositFee = contractDto.DepositFee;
+
+            await ContractDao.Instance.UpdateAsync(currentContract);
+        }
+
+        public async Task<IEnumerable<GetContractDto>> GetContractByOwnerId(int ownerId)
+        {
+            var contract = await ContractDao.Instance.GetContractsByOwnerIDAsync(ownerId);
+            return _mapper.Map<IEnumerable<GetContractDto>>(contract);
+        }
+
+        public async Task<IEnumerable<GetContractDto>> GetContractByStudentId(int studentId)
+        {
+            var contract = await ContractDao.Instance.GetContractsByStudentIDAsync(studentId);
+            return _mapper.Map<IEnumerable<GetContractDto>>(contract);
+        }
+
+        public async Task<GetContractDto> GetContractDetailsByContractId(int contractId)
+        {
+            var contract = await ContractDao.Instance.GetContractByContractIDAsync(contractId);
+            return _mapper.Map<GetContractDto>(contract);
+        }
+        public async Task UpdateContract(GetContractDto getContractDto)
+        {
+            var contract = _mapper.Map<Contract>(getContractDto);
             await ContractDao.Instance.UpdateAsync(contract);
         }
 
-        public async Task<IEnumerable<Contract>> GetContractByOwnerId(int ownerId)
+        public async Task AddContractMember(CreateListContractMemberDto createListContractMemberDto)
         {
-            return await ContractDao.Instance.GetContractsByOwnerIDAsync(ownerId);
-        }
-
-        public async Task<IEnumerable<Contract>> GetContractByStudentId(int studentId)
-        {
-            return await ContractDao.Instance.GetContractsByStudentIDAsync(studentId);
-        }
-
-        public async Task<Contract> GetContractDetailsByContractId(int contractId)
-        {
-            return await ContractDao.Instance.GetContractByContractIDAsync(contractId);
+            await ContractMemberDao.Instance.AddContractMembersAsync(createListContractMemberDto);
         }
     }
 }

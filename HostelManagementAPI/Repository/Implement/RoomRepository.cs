@@ -5,6 +5,7 @@ using DAO;
 using DTOs.Room;
 using Repository.Interface;
 using DTOs.RoomAppointment;
+using DTOs.RoomService;
 
 namespace Repository.Implement
 {
@@ -29,6 +30,7 @@ namespace Repository.Implement
 				Description = createRoomRequestDto.Description,
 				RoomFee = createRoomRequestDto.RoomFee,
 				HostelID = createRoomRequestDto.HostelID,
+				Area = createRoomRequestDto.Width * createRoomRequestDto.Length,
 				Status = (int)RoomEnum.Available,
 				RoomImages = new List<RoomImage>(),
 				RoomServices = new List<RoomService>(),
@@ -150,11 +152,22 @@ namespace Repository.Implement
 				RoomId = createRoomAppointmentDto.RoomId,
 				ViewerId = createRoomAppointmentDto.ViewerId,
 				AppointmentTime = DateTime.Now,
-				Status = createRoomAppointmentDto.Status,
+				Status = 1,
 			};
             var roomAppointment = _mapper.Map<RoomAppointment>(room);
 			
 			await RoomAppointmentDao.Instance.CreateAsync(roomAppointment);
+        }
+
+        public async Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates)
+        {
+            await RoomServiceDao.Instance.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
+        }
+
+        public async Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesIsSelected(int roomId)
+        {
+			var selectedServices =  await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
+			return _mapper.Map<IEnumerable<RoomServiceResponseDto>>(selectedServices);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

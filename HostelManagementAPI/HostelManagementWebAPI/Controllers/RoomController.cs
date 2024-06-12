@@ -1,5 +1,6 @@
 ﻿using DTOs.Room;
 using DTOs.RoomAppointment;
+using DTOs.RoomService;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -92,7 +93,25 @@ namespace HostelManagementWebAPI.Controllers
 			}
 		}
 
-		[Authorize(Policy = "Owner")]
+        [HttpGet("rooms/member/{hostelId}/list")]
+        public async Task<ActionResult> GetListRoomByHostelIdForMember(int hostelId)
+        {
+            try
+            {
+                var rooms = await _roomService.GetListRoomByHostelIdForMember(hostelId);
+                return Ok(rooms);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
 		[HttpPost("rooms")]
 		public async Task<ActionResult> Create([FromBody] CreateRoomRequestDto createRoomRequestDto)
 		{
@@ -182,8 +201,19 @@ namespace HostelManagementWebAPI.Controllers
 
             try
             {
-                await _roomService.CreateRoomAppointmentAsync(createRoomAppointmentDto);
-                return Ok(createRoomAppointmentDto);
+                var roomStatus = await _roomService.GetRoomDetailByRoomId(createRoomAppointmentDto.RoomId);
+                if(roomStatus.Status != 0)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Room is not available"));
+                }
+                var isUpdatedStatus = await _roomService.UpdateRoomStatus(createRoomAppointmentDto.RoomId, 1);
+                if(isUpdatedStatus)
+                {
+                    await _roomService.CreateRoomAppointmentAsync(createRoomAppointmentDto);
+                    return Ok(new ApiResponseStatus(200, "Create appoiment success"));
+                } 
+                return BadRequest(new ApiResponseStatus(400, "Fail to create appoitment"));
+                
             }
             catch (ServiceException ex)
             {
@@ -210,6 +240,25 @@ namespace HostelManagementWebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPut("rooms/service-update-select-status/{roomId}")]
+        public async Task<IActionResult> UpdateRoomServices(int roomId, [FromBody] List<RoomServiceUpdateDto> updates)
+        {
+            if (updates == null || updates.Count == 0)
+            {
+                return BadRequest("No updates provided.");
+            }
+
+            try
+            {
+                await _roomService.UpdateRoomServicesIsSelectStatusAsync(roomId, updates);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
 
