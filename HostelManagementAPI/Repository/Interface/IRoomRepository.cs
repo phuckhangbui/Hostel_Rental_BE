@@ -21,11 +21,12 @@ namespace Repository.Interface
 		Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
 		Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
 		Task <IEnumerable<RoomServiceResponseDto>> GetRoomServicesIsSelected(int roomId);
-        Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID);
+		Task <OwnerInfoDto> GetOwnerInfoByRoomId(int roomId);        
+    Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID);
 		Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId);
-        Task UpdateAppointmentRoom(int? roomID);
+    Task UpdateAppointmentRoom(int? roomID);
         //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
         //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
         //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
-    }
+  }
 }

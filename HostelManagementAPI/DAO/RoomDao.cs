@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Room;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -22,6 +23,26 @@ namespace DAO
                     instance = new RoomDao();
                 }
                 return instance;
+            }
+        }
+
+        public async Task<OwnerInfoDto> GetOwnerInfoByRoomId(int roomId)
+        {
+            using (var context = new DataContext())
+            {
+                // Query to get the owner's info based on roomId
+                var ownerInfo = await (from room in context.Room
+                                       join hostel in context.Hostel on room.HostelID equals hostel.HostelID
+                                       join account in context.Account on hostel.AccountID equals account.AccountID
+                                       where room.RoomID == roomId
+                                       select new OwnerInfoDto
+                                       {
+                                           Name = account.Name,
+                                           Phone = account.Phone,
+                                           Email = account.Email
+                                       }).FirstOrDefaultAsync();
+
+                return ownerInfo;
             }
         }
 
