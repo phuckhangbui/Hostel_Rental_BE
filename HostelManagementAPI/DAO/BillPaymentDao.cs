@@ -74,5 +74,15 @@ namespace DAO
 
             return await context.BillPayment.FirstOrDefaultAsync(b => b.TnxRef == tnxRef);
         }
+
+        public async Task<IEnumerable<BillPayment>> GetBillPaymentByContractId(int contractId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.BillPayment
+                    .Where(b => b.ContractId == contractId)
+                    .ToListAsync();
+            }
+        }
     }
 }

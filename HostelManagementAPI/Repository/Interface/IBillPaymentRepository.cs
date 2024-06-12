@@ -17,5 +17,6 @@ namespace Repository.Interface
         Task<BillPaymentDto> GetBillPaymentByTnxRef(string tnxRef);
         Task<BillPaymentDto> CreateBillPayment(BillPaymentDto billPaymentDto);
         Task<BillPaymentDto> UpdateBillPayment(BillPaymentDto billPaymentDto);
+        Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId);
     }
 }

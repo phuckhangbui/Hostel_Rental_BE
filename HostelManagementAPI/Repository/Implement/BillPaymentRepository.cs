@@ -6,7 +6,6 @@ using Repository.Interface;
 using DTOs.Enum;
 using DTOs.Contract;
 using DTOs.Room;
-using DTOs.Hostel;
 
 namespace Repository.Implement
 {
@@ -165,6 +164,13 @@ namespace Repository.Implement
             await BillPaymentDao.Instance.UpdateAsync(billPayment);
 
             return billPaymentDto;
+        }
+
+        public async Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId)
+        {
+            var billPayments = await BillPaymentDao.Instance.GetBillPaymentByContractId(contractId);
+
+            return _mapper.Map<IEnumerable<BillPaymentDto>>(billPayments);
         }
     }
 }
