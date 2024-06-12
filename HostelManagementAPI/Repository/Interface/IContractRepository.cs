@@ -7,7 +7,7 @@ namespace Repository.Interface
     {
         Task<IEnumerable<GetContractDto>> GetContractsAsync();
         Task UpdateContract(int id, UpdateContractDto contract);
-        Task<bool> CreateContract(CreateContractDto contract);
+        Task<int> CreateContract(CreateContractDto contract);
         Task<GetContractDto> GetContractById(int id);
         Task<IEnumerable<GetContractDto>> GetContractByOwnerId(int ownerId);
         Task<IEnumerable<GetContractDto>> GetContractByStudentId(int studentId);
