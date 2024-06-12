@@ -1,5 +1,8 @@
 using API.Extensions;
+using BusinessObject.Models;
 using HostelManagementWebAPI.Extensions;
+using Microsoft.AspNetCore.OData;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Service;
 using Service.Vnpay;
@@ -22,6 +25,13 @@ builder.Services.ApplicationServices(builder.Configuration);
 ConfigurationHelper.Initialize(builder.Configuration);
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
 
+var modelBuilder = new ODataConventionModelBuilder();
+modelBuilder.EntitySet<Complain>("Complains");
+
+builder.Services.AddControllers().AddOData(
+    options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
+        "odata",
+        modelBuilder.GetEdmModel()));
 
 builder.Services.AddSwaggerGen(option =>
 {

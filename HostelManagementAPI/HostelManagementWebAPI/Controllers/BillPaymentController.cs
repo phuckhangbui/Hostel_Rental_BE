@@ -28,7 +28,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("bill-payment/monthly")]
-        public async Task<ActionResult> Create([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
+        public async Task<ActionResult> CreateBillPaymentMonthly([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("billPayment/deposit")]
+        [HttpPost("bill-payment/deposit")]
         public async Task<ActionResult> DepositRoom(DepositRoomInputDto depositRoomInputDto)
         {
             int accountId = GetLoginAccountId();
@@ -134,7 +134,35 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("billPayment/deposit/confirm-payment")]
+        [HttpPost("bill-payment/pay/monthly")]
+        public async Task<ActionResult> MonthlyBillPayment(MonthlyBillPaymentInputDto monthlyBillPaymentInputDto)
+        {
+            int accountId = GetLoginAccountId();
+            try
+            {
+                var billPayment = await _billPaymentService.PrepareBillingForMonthlyPayment(monthlyBillPaymentInputDto.BillPaymentId, accountId);
+
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(billPayment.TnxRef, (double)billPayment.TotalAmount, monthlyBillPaymentInputDto.ReturnUrl, "Monthly bill payment", _vnPayProperties);
+
+                return Ok(new
+                {
+                    paymentUrl,
+                    billPayment
+                });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+
+        [Authorize(Policy = "Member")]
+        [HttpPost("bill-payment/confirm-payment")]
         public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
         {
             int accountId = GetLoginAccountId();
@@ -146,9 +174,12 @@ namespace HostelManagementWebAPI.Controllers
                     return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
                 }
 
-                var billPayment = await _billPaymentService.ConfirmDepositTransaction(vnPayReturnUrlDto);
+                var billPayment = await _billPaymentService.ConfirmBillingTransaction(vnPayReturnUrlDto);
 
-                await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
+                if (billPayment.BillType == (int)BillType.Deposit)
+                {
+                    await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
+                }
 
                 return Ok();
             }

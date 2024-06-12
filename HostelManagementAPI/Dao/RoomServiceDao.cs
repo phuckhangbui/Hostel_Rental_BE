@@ -93,5 +93,16 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task<IEnumerable<RoomService>> GetRoomServicesByRoom(int roomId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.RoomService
+                    .Include(rs => rs.TypeService)
+                    .Where(rs => rs.RoomId == roomId)
+                    .ToListAsync();
+            }
+        }
     }
 }

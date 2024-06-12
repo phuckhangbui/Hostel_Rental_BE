@@ -37,7 +37,7 @@ namespace Service.Implement
         public async Task<BillPaymentDto> GetLastMonthBillPayment(int contractId)
         {
             var currentContract = await _contractRepository.GetContractById(contractId);
-            if (currentContract == null) 
+            if (currentContract == null)
             {
                 throw new ServiceException("Contract not found with this ID");
             }
@@ -91,8 +91,6 @@ namespace Service.Implement
         {
             var contract = await _contractRepository.GetContractById(depositRoomInputDto.ContractId);
 
-
-
             var billpayment = new BillPaymentDto
             {
                 ContractId = contract.ContractID,
@@ -109,33 +107,6 @@ namespace Service.Implement
             return billpayment;
         }
 
-        public async Task<BillPaymentDto> ConfirmDepositTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
-        {
-            var billPayment = await _billPaymentRepository.GetBillPaymentByTnxRef(vnPayReturnUrlDto.TnxRef);
-
-            if (billPayment == null)
-            {
-                throw new ServiceException("No bill match");
-            }
-
-
-            if (vnPayReturnUrlDto == null)
-            {
-                throw new ServiceException("No transaction match");
-            }
-
-            if (billPayment.BillPaymentStatus != (int)BillPaymentStatus.Pending)
-            {
-                throw new ServiceException("Billpayment has been paid");
-            }
-
-            billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
-
-            await _billPaymentRepository.UpdateBillPayment(billPayment);
-
-            return billPayment;
-        }
-
         public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
         {
             var billPayment = await _billPaymentRepository.GetBillPaymentById(billPaymentId);
@@ -146,5 +117,59 @@ namespace Service.Implement
 
             return await _billPaymentRepository.GetBillPaymentDetail(billPaymentId);
         }
+
+        public async Task<BillPaymentDto> PrepareBillingForMonthlyPayment(int billpaymentId, int accountId)
+        {
+            var billpayment = await _billPaymentRepository.GetBillPaymentById(billpaymentId);
+
+            if (billpayment == null)
+            {
+                throw new ServiceException("Bill payment not found with this ID");
+            }
+
+            var contract = await _contractRepository.GetContractById((int)billpayment.ContractId);
+            if (contract == null || contract?.StudentAccountID != accountId)
+            {
+                throw new ServiceException("User are not allow to using this function");
+            }
+
+            if (billpayment.BillPaymentStatus != (int)BillPaymentStatus.Pending || billpayment.BillType != (int)BillType.MonthlyPayment)
+            {
+                throw new ServiceException("Bill is not suiable for this transaction");
+            }
+
+            billpayment.TnxRef = DateTime.Now.Ticks.ToString();
+            await _billPaymentRepository.UpdateBillPayment(billpayment);
+
+            return billpayment;
+        }
+
+        public async Task<BillPaymentDto> ConfirmBillingTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
+        {
+            var billPayment = await _billPaymentRepository.GetBillPaymentByTnxRef(vnPayReturnUrlDto.TnxRef);
+
+            if (billPayment == null)
+            {
+                throw new ServiceException("No bill match");
+            }
+
+            if (vnPayReturnUrlDto == null)
+            {
+                throw new ServiceException("No transaction match");
+            }
+
+            if (billPayment.BillPaymentStatus == (int)BillPaymentStatus.Paid)
+            {
+                throw new ServiceException("Billpayment has been paid");
+            }
+
+            billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+            billPayment.PaidDate = DateTime.Now;
+
+            await _billPaymentRepository.UpdateBillPayment(billPayment);
+
+            return billPayment;
+        }
+
     }
 }

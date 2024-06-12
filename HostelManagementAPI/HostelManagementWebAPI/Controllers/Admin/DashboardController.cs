@@ -43,9 +43,17 @@ namespace HostelManagementWebAPI.Controllers.Admin
 
         [Authorize(policy: "Admin")]
         [HttpGet("admin/dashboard/typemonth")]
-        public async Task<ActionResult<IEnumerable<TypeMonthDtos>>> GetAmountProfitEachMonth()
+        public async Task<ActionResult<IEnumerable<TypeMonthDtos>>> GetAmountProfitEachMonth(int year)
         {
-            var profits = await _dashboardService.GetAmountProfitEachMonth();
+            var profits = await _dashboardService.GetAmountProfitEachMonth(year);
+            return Ok(profits);
+        }
+
+        [Authorize(policy: "Admin")]
+        [HttpGet("admin/dashboard/accountmonth")]
+        public async Task<ActionResult<IEnumerable<TypeMonthDtos>>> GetAmountAccountEachMonth(int year)
+        {
+            var profits = await _dashboardService.GetAmountAccountEachMonth(year);
             return Ok(profits);
         }
     }

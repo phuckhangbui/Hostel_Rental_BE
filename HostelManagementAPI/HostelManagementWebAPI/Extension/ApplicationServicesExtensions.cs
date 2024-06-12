@@ -26,7 +26,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IBillPaymentRepository, BillPaymentRepository>();
 
         services.AddScoped<IVnpayService, VnpayService>();
-        //services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IMemberShipService, MemberShipService>();
@@ -45,7 +45,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IHostelService, HostelService>();
         services.AddScoped<IContractService, ContractService>();
         services.AddScoped<IContractRepository, ContractRepository>();
-        //services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IBillPaymentService, BillPaymentService>();
 
         services.AddScoped<IBillPaymentRepository, BillPaymentRepository>();

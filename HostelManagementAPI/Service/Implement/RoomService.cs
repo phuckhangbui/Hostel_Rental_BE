@@ -185,21 +185,30 @@ namespace Service.Implement
             await _roomRepository.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
         }
 
-        public async Task<bool> UpdateRoomStatus(int roomId, int status)
+		public async Task<bool> UpdateRoomStatus(int roomId, int status)
+		{
+			var room = await _roomRepository.GetRoomById(roomId);
+			if (room == null)
+			{
+				throw new ServiceException("Room not found with this ID");
+			}
+
+			if (!Enum.IsDefined(typeof(RoomEnum), status))
+			{
+				throw new ServiceException("Invalid status value");
+			}
+
+			await _roomRepository.UpdateRoomStatus(roomId, status);
+			return true;
+		}
+        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
         {
-            var room = await _roomRepository.GetRoomById(roomId);
-            if (room == null)
-            {
-                throw new ServiceException("Room not found with this ID");
-            }
+			return await _roomRepository.GetApppointmentToCreateContract(roomID);
+        }
 
-            if (!Enum.IsDefined(typeof(RoomEnum), status))
-            {
-                throw new ServiceException("Invalid status value");
-            }
-
-            await _roomRepository.UpdateRoomStatus(roomId, status);
-            return true;
+        public async Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId)
+        {
+			return await _roomRepository.GetRoomServicesByRoom(roomId);
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)

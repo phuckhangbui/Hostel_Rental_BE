@@ -18,7 +18,7 @@ namespace Repository.Implement
 
         public async Task<IEnumerable<Complain>> GetComplains()
         {
-            return await ComplainDao.Instance.GetAllAsync();
+            return await ComplainDao.Instance.GetComplainWithOnwerId();
         }
 
         public Task UpdateComplain(Complain complain)

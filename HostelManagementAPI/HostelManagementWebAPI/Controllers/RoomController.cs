@@ -243,6 +243,25 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [HttpGet("owner/appointment/details/{roomID}")]
+        public async Task<ActionResult> GetApppointmentToCreateContract(int roomID)
+        {
+            try
+            {
+                var appointment = await _roomService.GetApppointmentToCreateContract(roomID);
+                if (appointment == null)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Appointment not found"));
+                }
+                return Ok(appointment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+
         [HttpPut("rooms/service-update-select-status/{roomId}")]
         public async Task<IActionResult> UpdateRoomServices(int roomId, [FromBody] List<RoomServiceUpdateDto> updates)
         {

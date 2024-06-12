@@ -1,5 +1,6 @@
 ﻿using DTOs.Contract;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Exceptions;
 using Service.Interface;
@@ -48,8 +49,9 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [HttpPost("contracts")]
-        public async Task<ActionResult> Create([FromBody] CreateContractDto contractDto)
+        [Authorize(policy: "Owner")]
+        [HttpPost("owner/contract/create")]
+        public async Task<ActionResult> Create(CreateContractDto contractDto)
         {
             try
             {
