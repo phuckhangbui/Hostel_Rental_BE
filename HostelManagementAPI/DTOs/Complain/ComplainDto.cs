@@ -1,6 +1,6 @@
 ﻿namespace DTOs.Complain
 {
-    public class DisplayComplainDto
+    public class ComplainDto
     {
         public int ComplainID { get; set; }
         public int? AccountID { get; set; }
@@ -12,6 +12,6 @@
         public int? Status { get; set; }  //1 send, 2 processing, 3 resolved 
         public string? StatusName { get; set; }
         public DateTime? DateUpdate { get; set; }
-
+        public int? OwnerId { get; set; }
     }
 }
