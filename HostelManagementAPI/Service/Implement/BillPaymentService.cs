@@ -23,6 +23,19 @@ namespace Service.Implement
             _roomRepository = roomRepository;
         }
 
+        public async Task<BillPaymentDto> GetLastMonthBillPayment(int contractId)
+        {
+            var currentContract = await _contractRepository.GetContractById(contractId);
+            if (currentContract == null) 
+            {
+                throw new ServiceException("Contract not found with this ID");
+            }
+
+            var roomId = currentContract.RoomID;
+
+            return await _billPaymentRepository.GetLastMonthBillPayment(contractId, (int)roomId);
+        }
+
         public async Task CreateBillPaymentMonthly(CreateBillPaymentRequestDto createBillPaymentRequestDto)
         {
             var contractId = createBillPaymentRequestDto.ContractId;

@@ -6,6 +6,7 @@ using Repository.Interface;
 using DTOs.Enum;
 using DTOs.Contract;
 using DTOs.Room;
+using DTOs.Hostel;
 
 namespace Repository.Implement
 {
@@ -111,9 +112,27 @@ namespace Repository.Implement
             return null;
         }
 
-        public async Task<BillPaymentDetail> GetLastBillPaymentDetail(int roomServiceId)
+        public async Task<BillPaymentDto> GetLastMonthBillPayment(int contractId, int roomId)
         {
-            return await BillPaymentDao.Instance.GetLastBillPaymentDetail(roomServiceId);
+            var lastBillPayment = await BillPaymentDao.Instance.GetLastBillPayment(contractId);
+            var lastBillPaymentDto = _mapper.Map<BillPaymentDto>(lastBillPayment);
+
+            var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
+            var billPaymentDetails = new List<BillPaymentDetail>();
+
+            foreach (var service in selectedServices)
+            {
+                var lastBillPaymentDetail = await BillPaymentDao.Instance.GetLastBillPaymentDetail(service.RoomServiceId);
+                if (lastBillPaymentDetail != null)
+                {
+                    billPaymentDetails.Add(lastBillPaymentDetail);
+                }
+            }
+
+            var billPaymentDetailDtos = _mapper.Map<IEnumerable<BillPaymentDetailResponseDto>>(billPaymentDetails);
+            lastBillPaymentDto.BillPaymentDetails = (List<BillPaymentDetailResponseDto>)billPaymentDetailDtos;
+
+            return lastBillPaymentDto;
         }
 
         public async Task<BillPaymentDto> GetBillPaymentById(int id)

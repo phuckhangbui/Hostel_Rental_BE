@@ -1,4 +1,3 @@
-using BusinessObject.Models;
 using DTOs.BillPayment;
 using DTOs.Contract;
 using DTOs.Room;
@@ -13,7 +12,7 @@ namespace Repository.Interface
             CreateBillPaymentRequestDto createBillPaymentRequestDto,
             DateTime billingMonth);
         Task<BillPaymentDto> GetCurrentMonthBillPayment(int contractId, int month, int year);
-        Task<BillPaymentDetail> GetLastBillPaymentDetail(int roomServiceId);
+        Task<BillPaymentDto> GetLastMonthBillPayment(int contractId, int roomId);
         Task<BillPaymentDto> GetBillPaymentById(int id);
         Task<BillPaymentDto> GetBillPaymentByTnxRef(string tnxRef);
         Task<BillPaymentDto> CreateBillPayment(BillPaymentDto billPaymentDto);

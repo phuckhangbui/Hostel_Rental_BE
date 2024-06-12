@@ -117,5 +117,10 @@ public class AutoMapperProfile : Profile
         CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>().ReverseMap();
 
         CreateMap<BillPayment, BillPaymentDto>().ReverseMap();
+        CreateMap<BillPaymentDetail, BillPaymentDetailResponseDto>()
+            .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.RoomService != null ? src.RoomService.Price : (double?)null))
+            .ForMember(dest => dest.ServiceType, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.TypeName : null))
+            .ForMember(dest => dest.ServiceUnit, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.Unit : null))
+            .ReverseMap();
     }
 }

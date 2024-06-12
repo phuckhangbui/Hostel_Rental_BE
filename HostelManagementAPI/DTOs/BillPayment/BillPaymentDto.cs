@@ -12,8 +12,6 @@
         public int? BillPaymentStatus { get; set; }
         public int? BillType { get; set; }
         public string? TnxRef { get; set; }
-        
-
-        //public IList<BillPaymentDetail> Details { get; set; }
+        public List<BillPaymentDetailResponseDto> BillPaymentDetails { get; set; }
     }
 }
