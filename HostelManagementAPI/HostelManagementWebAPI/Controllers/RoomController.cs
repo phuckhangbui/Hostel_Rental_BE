@@ -201,8 +201,19 @@ namespace HostelManagementWebAPI.Controllers
 
             try
             {
-                await _roomService.CreateRoomAppointmentAsync(createRoomAppointmentDto);
-                return Ok(createRoomAppointmentDto);
+                var roomStatus = await _roomService.GetRoomDetailByRoomId(createRoomAppointmentDto.RoomId);
+                if(roomStatus.Status != 0)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Room is not available"));
+                }
+                var isUpdatedStatus = await _roomService.UpdateRoomStatus(createRoomAppointmentDto.RoomId, 1);
+                if(isUpdatedStatus)
+                {
+                    await _roomService.CreateRoomAppointmentAsync(createRoomAppointmentDto);
+                    return Ok(new ApiResponseStatus(200, "Create appoiment success"));
+                } 
+                return BadRequest(new ApiResponseStatus(400, "Fail to create appoitment"));
+                
             }
             catch (ServiceException ex)
             {

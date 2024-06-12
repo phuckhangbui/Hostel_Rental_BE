@@ -25,5 +25,6 @@ namespace Service.Interface
         //Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
         //Task RemoveRoomServiceAsync(int roomId, int serviceId);
         //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
+        Task<bool> UpdateRoomStatus(int roomId, int status);
     }
 }

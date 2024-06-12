@@ -11,6 +11,5 @@ namespace DTOs.RoomAppointment
         public int RoomId { get; set; }
         public int ViewerId { get; set; }
         public DateTime AppointmentTime { get; set; }
-        public int Status { get; set; }
     }
 }

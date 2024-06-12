@@ -168,6 +168,23 @@ namespace Service.Implement
             await _roomRepository.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
         }
 
+        public async Task<bool> UpdateRoomStatus(int roomId, int status)
+        {
+            var room = await _roomRepository.GetRoomById(roomId);
+            if (room == null)
+            {
+                throw new ServiceException("Room not found with this ID");
+            }
+
+            if (!Enum.IsDefined(typeof(RoomEnum), status))
+            {
+                throw new ServiceException("Invalid status value");
+            }
+
+            await _roomRepository.UpdateRoomStatus(roomId, status);
+			return true;
+        }
+
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
         //     {
         //return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
