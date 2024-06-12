@@ -152,7 +152,7 @@ namespace Repository.Implement
 				RoomId = createRoomAppointmentDto.RoomId,
 				ViewerId = createRoomAppointmentDto.ViewerId,
 				AppointmentTime = DateTime.Now,
-				Status = createRoomAppointmentDto.Status,
+				Status = 1,
 			};
             var roomAppointment = _mapper.Map<RoomAppointment>(room);
 			
