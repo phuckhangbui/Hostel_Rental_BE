@@ -192,7 +192,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [HttpPost("rooms/appointment")]
-        public async Task<ActionResult> CreateRoomAppointment([FromBody] CreateRoomAppointmentDto createRoomAppointmentDto)
+        public async Task<ActionResult> CreateRoomAppointment([FromBody] CreateAppointmentSendEmailDto createRoomAppointmentDto)
         {
             if (!ModelState.IsValid)
             {

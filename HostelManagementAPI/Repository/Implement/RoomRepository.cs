@@ -9,7 +9,7 @@ using DTOs.RoomService;
 
 namespace Repository.Implement
 {
-	public class RoomRepository : IRoomRepository
+    public class RoomRepository : IRoomRepository
 	{
 		private readonly IMapper _mapper;
 
@@ -168,6 +168,11 @@ namespace Repository.Implement
         {
 			var selectedServices =  await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
 			return _mapper.Map<IEnumerable<RoomServiceResponseDto>>(selectedServices);
+        }
+
+        public async Task<OwnerInfoDto> GetOwnerInfoByRoomId(int roomId)
+        {
+            return await RoomDao.Instance.GetOwnerInfoByRoomId(roomId);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

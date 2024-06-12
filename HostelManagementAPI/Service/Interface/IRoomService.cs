@@ -19,7 +19,7 @@ namespace Service.Interface
 		Task<List<string>> GetRoomImagesByHostelId(int hostelId);
         Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync();
         Task<GetAppointmentDto> GetAppointmentById(int id);
-        Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
+        Task CreateRoomAppointmentAsync(CreateAppointmentSendEmailDto createAppointmentSendEmailDto);
         Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
 
         //Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
