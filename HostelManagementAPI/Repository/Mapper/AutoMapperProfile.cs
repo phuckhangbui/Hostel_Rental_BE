@@ -67,7 +67,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Phone : string.Empty))
             .ForMember(dest => dest.NumberOfRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
         CreateMap<Complain, CreateComplainDto>().ReverseMap();
-        CreateMap<Complain, DisplayComplainDto>()
+        CreateMap<Complain, ComplainDto>()
             .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : string.Empty))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : string.Empty));
         CreateMap<MemberShipRegisterTransaction, ViewHistoryMemberShipDtos>()
@@ -144,5 +144,10 @@ public class AutoMapperProfile : Profile
 
         CreateMap<RoomService, RoomServiceView>()
         .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName));
+
+        CreateMap<Complain, ComplainDto>()
+            .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID));
+
+        CreateMap<ComplainDto, Complain>();
     }
 }

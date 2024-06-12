@@ -39,6 +39,8 @@ public static class IdentityServiceExtension
                       policy.RequireClaim("RoleId", MEMBER_ID));
             options.AddPolicy("MemberAndOwner", policy =>
                         policy.RequireClaim("RoleId", MEMBER_ID, OWNER_ID));
+            options.AddPolicy("OwnerAndAdmin", policy =>
+                        policy.RequireClaim("RoleId", ADMIN_ID, OWNER_ID));
         });
         return services;
     }

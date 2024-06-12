@@ -1,7 +1,10 @@
-﻿namespace BusinessObject.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BusinessObject.Models
 {
     public class Complain
     {
+        [Key]
         public int ComplainID { get; set; }
         public Account? ComplainAccount { get; set; }
         public int? AccountID { get; set; }
