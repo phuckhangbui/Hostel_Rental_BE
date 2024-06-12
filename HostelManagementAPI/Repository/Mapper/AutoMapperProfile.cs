@@ -99,12 +99,13 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.HostelAddress, opt => opt.MapFrom(src => src.Room.Hostel.HostelAddress))
             .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members))
             .ForMember(dest => dest.RoomServiceDetails, opt => opt.MapFrom(src => src.Room.RoomServices.Select(rs => new RoomServiceResponseForContractDto
-            {
-                RoomServiceId = rs.RoomServiceId,
-                TypeServiceName = rs.TypeService.TypeName,
-                ServiceName = rs.TypeService.Unit,
-                ServicePrice = rs.Price ?? 0
-            }).ToList()));
+             {
+                 RoomId = rs.RoomId,
+                 RoomServiceId = rs.RoomServiceId,
+                 TypeServiceName = rs.TypeService.TypeName,
+                 ServiceName = rs.TypeService.Unit,
+                 ServicePrice = rs.Price ?? 0
+             }).ToList()));
         CreateMap<GetContractDto, Contract>();
 
         CreateMap<RoomService, RoomServiceResponseForContractDto>()

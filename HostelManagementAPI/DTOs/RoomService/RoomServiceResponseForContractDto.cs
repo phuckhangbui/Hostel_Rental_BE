@@ -8,6 +8,7 @@ namespace DTOs.RoomService
 {
     public class RoomServiceResponseForContractDto
     {
+        public int RoomId { get; set; }
         public int RoomServiceId { get; set; }
         public string TypeServiceName { get; set; }
         public string ServiceName { get; set; }

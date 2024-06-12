@@ -35,10 +35,13 @@ namespace DAO
         {
             var context = new DataContext();
             return await context.Contract
-                .Include(c => c.OwnerAccount) 
-                .Include(c => c.StudentLeadAccount) 
+                .Include(c => c.OwnerAccount)
+                .Include(c => c.StudentLeadAccount)
                 .Include(c => c.Room)
-                .ThenInclude(r => r.Hostel)
+                    .ThenInclude(r => r.Hostel)  
+                .Include(c => c.Room)
+                    .ThenInclude(r => r.RoomServices)
+                        .ThenInclude(t => t.TypeService)
                 .Include(c => c.Members)
                 .ToListAsync();
         }
@@ -50,9 +53,11 @@ namespace DAO
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
                 .Include(c => c.Room)
-                .ThenInclude(r => r.Hostel)
+                    .ThenInclude(r => r.Hostel)  
+                .Include(c => c.Room)
+                    .ThenInclude(r => r.RoomServices)
+                        .ThenInclude(t => t.TypeService)
                 .Include(c => c.Members)
-                .Where(c => c.OwnerAccountID == ownerID)
                 .ToListAsync();
         }
 
@@ -63,9 +68,11 @@ namespace DAO
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
                 .Include(c => c.Room)
-                .ThenInclude(r => r.Hostel)
+                    .ThenInclude(r => r.Hostel)
+                .Include(c => c.Room)
+                    .ThenInclude(r => r.RoomServices)
+                        .ThenInclude(t => t.TypeService)
                 .Include(c => c.Members)
-                .Where(c => c.StudentAccountID == studentID)
                 .ToListAsync();
         }
 
@@ -73,11 +80,14 @@ namespace DAO
         {
             var context = new DataContext();
             return await context.Contract
-                .Include(c => c.Members)
                 .Include(c => c.OwnerAccount)
                 .Include(c => c.StudentLeadAccount)
                 .Include(c => c.Room)
-                .ThenInclude(r => r.Hostel)
+                    .ThenInclude(r => r.Hostel)
+                .Include(c => c.Room)
+                    .ThenInclude(r => r.RoomServices)
+                        .ThenInclude(t => t.TypeService)
+                .Include(c => c.Members)
                 .FirstOrDefaultAsync(c => c.ContractID == contractID);
         }
 
