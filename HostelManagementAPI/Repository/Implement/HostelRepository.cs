@@ -50,7 +50,12 @@ namespace Repository.Implement
 			return _mapper.Map<HostelResponseDto>(hostel);
 		}
 
-		public async Task<IEnumerable<HostelResponseDto>> GetOwnerHostels(int ownerId)
+        public async Task<InformationHouse> GetHostelInformation(int id)
+        {
+            return await HostelDao.Instance.GetHostelInformation(id);
+        }
+
+        public async Task<IEnumerable<HostelResponseDto>> GetOwnerHostels(int ownerId)
 		{
 			var hostels = await HostelDao.Instance.GetAllHostelsAsync();
 			hostels = hostels.Where(h => h.AccountID == ownerId).OrderByDescending(h => h.HostelID);

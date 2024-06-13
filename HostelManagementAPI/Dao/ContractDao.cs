@@ -57,7 +57,7 @@ namespace DAO
                 .Include(c => c.Room)
                     .ThenInclude(r => r.RoomServices)
                         .ThenInclude(t => t.TypeService)
-                .Include(c => c.Members)
+                .Include(c => c.Members).OrderByDescending(x => x.CreatedDate)
                 .ToListAsync();
         }
 
@@ -72,7 +72,7 @@ namespace DAO
                 .Include(c => c.Room)
                     .ThenInclude(r => r.RoomServices)
                         .ThenInclude(t => t.TypeService)
-                .Include(c => c.Members)
+                .Include(c => c.Members).OrderByDescending(x => x.CreatedDate)
                 .ToListAsync();
         }
 
