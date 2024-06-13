@@ -281,6 +281,25 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Owner")]
+        [HttpGet("rooms/hiring/{ownerId}")]
+        public async Task<ActionResult> GetHiringRoomForOwner(int ownerId)
+        {
+            try
+            {
+                var room = await _roomService.GetHiringRoomsForOwner(ownerId);
+                return Ok(room);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         //      [HttpPost("roomServiceAdd")]
         //      public async Task<IActionResult> AddRoomServices([FromBody] AddRoomServicesDto roomServicesDto)
         //      {

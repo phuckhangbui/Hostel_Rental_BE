@@ -191,6 +191,13 @@ namespace Repository.Implement
             return await RoomDao.Instance.GetOwnerInfoByRoomId(roomId);
         }
 
+        public async Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId)
+        {
+            var hiringRooms = await RoomDao.Instance.GetHiringRoomForOwner(ownerId);
+
+			return _mapper.Map<IEnumerable<RentingRoomResponseDto>>(hiringRooms);
+        }
+
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
         //{
         //	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService

@@ -211,6 +211,11 @@ namespace Service.Implement
 			return await _roomRepository.GetRoomServicesByRoom(roomId);
         }
 
+        public async Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId)
+        {
+            return await _roomRepository.GetHiringRoomsForOwner(ownerId);
+        }
+
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
         //     {
         //return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;
