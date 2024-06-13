@@ -51,6 +51,9 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IBillPaymentRepository, BillPaymentRepository>();
         services.AddScoped<IBillPaymentService, BillPaymentService>();
 
+        services.AddScoped<IComplainService, ComplainService>();
+        services.AddScoped<IComplainRepository, ComplainRepository>();
+
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
         services.AddCors(opt =>
@@ -59,5 +62,6 @@ public static class ApplicationServicesExtensions
         });
 
         return services;
+
     }
 }
