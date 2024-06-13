@@ -118,4 +118,5 @@ namespace Service.Mail
             mailContext.Body = bodyBuilder.ToString();
             return mailContext;
         }
+    }
 }
