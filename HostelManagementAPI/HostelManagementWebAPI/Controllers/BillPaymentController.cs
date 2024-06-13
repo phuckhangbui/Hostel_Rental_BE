@@ -1,5 +1,4 @@
-﻿using DTOs;
-using DTOs.BillPayment;
+﻿using DTOs.BillPayment;
 using DTOs.Enum;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
@@ -161,36 +160,36 @@ namespace HostelManagementWebAPI.Controllers
         }
 
 
-        [Authorize(Policy = "Member")]
-        [HttpPost("bill-payment/confirm-payment")]
-        public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
-        {
-            int accountId = GetLoginAccountId();
+        //[Authorize(Policy = "Member")]
+        //[HttpPost("bill-payment/confirm-payment")]
+        //public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        //{
+        //    int accountId = GetLoginAccountId();
 
-            try
-            {
-                if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
-                {
-                    return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
-                }
+        //    try
+        //    {
+        //        if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+        //        {
+        //            return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
+        //        }
 
-                var billPayment = await _billPaymentService.ConfirmBillingTransaction(vnPayReturnUrlDto);
+        //        var billPayment = await _billPaymentService.ConfirmBillingTransaction(vnPayReturnUrlDto);
 
-                if (billPayment.BillType == (int)BillType.Deposit)
-                {
-                    await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
-                }
+        //        if (billPayment.BillType == (int)BillType.Deposit)
+        //        {
+        //            await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
+        //        }
 
-                return Ok();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(new ApiResponseStatus(400, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-            }
-        }
+        //        return Ok();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //    }
+        //}
     }
 }

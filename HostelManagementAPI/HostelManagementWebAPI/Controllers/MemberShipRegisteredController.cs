@@ -1,6 +1,4 @@
-﻿using DTOs;
-using DTOs.Enum;
-using DTOs.Membership;
+﻿using DTOs.Membership;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +83,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Owner")]
-        [HttpPost("register")]
+        [HttpPost("memberships/register")]
         public async Task<ActionResult> RegisterMemberShip(RegisterMemberShipDto registerMemberShipDto)
         {
             try
@@ -110,33 +108,33 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        [Authorize(Policy = "Owner")]
-        [HttpPost("register/confirm-payment")]
-        public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
-        {
-            int accountId = GetLoginAccountId();
+        //[Authorize(Policy = "Owner")]
+        //[HttpPost("memberships/register/confirm-payment")]
+        //public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        //{
+        //    int accountId = GetLoginAccountId();
 
-            try
-            {
-                if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
-                {
-                    return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
-                }
+        //    try
+        //    {
+        //        if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+        //        {
+        //            return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
+        //        }
 
-                await _memberShipRegisteredService.ConfirmTransaction(vnPayReturnUrlDto);
+        //        await _memberShipRegisteredService.ConfirmTransaction(vnPayReturnUrlDto);
 
-                await _accountService.UpdateAccountPackageStatus(accountId, (int)AccountPackageStatusEnum.Active);
-                return Ok();
-            }
-            catch (ServiceException ex)
-            {
-                return BadRequest(new ApiResponseStatus(400, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
-            }
-        }
+        //        await _accountService.UpdateAccountPackageStatus(accountId, (int)AccountPackageStatusEnum.Active);
+        //        return Ok();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //    }
+        //}
 
     }
 }

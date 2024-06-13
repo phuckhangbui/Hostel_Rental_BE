@@ -54,6 +54,8 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IComplainService, ComplainService>();
         services.AddScoped<IComplainRepository, ComplainRepository>();
 
+        services.AddScoped<IPaymentService, PaymentService>();
+
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
         services.AddCors(opt =>
