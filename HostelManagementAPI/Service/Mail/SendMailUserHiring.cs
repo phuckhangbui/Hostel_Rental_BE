@@ -37,7 +37,7 @@ namespace Service.Mail
             bodyBuilder.AppendLine("<div class='container'>");
             bodyBuilder.AppendLine("<div class='header'>");
             bodyBuilder.AppendLine("<div class='img'>");
-            bodyBuilder.AppendLine("<img src='https://res.cloudinary.com/newdawn/image/upload/v1718273531/hylocmmy9gcsbo3brvdh.png' alt='LogoImage' />");
+            bodyBuilder.AppendLine("<img src='https://res.cloudinary.com/newdawn/image/upload/c_scale,h_120,w_120/hylocmmy9gcsbo3brvdh.jpg' alt='LogoImage'/>");
             bodyBuilder.AppendLine("</div>");
             bodyBuilder.AppendLine("<div>");
             bodyBuilder.AppendLine("<h1>HOSTEL FLATFORM</h1>");
@@ -92,7 +92,7 @@ namespace Service.Mail
             bodyBuilder.AppendLine("<div class='container'>");
             bodyBuilder.AppendLine("<div class='header'>");
             bodyBuilder.AppendLine("<div class='img'>");
-            bodyBuilder.AppendLine("<img src='https://res.cloudinary.com/newdawn/image/upload/v1718273531/hylocmmy9gcsbo3brvdh.png' alt='LogoImage' />");
+            bodyBuilder.AppendLine("<img src='https://res.cloudinary.com/newdawn/image/upload/c_scale,h_120,w_120/hylocmmy9gcsbo3brvdh.jpg' alt='LogoImage' />");
             bodyBuilder.AppendLine("</div>");
             bodyBuilder.AppendLine("<div>");
             bodyBuilder.AppendLine("<h1>HOSTEL FLATFORM</h1>");

@@ -138,5 +138,36 @@ namespace DAO
             }
             return accouuntList;
         }
+
+        public async Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int hostelID)
+        {
+            var context = new DataContext();
+            var appointments = await context.RoomAppointments
+                .Include(ra => ra.Room)
+                .ThenInclude(x => x.Hostel)
+                .Include(ra => ra.Viewer)
+                .Where(ra => ra.Room.Hostel.HostelID == hostelID)
+                .Select(ra => new GetAppointmentOwner
+                {
+                    ViewRoomAppointmentId = ra.ViewRoomAppointmentId,
+                    RoomName = ra.Room.RoomName,
+                    ViewerName = ra.Viewer.Name,
+                    ViewerPhone = ra.Viewer.Phone,
+                    AppointmentTime = ra.AppointmentTime,
+                    Status = ra.Status
+                })
+                .OrderByDescending(x => x.AppointmentTime)
+                .ToListAsync();
+
+            return appointments;
+        }
+
+        public async Task CancelAppointmentRoom(int appointmentID)
+        {
+            var context = new DataContext();
+            var appointment = await context.RoomAppointments.FirstOrDefaultAsync(x => x.ViewRoomAppointmentId == appointmentID);
+            appointment.Status = (int)AppointmentStatus.Cancel;
+            await UpdateAsync(appointment);
+        }
     }
 }

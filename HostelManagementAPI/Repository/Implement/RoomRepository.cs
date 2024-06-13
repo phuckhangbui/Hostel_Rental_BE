@@ -186,6 +186,16 @@ namespace Repository.Implement
             return await RoomAppointmentDao.Instance.UpdateAppointmentRoom(roomID, accountID);
         }
 
+        public async Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int hostelID)
+        {
+            return await RoomAppointmentDao.Instance.GetRoomAppointmentListByOwner(hostelID);
+        }
+
+        public async Task CancelAppointmentRoom(int appointmentID)
+        {
+            await RoomAppointmentDao.Instance.CancelAppointmentRoom(appointmentID);
+        }
+
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
         //{
         //	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
