@@ -21,7 +21,7 @@ namespace Service.Interface
         Task<GetAppointmentDto> GetAppointmentById(int id);
         Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
         Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
-        Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID);
+        Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID);
         Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId);
 
         //Task AddRoomService(AddRoomServicesDto addRoomServicesDto);

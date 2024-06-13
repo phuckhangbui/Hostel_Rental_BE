@@ -144,7 +144,8 @@ public class AutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<RoomService, RoomServiceView>()
-        .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName));
+        .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName))
+        .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.TypeService.Unit));
 
         CreateMap<Complain, ComplainDto>()
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID));

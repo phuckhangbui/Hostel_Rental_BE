@@ -184,7 +184,7 @@ namespace Service.Implement
 			await _roomRepository.UpdateRoomStatus(roomId, status);
 			return true;
 		}
-        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
+        public async Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID)
         {
 			return await _roomRepository.GetApppointmentToCreateContract(roomID);
         }

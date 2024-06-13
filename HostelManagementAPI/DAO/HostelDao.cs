@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Hostel;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -51,6 +52,18 @@ namespace DAO
             var context = new DataContext();
             return await context.Hostel.Where(x => x.Status == 0)
                 .ToListAsync();
+        }
+
+        public async Task<InformationHouse> GetHostelInformation(int id)
+        {
+            var context = new DataContext();
+            return await context.Room.Include(x => x.Hostel).Where(x => x.RoomID == id)
+                .Select(x => new InformationHouse
+                {
+                    HostelName = x.Hostel.HostelName,
+                    Address = x.Hostel.HostelAddress,
+                    RoomName = x.RoomName
+                }).FirstOrDefaultAsync();
         }
 
         //public async Task<IEnumerable<HostelService>> GetHostelServicesByHostelId(int hostelId)

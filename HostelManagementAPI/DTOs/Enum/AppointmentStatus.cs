@@ -10,6 +10,7 @@ namespace DTOs.Enum
     {
         View = 0,
         Accept = 1,
-        Cancel = 2
+        Cancel = 2,
+        Hire_Directly = 3
     }
 }

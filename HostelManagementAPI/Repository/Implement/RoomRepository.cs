@@ -175,15 +175,15 @@ namespace Repository.Implement
             return _mapper.Map<IEnumerable<RoomServiceView>>(service);
         }
 
-        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
+        public async Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID)
         {
             var appointmentDetails = await RoomAppointmentDao.Instance.GetApppointmentToCreateContract(roomID);
             return appointmentDetails;
         }
 
-        public async Task UpdateAppointmentRoom(int? roomID)
+        public async Task<List<int>> UpdateAppointmentRoom(int? roomID, int accountID)
         {
-            await RoomAppointmentDao.Instance.UpdateAppointmentRoom(roomID);
+            return await RoomAppointmentDao.Instance.UpdateAppointmentRoom(roomID, accountID);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

@@ -82,19 +82,15 @@ namespace DAO
             return appointment;
         }
 
-        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
+        public async Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID)
         {
             var context = new DataContext();
             var appointment = await context.RoomAppointments
                 .Include(ra => ra.Room)
                 .Include(ra => ra.Viewer)
-                .Where(ra => ra.RoomId == roomID && ra.Status == (int)AppointmentStatus.View)
-                .Select(ra => new GetAppointmentDto
+                .Where(ra => ra.RoomId == roomID && (ra.Status == (int)AppointmentStatus.View || ra.Status == (int)AppointmentStatus.Hire_Directly))
+                .Select(ra => new AccountAppointment
                 {
-                    ViewRoomAppointmentId = ra.ViewRoomAppointmentId,
-                    RoomId = ra.RoomId,
-                    RoomName = ra.Room.RoomName,
-                    RoomFee = ra.Room.RoomFee,
                     ViewerId = ra.ViewerId,
                     ViewerName = ra.Viewer.Name,
                     ViewerPhone = ra.Viewer.Phone,
@@ -103,19 +99,44 @@ namespace DAO
                     AppointmentTime = ra.AppointmentTime,
                     Status = ra.Status
                 })
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            return appointment;
+            var room = await context.RoomAppointments
+                .Include(ra => ra.Room)
+                .Include(ra => ra.Viewer)
+                .Where(ra => ra.RoomId == roomID)
+                .Select(ra => new GetAppointmentContract
+                {
+                    RoomId = ra.RoomId,
+                    RoomFee = ra.Room.RoomFee,
+                    RoomName = ra.Room.RoomName,
+                    AccountAppointments = appointment
+                }).FirstOrDefaultAsync();
+
+            return room;
         }
 
-        public async Task UpdateAppointmentRoom(int? roomID)
+        public async Task<List<int>> UpdateAppointmentRoom(int? roomID, int accountID)
         {
             var context = new DataContext();
             var appointment = await context.RoomAppointments
-                .Where(ra => ra.RoomId == roomID && ra.Status == (int)AppointmentStatus.View)
+                .Where(ra => ra.RoomId == roomID && ra.ViewerId == accountID && (ra.Status == (int)AppointmentStatus.View || ra.Status == (int)AppointmentStatus.Hire_Directly))
                 .FirstOrDefaultAsync();
             appointment.Status = (int)AppointmentStatus.Accept;
             await UpdateAsync(appointment);
+
+            var accouuntList = new List<int>();
+            var appointments = await context.RoomAppointments
+                .Where(ra => ra.RoomId == roomID && (ra.Status == (int)AppointmentStatus.View || ra.Status == (int)AppointmentStatus.Hire_Directly))
+                .ToListAsync();
+
+            foreach(var item in appointments)
+            {
+                item.Status = (int)AppointmentStatus.Cancel;
+                await UpdateAsync(item);
+                accouuntList.Add(item.ViewerId);
+            }
+            return accouuntList;
         }
     }
 }
