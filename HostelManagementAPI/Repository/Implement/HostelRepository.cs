@@ -39,7 +39,8 @@ namespace Repository.Implement
 		public async Task<IEnumerable<HostelResponseDto>> GetAllHostels()
 		{
 			var hostels = await HostelDao.Instance.GetAllHostelsAsync();
-			return _mapper.Map<IEnumerable<HostelResponseDto>>(hostels);
+			hostels = hostels.Where(h => h.Status == (int)HostelEnum.Available);
+            return _mapper.Map<IEnumerable<HostelResponseDto>>(hostels);
 		}
 
 		public async Task<HostelResponseDto> GetHostelDetailById(int id)

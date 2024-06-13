@@ -43,7 +43,6 @@ namespace DAO
                 .Include(h => h.OwnerAccount)
                 .Include(h => h.Rooms)
                 .Include(h => h.Images)
-                .Where(x => x.Status == 1)
                 .ToListAsync();
         }
 
