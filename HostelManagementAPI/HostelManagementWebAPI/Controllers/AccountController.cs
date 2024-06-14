@@ -219,7 +219,8 @@ namespace HostelManagementWebAPI.Controllers
 
         }
 
-        [HttpGet("profile")]
+        [Authorize(policy: "Member")]
+        [HttpGet("member/profile/{accountID}")]
         public async Task<ActionResult<CustomerViewAccount>> GetAccountDetailById(int accountID)
         {
             try
@@ -236,6 +237,53 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+        [Authorize(policy: "Member")]
+        [HttpPost("member/profile/update")]
+        public async Task<IActionResult> UpdateMemberProfile(AccountUpdate accountUpdate)
+        {
+            try
+            {
+                await _accountService.UpdateOwnerProfile(accountUpdate);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(policy: "Member")]
+        [HttpPost("member/password/update")]
+        public async Task<IActionResult> UpdateMemberPassword(ChangePassword newPassword)
+        {
+            try
+            {
+                await _accountService.UpdateOwnerPassword(newPassword);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(404, ex.Message));
+            }
+        }
+
+        [Authorize(policy: "Member")]
+        [HttpPost("member/password/get-old-password")]
+        public async Task<IActionResult> GetMemberOldPassword(ChangePassword oldPassword)
+        {
+            try
+            {
+                await _accountService.GetOldPassword(oldPassword);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(404, ex.Message));
+            }
+        }
+
+
 
         [Authorize(policy: "Owner")]
         [HttpGet("owner/profile/{accountID}")]
