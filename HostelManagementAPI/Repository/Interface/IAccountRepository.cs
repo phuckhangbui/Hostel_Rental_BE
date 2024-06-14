@@ -16,6 +16,7 @@ namespace Repository.Interface
         Task<AccountDto> GetAccountWithHostelById(int id);
         Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip();
         Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid);
-
+        Task<ProfileDto> GetProfileAccount(int accountID);
+        Task UpdateOwnerProfile(AccountUpdate accountUpdate);
     }
 }
