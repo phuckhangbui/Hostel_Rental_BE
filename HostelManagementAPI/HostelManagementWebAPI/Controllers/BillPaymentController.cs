@@ -33,7 +33,7 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 await _billPaymentService.CreateBillPaymentMonthly(createBillPaymentRequestDto);
-                return Ok();
+                return Ok(new ApiResponseStatus(Ok().StatusCode, "Create new monthly bill successfully"));
             }
             catch (ServiceException ex)
             {
