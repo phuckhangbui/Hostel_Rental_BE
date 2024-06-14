@@ -21,12 +21,15 @@ namespace Service.Interface
         Task<GetAppointmentDto> GetAppointmentById(int id);
         Task CreateRoomAppointmentAsync(CreateAppointmentSendEmailDto createAppointmentSendEmailDto);
         Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
-        Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID);
+        Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID);
         Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId);
 
         //Task AddRoomService(AddRoomServicesDto addRoomServicesDto);
         //Task RemoveRoomServiceAsync(int roomId, int serviceId);
         //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);
         Task<bool> UpdateRoomStatus(int roomId, int status);
+        Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId);
+        Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int accountID);
+        Task CancelAppointmentRoom(int appointmentID);
     }
 }

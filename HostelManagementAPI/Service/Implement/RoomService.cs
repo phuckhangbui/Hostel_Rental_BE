@@ -1,4 +1,6 @@
-﻿using DTOs.Enum;
+﻿using BusinessObject.Models;
+using DTOs.Enum;
+using DTOs.Hostel;
 using DTOs.Room;
 using DTOs.RoomAppointment;
 using DTOs.RoomService;
@@ -12,28 +14,27 @@ namespace Service.Implement
 {
     public class RoomService : IRoomService
     {
-        private readonly IRoomRepository _roomRepository;
-        private readonly IHostelRepository _hostelRepository;
-        //private readonly IAccountRepository _accountRepository;
-        //private readonly IContractRepository _contractRepository;
-        private readonly ICloudinaryService _cloudinaryService;
-        private readonly IMailService _mailService;
+		private readonly IRoomRepository _roomRepository;
+		private readonly IHostelRepository _hostelRepository;
+		private readonly IAccountRepository _accountRepository;
+		//private readonly IContractRepository _contractRepository;
+		private readonly ICloudinaryService _cloudinaryService;
+		private readonly IMailService _mailService;
 
-        public RoomService(
+		public RoomService(
             IRoomRepository roomRepository,
             IHostelRepository hostelRepository,
-            //IAccountRepository accountRepository,
+            IAccountRepository accountRepository,
             //IContractRepository contractRepository,
-            ICloudinaryService cloudinaryService, 
-            IMailService _mailService)
-
+            ICloudinaryService cloudinaryService,
+            IMailService mailService)
         {
             _roomRepository = roomRepository;
             _hostelRepository = hostelRepository;
-            //_accountRepository = accountRepository;
+            _accountRepository = accountRepository;
             //_contractRepository = contractRepository;
             _cloudinaryService = cloudinaryService;
-            this._mailService = _mailService;
+            _mailService = mailService;
         }
 
         public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
@@ -201,7 +202,7 @@ namespace Service.Implement
 			await _roomRepository.UpdateRoomStatus(roomId, status);
 			return true;
 		}
-        public async Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID)
+        public async Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID)
         {
 			return await _roomRepository.GetApppointmentToCreateContract(roomID);
         }
@@ -209,6 +210,32 @@ namespace Service.Implement
         public async Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId)
         {
 			return await _roomRepository.GetRoomServicesByRoom(roomId);
+        }
+
+        public async Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId)
+        {
+            return await _roomRepository.GetHiringRoomsForOwner(ownerId);
+        }
+
+        public async Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int hostelID)
+        {
+            return await _roomRepository.GetRoomAppointmentListByOwner(hostelID);
+        }
+
+        public async Task CancelAppointmentRoom(int appointmentID)
+        {
+            await _roomRepository.CancelAppointmentRoom(appointmentID);
+			var account = await _roomRepository.GetAppointmentById(appointmentID);
+
+            var room = await _roomRepository.GetAppointmentById(appointmentID);
+			var hostel = _roomRepository.GetRoomById(room.RoomId).Result.Hostel;
+			var inf = new InformationHouse()
+			{
+				HostelName = hostel.HostelName,
+				Address = hostel.HostelAddress,
+				RoomName = room.RoomName,
+			};
+			_mailService.SendMail(SendMailUserHiring.SendEmailDeclineAppointment(account.ViewerEmail, account.ViewerName, inf));
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)

@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Enum;
 using DTOs.Room;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,7 +50,7 @@ namespace DAO
         public async Task<Room> GetRoomById(int roomId)
         {
             var context = new DataContext();
-            return await context.Room.FirstOrDefaultAsync(r => r.RoomID == roomId);
+            return await context.Room.Include(x => x.Hostel).FirstOrDefaultAsync(r => r.RoomID == roomId);
         }
 
         public async Task<IEnumerable<Room>> GetRoomListByHostelId(int hostelId)
@@ -85,6 +86,20 @@ namespace DAO
                                           ri => ri.RoomID,
                                           (r, ri) => ri.RoomUrl)
                                     .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Room>> GetHiringRoomForOwner(int ownerId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.Room
+                    .Include(r => r.Hostel)
+                    .Include(r => r.RoomImages)
+                    .Include(r => r.RoomContract)
+                        .ThenInclude(rc => rc.StudentLeadAccount)
+                    .Where(r => r.Hostel.AccountID == ownerId && r.Status == (int)RoomEnum.Hiring)
+                    .ToListAsync();
+            }
         }
     }
 }

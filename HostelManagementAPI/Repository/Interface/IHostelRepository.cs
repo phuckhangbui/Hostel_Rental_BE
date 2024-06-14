@@ -13,5 +13,6 @@ namespace Repository.Interface
         Task UpdateHostelImage(int hostelId, List<string> imageUrls);
         Task<HostelDetailAdminView> GetHostelDetailAdminView(int id);
         Task<IEnumerable<HostelsAdminView>> GetHostelsAdminView();
+        Task<InformationHouse> GetHostelInformation(int id);
     }
 }

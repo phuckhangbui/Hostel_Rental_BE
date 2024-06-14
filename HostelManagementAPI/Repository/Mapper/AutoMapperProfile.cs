@@ -144,11 +144,19 @@ public class AutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<RoomService, RoomServiceView>()
-        .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName));
+        .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName))
+        .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.TypeService.Unit));
 
         CreateMap<Complain, ComplainDto>()
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID));
 
         CreateMap<ComplainDto, Complain>();
+
+        CreateMap<Room, RentingRoomResponseDto>()
+            .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault() != null ? src.RoomImages.FirstOrDefault().RoomUrl : null))
+            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName))
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.Name : null))
+            .ForMember(dest => dest.StudentAccountId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.AccountID : (int?)null))
+            .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().ContractID : (int?)null));
     }
 }

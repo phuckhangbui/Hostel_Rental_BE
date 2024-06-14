@@ -281,6 +281,62 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Owner")]
+        [HttpGet("rooms/hiring/{ownerId}")]
+        public async Task<ActionResult> GetHiringRoomForOwner(int ownerId)
+        {
+            try
+            {
+                var room = await _roomService.GetHiringRoomsForOwner(ownerId);
+                return Ok(room);
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(policy: "Owner")]
+        [HttpGet("owner/rooms/appointment/{hostelID}")]
+        public async Task<ActionResult> GetRoomAppointmentListByOwner(int hostelID)
+        {
+            try
+            {
+                var roomAppointments = await _roomService.GetRoomAppointmentListByOwner(hostelID);
+                return Ok(roomAppointments);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(policy: "Owner")]
+        [HttpPut("owner/rooms/appointment/cancel/{appointmentID}")]
+        public async Task<ActionResult> CancelAppointmentByOwner(int appointmentID)
+        {
+            try
+            {
+                await _roomService.CancelAppointmentRoom(appointmentID);
+                return Ok();
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         //      [HttpPost("roomServiceAdd")]
         //      public async Task<IActionResult> AddRoomServices([FromBody] AddRoomServicesDto roomServicesDto)
         //      {
