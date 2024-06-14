@@ -289,6 +289,7 @@ namespace HostelManagementWebAPI.Controllers
             {
                 var room = await _roomService.GetHiringRoomsForOwner(ownerId);
                 return Ok(room);
+            }
             catch (ServiceException ex)
             {
                 return BadRequest(new ApiResponseStatus(400, ex.Message));
