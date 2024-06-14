@@ -404,5 +404,15 @@ namespace Service.Implement
 
             await _accountRepository.UpdateAccount(account);
         }
+
+        public async Task<ProfileDto> GetProfileAccount(int accountID)
+        {
+            return await _accountRepository.GetProfileAccount(accountID);
+        }
+
+        public async Task UpdateOwnerProfile(AccountUpdate accountUpdate)
+        {
+            await _accountRepository.UpdateOwnerProfile(accountUpdate);
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace Repository.Interface
         Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
         Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesIsSelected(int roomId);
         Task<OwnerInfoDto> GetOwnerInfoByRoomId(int roomId);
-        Task<GetAppointmentDto> GetApppointmentToCreateContract(int roomID);
+        Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID);
         Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId);
         Task<List<int>> UpdateAppointmentRoom(int? roomID, int accountID);
         Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId);

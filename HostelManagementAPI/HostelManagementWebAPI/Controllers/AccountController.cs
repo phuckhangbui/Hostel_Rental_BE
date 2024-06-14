@@ -237,5 +237,35 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(policy: "Owner")]
+        [HttpGet("owner/profile/{accountID}")]
+        public async Task<IActionResult> GetProfileOwner(int accountID)
+        {
+            var inf = await _accountService.GetProfileAccount(accountID);
+            return Ok(inf);
+        }
+
+        [Authorize(policy: "Owner")]
+        [HttpGet("owner/profile/detail/{accountID}")]
+        public async Task<IActionResult> GetProfileDetailOwner(int accountID)
+        {
+            var inf = await _accountService.GetAccountById(accountID);
+            return Ok(inf);
+        }
+
+        [Authorize(policy: "Owner")]
+        [HttpPost("owner/profile/update")]
+        public async Task<IActionResult> UpdateOwnerProfile(AccountUpdate accountUpdate)
+        {
+            try
+            {
+                await _accountService.UpdateOwnerProfile(accountUpdate);
+                return Ok();
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

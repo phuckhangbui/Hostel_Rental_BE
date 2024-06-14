@@ -1,5 +1,7 @@
 ﻿using BusinessObject.Models;
+using DTOs.Account;
 using DTOs.Dashboard;
+using DTOs.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -73,6 +75,49 @@ namespace DAO
             NumberOfAccount = group.Count()
         });
             return profit;
+        }
+
+        public async Task<ProfileDto> GetProfileAccount(int accountID)
+        {
+            var context = new DataContext();
+            var package = await context.MembershipsRegisterTransaction.Include(x => x.MemberShip).Where(x => x.Status == (int)MembershipRegisterEnum.Done && x.AccountID == accountID).FirstOrDefaultAsync();
+            var account = await context.Account.Where(x => x.AccountID == accountID)
+                .FirstOrDefaultAsync();
+            if(package == null)
+            {
+                var inf = new ProfileDto()
+                {
+                    AccountId = (int)account.AccountID,
+                    Name = account.Name,
+                    Address = account.Address,
+                    CitizenCard = account.CitizenCard,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    Gender = (int)account.Gender,
+                    Status = (int)account.PackageStatus,
+                };
+                return inf;
+            }
+            else
+            {
+                var inf = new ProfileDto()
+                {
+                    AccountId = (int)account.AccountID,
+                    Name = account.Name,
+                    Address = account.Address,
+                    CitizenCard = account.CitizenCard,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    Gender = (int)account.Gender,
+                    PackName = package.MemberShip.MemberShipName,
+                    CapacityHostel = (int)package.MemberShip.CapacityHostel,
+                    FeePackage = package.PackageFee,
+                    DateExpire = (DateTime)package.DateExpire,
+                    DateRegister = (DateTime)package.DateRegister,
+                    Status = (int)account.PackageStatus,
+                };
+                return inf;
+            }
         }
     }
 }
