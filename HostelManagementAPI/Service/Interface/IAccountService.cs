@@ -28,5 +28,7 @@ namespace Service.Interface
         Task UpdateAccountPackageStatus(int accountId, int status);
         Task<ProfileDto> GetProfileAccount(int accountID);
         Task UpdateOwnerProfile(AccountUpdate accountUpdate);
+        Task UpdateOwnerPassword(ChangePassword newPassword);
+        Task GetOldPassword(ChangePassword oldPassword);
     }
 }

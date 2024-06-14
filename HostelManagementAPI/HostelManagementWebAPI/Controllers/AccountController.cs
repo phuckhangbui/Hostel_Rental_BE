@@ -267,5 +267,35 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(policy: "Owner")]
+        [HttpPost("owner/password/update")]
+        public async Task<IActionResult> UpdateOwnerPassword(ChangePassword newPassword)
+        {
+            try
+            {
+                await _accountService.UpdateOwnerPassword(newPassword);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(404, ex.Message));
+            }
+        }
+
+        [Authorize(policy: "Owner")]
+        [HttpPost("owner/password/get-old-password")]
+        public async Task<IActionResult> GetOldPassword(ChangePassword oldPassword)
+        {
+            try
+            {
+                await _accountService.GetOldPassword(oldPassword);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(404, ex.Message));
+            }
+        }
+
     }
 }
