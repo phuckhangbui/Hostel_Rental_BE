@@ -56,6 +56,10 @@ namespace DAO
             {
                 return await context.BillPayment
                     .Where(b => b.ContractId == contractId)
+                     .Include(bp => bp.Contract)
+                        .ThenInclude(c => c.Room)
+                    .Include(bp => bp.Contract)
+                        .ThenInclude(c => c.StudentLeadAccount)
                     .OrderByDescending(d => d.CreatedDate)
                     .FirstOrDefaultAsync();
             }
@@ -94,6 +98,22 @@ namespace DAO
                  .Include(d => d.RoomService)
                  .Include(d => d.RoomService.TypeService)
                  .ToListAsync();
+            }
+        }
+
+        public async Task<BillPayment> GetBillPaymentByBillPaymentId(int billPaymentId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.BillPayment
+                    .Include(bp => bp.Contract)
+                        .ThenInclude(c => c.Room)
+                    .Include(bp => bp.Contract)
+                        .ThenInclude(c => c.StudentLeadAccount)
+                    .Include(bp => bp.Details)
+                        .ThenInclude(d => d.RoomService)
+                        .ThenInclude(rs => rs.TypeService)
+                    .FirstOrDefaultAsync(bp => bp.BillPaymentID == billPaymentId);
             }
         }
     }

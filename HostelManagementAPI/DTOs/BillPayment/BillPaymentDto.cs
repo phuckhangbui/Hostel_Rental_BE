@@ -14,5 +14,8 @@
         public int? BillType { get; set; }
         public string? TnxRef { get; set; }
         public List<BillPaymentDetailResponseDto> BillPaymentDetails { get; set; }
+
+        public string? RoomName { get; set; }
+        public string? RenterName { get; set; }
     }
 }
