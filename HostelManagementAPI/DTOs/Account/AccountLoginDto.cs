@@ -11,7 +11,7 @@
         public int? Status { get; set; }
         public DateTime? CreatedDate { get; set; }
         public bool? IsLoginWithGmail { get; set; }
-        public bool? IsNewAccount { get; set; }
+        public int? PackageStatus { get; set; }
         public string? RefreshToken { get; set; }
     }
 }

@@ -188,6 +188,9 @@ namespace Service.Implement
                 RoleId = emailRegisterDto.RoleId,
                 IsLoginWithGmail = false,
                 OtpToken = otp,
+                Address = emailRegisterDto.Address,
+                Phone = emailRegisterDto.Phone,
+                CitizenCard = emailRegisterDto.CitizenCard
             };
 
             if (newAccount.RoleId == (int)AccountRoleEnum.Owner)
