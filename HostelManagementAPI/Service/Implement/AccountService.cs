@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DAO;
 using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
@@ -403,6 +404,47 @@ namespace Service.Implement
             account.PackageStatus = status;
 
             await _accountRepository.UpdateAccount(account);
+        }
+
+        public async Task<ProfileDto> GetProfileAccount(int accountID)
+        {
+            return await _accountRepository.GetProfileAccount(accountID);
+        }
+
+        public async Task UpdateOwnerProfile(AccountUpdate accountUpdate)
+        {
+            await _accountRepository.UpdateOwnerProfile(accountUpdate);
+        }
+
+        public async Task UpdateOwnerPassword(ChangePassword newPassword)
+        {
+            var account = await _accountRepository.GetAccountById(newPassword.AccountID);
+            using var hmac = new HMACSHA512();
+
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newPassword.Password));
+            account.PasswordSalt = hmac.Key;
+            try
+            {
+                await _accountRepository.UpdateAccount(account);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException("Cannot update the password");
+            }
+        }
+
+        public async Task GetOldPassword(ChangePassword oldPassword)
+        {
+            var account = await _accountRepository.GetAccountById(oldPassword.AccountID);
+            using var hmac = new HMACSHA512(account.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(oldPassword.Password));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != account.PasswordHash[i])
+                {
+                    throw new Exception("Old password do not equal your password!");
+                }
+            }
         }
     }
 }

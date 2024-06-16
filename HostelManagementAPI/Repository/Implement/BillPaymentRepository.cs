@@ -115,6 +115,13 @@ namespace Repository.Implement
         {
             var lastBillPayment = await BillPaymentDao.Instance.GetLastBillPayment(contractId);
             var lastBillPaymentDto = _mapper.Map<BillPaymentDto>(lastBillPayment);
+            if (lastBillPaymentDto == null)
+            {
+                lastBillPaymentDto = new BillPaymentDto();
+                lastBillPaymentDto.ContractId = contractId;
+                lastBillPaymentDto.BillType = (int)BillType.MonthlyPayment;
+                lastBillPaymentDto.BillPaymentID = 0;
+            }
 
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
             var billPaymentDetails = new List<BillPaymentDetail>();
@@ -125,6 +132,16 @@ namespace Repository.Implement
                 if (lastBillPaymentDetail != null)
                 {
                     billPaymentDetails.Add(lastBillPaymentDetail);
+                }
+                else
+                {
+                    var billPaymentDetail = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        RoomService = service,
+                    };
+
+                    billPaymentDetails.Add(billPaymentDetail);
                 }
             }
 
@@ -175,7 +192,7 @@ namespace Repository.Implement
 
         public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
         {
-            var billPayment = await BillPaymentDao.Instance.GetBillPayment(billPaymentId);
+            var billPayment = await BillPaymentDao.Instance.GetBillPaymentByBillPaymentId(billPaymentId);
             var billPaymentDto = _mapper.Map<BillPaymentDto>(billPayment);
 
             var billPaymentDetail = await BillPaymentDao.Instance.GetBillPaymentDetail(billPaymentId);

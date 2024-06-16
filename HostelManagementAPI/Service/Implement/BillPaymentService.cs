@@ -44,7 +44,9 @@ namespace Service.Implement
 
             var roomId = currentContract.RoomID;
 
-            return await _billPaymentRepository.GetLastMonthBillPayment(contractId, (int)roomId);
+            var lastMonthBillPayment = await _billPaymentRepository.GetLastMonthBillPayment(contractId, (int)roomId);
+
+            return lastMonthBillPayment;
         }
 
         public async Task CreateBillPaymentMonthly(CreateBillPaymentRequestDto createBillPaymentRequestDto)
