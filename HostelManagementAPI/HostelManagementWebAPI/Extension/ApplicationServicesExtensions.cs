@@ -63,6 +63,13 @@ public static class ApplicationServicesExtensions
             opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
         });
 
+        services.AddSingleton<IFirebaseMessagingService>(provider =>
+        {
+            // Assuming jsonCredentialsPath is configured elsewhere, possibly in appsettings.json
+            var jsonCredentialsPath = config["Firebase:CredentialsPath"];
+            return new FirebaseMessagingService(jsonCredentialsPath);
+        });
+
         return services;
 
     }

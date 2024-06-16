@@ -23,8 +23,8 @@
         public IList<Hostel> Hostels { get; set; }
         public IList<MemberShipRegisterTransaction> Memberships { get; set; }
         public IList<Complain> AccountComplain { get; set; }
-        public IList<Notice> AccountNotice { get; set; }
-        public IList<Notice> AccountNoticeReceive { get; set; }
+        public IList<Notification> AccountNotice { get; set; }
+        public IList<Notification> AccountNoticeReceive { get; set; }
         public IList<Contract> OwnerContract { get; set; }
         public IList<Contract> StudentContract { get; set; }
         public IList<RoomAppointment> Appointments { get; set; }

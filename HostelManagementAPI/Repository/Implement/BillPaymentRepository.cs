@@ -1,11 +1,11 @@
+using AutoMapper;
 using BusinessObject.Models;
 using DAO;
-﻿using AutoMapper;
 using DTOs.BillPayment;
-using Repository.Interface;
-using DTOs.Enum;
 using DTOs.Contract;
+using DTOs.Enum;
 using DTOs.Room;
+using Repository.Interface;
 
 namespace Repository.Implement
 {
@@ -20,7 +20,7 @@ namespace Repository.Implement
 
         public async Task CreateBillPaymentMonthly(
             RoomDetailResponseDto hiredRoomDto,
-            GetContractDto currentContractDto, 
+            GetContractDto currentContractDto,
             CreateBillPaymentRequestDto createBillPaymentRequestDto,
             DateTime billingMonth)
         {
@@ -101,7 +101,7 @@ namespace Repository.Implement
 
         public async Task<BillPaymentDto> GetCurrentMonthBillPayment(int contractId, int month, int year)
         {
-            
+
             var currentBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contractId, month, year);
             if (currentBillPayment != null)
             {
