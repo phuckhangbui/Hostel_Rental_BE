@@ -15,6 +15,8 @@
         public DateTime? CreateDate { get; set; }
         public string? Phone { get; set; }
         public string? HostelType { get; set; }
+        public double? LowestPrice { get; set; }
+        public double? LowestArea { get; set; }
 
     }
 }
