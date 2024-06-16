@@ -2,11 +2,12 @@
 {
     public class NotificationDto
     {
-        public int NotificationId { get; set; }
-        public int NotificationType { get; set; }
-        public int AccountReceiveId { get; set; }
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public DateTime DateCreated { get; set; }
+        public int? NotificationId { get; set; }
+        public int? AccountNoticeId { get; set; }
+        public int? ReceiveAccountId { get; set; }
+        public string? NotificationText { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public int? NotificationType { get; set; }
+        public string? Title { get; set; }
     }
 }

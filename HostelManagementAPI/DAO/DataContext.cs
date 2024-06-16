@@ -215,14 +215,14 @@ namespace DAO
             modelBuilder.Entity<Notification>()
                .HasOne(notice => notice.AccountNotice)
                .WithMany(account => account.AccountNotice)
-               .HasForeignKey(notice => notice.AccountID)
+               .HasForeignKey(notice => notice.AccountNoticeId)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many notice receive
             modelBuilder.Entity<Notification>()
                .HasOne(notice => notice.ReceiveAccount)
                .WithMany(account => account.AccountNoticeReceive)
-               .HasForeignKey(notice => notice.AccountID)
+               .HasForeignKey(notice => notice.ReceiveAccountId)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract owner
