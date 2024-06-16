@@ -93,6 +93,11 @@ namespace Service.Implement
         {
             var contract = await _contractRepository.GetContractById(depositRoomInputDto.ContractId);
 
+            if (contract == null)
+            {
+                throw new ServiceException("Contract does not existed");
+            }
+
             var billpayment = new BillPaymentDto
             {
                 ContractId = contract.ContractID,
