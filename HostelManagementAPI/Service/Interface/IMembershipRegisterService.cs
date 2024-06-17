@@ -10,7 +10,7 @@ namespace Service.Interface
         Task<IEnumerable<ViewTransactionMembership>> GetAllTransactionInAdmin();
         Task<MemberShipRegisterTransactionDto> RegisterMembership(RegisterMemberShipDto registerMemberShipDto);
         Task<MemberShipRegisterTransactionDto> ExtendMembership(RegisterMemberShipDto registerMemberShipDto);
-        Task<MemberShipRegisterTransactionDto> UpdateMembership(RegisterMemberShipDto registerMemberShipDto);
+        Task<MemberShipRegisterTransactionDto> UpdateMembership(MembershipUpdatePackageDto membershipUpdatePackageDto);
         Task<MemberShipRegisterTransactionDto> ConfirmTransaction(VnPayReturnUrlDto vnPayReturnUrlDto, int accountId);
         Task<MemberShipRegisterTransactionDto> GetCurrentActiveMembership(int accountId);
     }

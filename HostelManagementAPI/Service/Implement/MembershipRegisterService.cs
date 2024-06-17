@@ -65,22 +65,22 @@ namespace Service.Implement
                 registerMemberShipDto.MembershipId, (double)membership.MemberShipFee, (int)MembershipRegisterEnum.pending_extend);
         }
 
-        public async Task<MemberShipRegisterTransactionDto> UpdateMembership(RegisterMemberShipDto registerMemberShipDto)
+        public async Task<MemberShipRegisterTransactionDto> UpdateMembership(MembershipUpdatePackageDto membershipUpdatePackageDto)
         {
-            var membership = await _memberShipRepository.GetMembershipById(registerMemberShipDto.MembershipId);
+            var membership = await _memberShipRepository.GetMembershipById(membershipUpdatePackageDto.MembershipId);
 
             if (membership == null || membership?.Status == (int)MemberShipEnum.Expire)
             {
                 throw new ServiceException("this membership package now is not available");
             }
 
-            if (await _membershipRegisterRepository.GetCurrentActiveMembership(registerMemberShipDto.AccountId) == null)
+            if (await _membershipRegisterRepository.GetCurrentActiveMembership(membershipUpdatePackageDto.AccountId) == null)
             {
                 throw new ServiceException("There is no old membership to update");
             }
 
 
-            return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId, registerMemberShipDto.MembershipId, (double)membership.MemberShipFee, (int)MembershipRegisterEnum.pending_update);
+            return await _membershipRegisterRepository.RegisterMembership(membershipUpdatePackageDto.AccountId, membershipUpdatePackageDto.MembershipId, (double)membershipUpdatePackageDto.Fee, (int)MembershipRegisterEnum.pending_update);
         }
 
         public async Task<MemberShipRegisterTransactionDto> ConfirmTransaction(VnPayReturnUrlDto vnPayReturnUrlDto, int accountId)
@@ -124,7 +124,7 @@ namespace Service.Implement
                     await _membershipRegisterRepository.UpdateMembership(oldMembership);
 
                     //update case only update to the expired date of the current package, after update could extend later
-                    membershipTransaction.DateExpire = oldMembership.DateExpire.Value;
+                    membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
                     await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
                 }
             }

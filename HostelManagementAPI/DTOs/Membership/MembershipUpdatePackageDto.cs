@@ -2,7 +2,7 @@
 
 namespace DTOs.Membership
 {
-    public class RegisterMemberShipDto
+    public class MembershipUpdatePackageDto
     {
         [Required]
         public int AccountId { get; set; }
@@ -10,5 +10,8 @@ namespace DTOs.Membership
         public int MembershipId { get; set; }
         [Required]
         public string ReturnUrl { get; set; }
+        [Required]
+        public double Fee { get; set; }
+
     }
 }

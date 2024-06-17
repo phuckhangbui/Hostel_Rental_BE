@@ -115,7 +115,7 @@ namespace HostelManagementWebAPI.Controllers
         {
             try
             {
-                var membershipRegistered = await _memberShipRegisteredService.RegisterMembership(registerMemberShipDto);
+                var membershipRegistered = await _memberShipRegisteredService.ExtendMembership(registerMemberShipDto);
 
                 string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, registerMemberShipDto.ReturnUrl, "Register package", _vnPayProperties);
 
@@ -137,13 +137,13 @@ namespace HostelManagementWebAPI.Controllers
 
         [Authorize(Policy = "Owner")]
         [HttpPost("memberships/update")]
-        public async Task<ActionResult> UpdateMemberShip(RegisterMemberShipDto registerMemberShipDto)
+        public async Task<ActionResult> UpdateMemberShip(MembershipUpdatePackageDto membershipUpdatePackageDto)
         {
             try
             {
-                var membershipRegistered = await _memberShipRegisteredService.ExtendMembership(registerMemberShipDto);
+                var membershipRegistered = await _memberShipRegisteredService.UpdateMembership(membershipUpdatePackageDto);
 
-                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, registerMemberShipDto.ReturnUrl, "Register package", _vnPayProperties);
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, membershipUpdatePackageDto.ReturnUrl, "Register package", _vnPayProperties);
 
                 return Ok(new
                 {

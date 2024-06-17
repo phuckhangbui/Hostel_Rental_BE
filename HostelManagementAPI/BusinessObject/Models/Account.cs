@@ -33,7 +33,7 @@
         public IList<Contract> StudentContract { get; set; }
         public IList<RoomAppointment> Appointments { get; set; }
 
-        public IList<BillPayment> BillPaymentReceive { get; set; }
-        public IList<BillPayment> BillPaymentPay { get; set; }
+        public IList<BillPayment> BillPaymentReceives { get; set; }
+        public IList<BillPayment> BillPaymentPays { get; set; }
     }
 }
