@@ -54,7 +54,7 @@ namespace DAO
         public DbSet<Hostel> Hostel { get; set; }
         public DbSet<MemberShip> Membership { get; set; }
         public DbSet<MemberShipRegisterTransaction> MembershipsRegisterTransaction { get; set; }
-        public DbSet<Notice> Notice { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Room> Room { get; set; }
         public DbSet<RoomImage> RoomsImage { get; set; }
         public DbSet<HostelImage> HostelImages { get; set; }
@@ -140,11 +140,11 @@ namespace DAO
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
-            modelBuilder.Entity<Notice>()
-             .HasKey(notice => notice.NoticeID);
+            modelBuilder.Entity<Notification>()
+             .HasKey(notice => notice.NotificationID);
 
-            modelBuilder.Entity<Notice>()
-                .Property(notice => notice.NoticeID)
+            modelBuilder.Entity<Notification>()
+                .Property(notice => notice.NotificationID)
                 .ValueGeneratedOnAdd()
                 .UseIdentityColumn();
 
@@ -212,17 +212,17 @@ namespace DAO
                 .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many notice sent
-            modelBuilder.Entity<Notice>()
-               .HasOne(notice => notice.NoticeAccount)
+            modelBuilder.Entity<Notification>()
+               .HasOne(notice => notice.AccountNotice)
                .WithMany(account => account.AccountNotice)
-               .HasForeignKey(notice => notice.AccountID)
+               .HasForeignKey(notice => notice.AccountNoticeId)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many notice receive
-            modelBuilder.Entity<Notice>()
+            modelBuilder.Entity<Notification>()
                .HasOne(notice => notice.ReceiveAccount)
                .WithMany(account => account.AccountNoticeReceive)
-               .HasForeignKey(notice => notice.AccountID)
+               .HasForeignKey(notice => notice.ReceiveAccountId)
                .OnDelete(DeleteBehavior.Restrict);
 
             // one account have many contract owner

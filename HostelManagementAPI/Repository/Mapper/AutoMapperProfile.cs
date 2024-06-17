@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
+using DTOs;
 using DTOs.Account;
 using DTOs.BillPayment;
 using DTOs.Complain;
@@ -164,5 +165,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.Name : null))
             .ForMember(dest => dest.StudentAccountId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.AccountID : (int?)null))
             .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().ContractID : (int?)null));
+
+        CreateMap<Notification, NotificationDto>().ReverseMap();
     }
 }

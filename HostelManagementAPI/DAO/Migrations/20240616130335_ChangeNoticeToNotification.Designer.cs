@@ -4,6 +4,7 @@ using DAO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAO.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240616130335_ChangeNoticeToNotification")]
+    partial class ChangeNoticeToNotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -408,7 +411,10 @@ namespace DAO.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"));
 
-                    b.Property<int?>("AccountNoticeId")
+                    b.Property<int?>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AccountNoticeAccountID")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreateDate")
@@ -420,17 +426,14 @@ namespace DAO.Migrations
                     b.Property<int?>("NotificationType")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReceiveAccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NotificationID");
 
-                    b.HasIndex("AccountNoticeId");
+                    b.HasIndex("AccountID");
 
-                    b.HasIndex("ReceiveAccountId");
+                    b.HasIndex("AccountNoticeAccountID");
 
                     b.ToTable("Notifications");
                 });
@@ -695,15 +698,14 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.Notification", b =>
                 {
-                    b.HasOne("BusinessObject.Models.Account", "AccountNotice")
-                        .WithMany("AccountNotice")
-                        .HasForeignKey("AccountNoticeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BusinessObject.Models.Account", "ReceiveAccount")
                         .WithMany("AccountNoticeReceive")
-                        .HasForeignKey("ReceiveAccountId")
+                        .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("BusinessObject.Models.Account", "AccountNotice")
+                        .WithMany("AccountNotice")
+                        .HasForeignKey("AccountNoticeAccountID");
 
                     b.Navigation("AccountNotice");
 
