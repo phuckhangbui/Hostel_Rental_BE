@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -37,6 +38,17 @@ namespace DAO
             var context = new DataContext();
             return await context.Membership.Where(x => x.Status == 0)
                 .ToListAsync();
+        }
+
+        public async Task<MemberShipRegisterTransaction> GetMembershipRegisterStatusDone(int accountId)
+        {
+            var context = new DataContext();
+
+            return await context.MembershipsRegisterTransaction
+                .Include(m => m.MemberShip)
+                .Where(m => m.AccountID == accountId && m.Status == (int)MembershipRegisterEnum.Done)
+                .OrderByDescending(m => m.DateRegister)
+                .FirstOrDefaultAsync();
         }
     }
 }

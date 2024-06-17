@@ -1,6 +1,8 @@
 ﻿using DTOs;
 using DTOs.BillPayment;
+using DTOs.Contract;
 using DTOs.Enum;
+using DTOs.Room;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -51,42 +53,38 @@ namespace Service.Implement
 
         public async Task CreateBillPaymentMonthly(CreateBillPaymentRequestDto createBillPaymentRequestDto)
         {
-            var contractId = createBillPaymentRequestDto.ContractId;
+            foreach (var roomBillPayment in createBillPaymentRequestDto.RoomBillPayments)
+            {
+                var contractId = roomBillPayment.ContractId;
 
-            var currentContract = await _contractRepository.GetContractById(contractId);
-            if (currentContract == null)
-            {
-                throw new ServiceException("Contract not found with this ID");
-            }
-            else
-            {
+                var currentContract = await _contractRepository.GetContractById(contractId);
+                if (currentContract == null)
+                {
+                    throw new ServiceException($"Contract not found for ID: {contractId}");
+                }
+
                 var currentDate = DateTime.Now;
                 var year = currentDate.Year;
                 var month = currentDate.Month;
 
-                //if (currentDate < currentContract.DateStart || currentDate > currentContract.DateEnd)
-                //{
-                //    throw new ServiceException("Contract is not active yet");
-                //}
-
                 int monthsSinceStart = ((currentDate.Year - currentContract.DateStart.Value.Year) * 12) +
-                    currentDate.Month - currentContract.DateStart.Value.Month;
+                                       currentDate.Month - currentContract.DateStart.Value.Month;
                 var billingMonth = currentContract.DateStart.Value.AddMonths(monthsSinceStart);
 
-                //Check bill exist or not
                 var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, month, year);
                 if (existingBillPayment != null)
                 {
-                    throw new ServiceException("A bill for this month already exists.");
+                    continue;
                 }
 
                 var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
                 if (hiredRoom != null)
                 {
-                    await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, createBillPaymentRequestDto, billingMonth);
+                    await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
                 }
-
             }
+
+            
         }
 
         public async Task<BillPaymentDto> CreateDepositPayment(DepositRoomInputDto depositRoomInputDto, int accountId)
@@ -178,5 +176,9 @@ namespace Service.Implement
             return billPayment;
         }
 
+        public async Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId)
+        {
+            return await _billPaymentRepository.GetLastMonthBillPaymentsByOwnerId(ownerId);
+        }
     }
 }

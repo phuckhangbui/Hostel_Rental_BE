@@ -26,6 +26,24 @@ namespace HostelManagementWebAPI.Controllers
             _vnpayService = vnpayService;
         }
 
+        [HttpGet("bill-payment/owner/{ownerId}")]
+        public async Task<ActionResult> GetLastMonthBillPaymentsByOwnerId(int ownerId)
+        {
+            try
+            {
+                var result = await _billPaymentService.GetLastMonthBillPaymentsByOwnerId(ownerId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         [HttpPost("bill-payment/monthly")]
         public async Task<ActionResult> CreateBillPaymentMonthly([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
         {
