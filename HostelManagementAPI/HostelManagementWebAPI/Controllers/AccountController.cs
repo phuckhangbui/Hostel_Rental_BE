@@ -1,4 +1,5 @@
-﻿using DTOs;
+﻿
+using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
 using HostelManagementWebAPI.MessageStatusResponse;
@@ -309,7 +310,8 @@ namespace HostelManagementWebAPI.Controllers
             {
                 await _accountService.UpdateOwnerProfile(accountUpdate);
                 return Ok();
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

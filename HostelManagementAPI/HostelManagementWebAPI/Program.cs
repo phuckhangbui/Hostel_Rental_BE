@@ -95,6 +95,8 @@ app.UseAuthorization();
 //    logger.LogError(ex, "An error occured during migration");
 //}
 
+//var cache = app.Services.GetRequiredService<IMemoryCache>();
+
 app.MapControllers();
 
 app.Run();
