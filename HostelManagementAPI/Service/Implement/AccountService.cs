@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using DAO;
 using DTOs;
 using DTOs.Account;
 using DTOs.AccountAuthentication;
 using DTOs.Enum;
 using DTOs.MemberShipRegisterTransaction;
 using Google.Apis.Auth;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -22,10 +23,12 @@ namespace Service.Implement
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
-        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService)
+
+        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService, IMemoryCache cache)
         {
             _accountRepository = accountRepository; _tokenService = tokenService; _mapper = mapper;
             _mailService = mailService;
+            _cache = cache;
         }
 
         private AccountDto AdminLogin(EmailLoginDto emailLoginDto)
@@ -68,6 +71,9 @@ namespace Service.Implement
             var adminAccount = AdminLogin(login);
             if (adminAccount != null)
             {
+
+
+
                 return _mapper.Map<AccountLoginDto>(adminAccount);
             }
 
@@ -92,25 +98,42 @@ namespace Service.Implement
                 }
 
 
+
+
                 using var hmac = new HMACSHA512(accountDto.PasswordSalt);
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
                     if (computedHash[i] != accountDto.PasswordHash[i])
                     {
-                        return null;
+                        throw new ServiceException("Wrong password");
                     }
-
-
-                    accountDto.Token = _tokenService.CreateToken(accountDto);
-
-                    var refreshToken = _tokenService.GenerateRefreshToken();
-                    accountDto.RefreshToken = refreshToken;
-                    accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-                    await _accountRepository.UpdateAccount(accountDto);
-
-                    return _mapper.Map<AccountLoginDto>(accountDto);
                 }
+
+                accountDto.Token = _tokenService.CreateToken(accountDto);
+
+                var refreshToken = _tokenService.GenerateRefreshToken();
+                accountDto.RefreshToken = refreshToken;
+                accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+                if (login.FirebaseRegisterToken.IsNullOrEmpty())
+                {
+
+                }
+                else if (!login.FirebaseRegisterToken.Equals(accountDto.FirebaseToken))
+                {
+                    var firebaseTokenExistedAccount = await _accountRepository.FirebaseTokenExisted(login.FirebaseRegisterToken);
+                    if (firebaseTokenExistedAccount != null)
+                    {
+                        firebaseTokenExistedAccount.FirebaseToken = null;
+                        await _accountRepository.UpdateAccount(firebaseTokenExistedAccount);
+                    }
+                    accountDto.FirebaseToken = login.FirebaseRegisterToken;
+                }
+                await _accountRepository.UpdateAccount(accountDto);
+
+                return _mapper.Map<AccountLoginDto>(accountDto);
+
             }
             throw new ServiceException("No account associate with this email");
         }
