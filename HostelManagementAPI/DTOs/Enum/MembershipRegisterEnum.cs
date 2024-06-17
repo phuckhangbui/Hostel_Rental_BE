@@ -3,6 +3,9 @@
     public enum MembershipRegisterEnum
     {
         Pending = 0,
-        Done = 1
+        current = 1,
+        expired = 2,
+        updated = 3,
+        extended = 4,
     }
 }

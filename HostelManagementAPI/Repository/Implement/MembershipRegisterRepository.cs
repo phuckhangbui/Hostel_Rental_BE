@@ -61,5 +61,13 @@ namespace Repository.Implement
 
             await MemberShipRegisterDao.Instance.UpdateAsync(membershipTransaction);
         }
+
+        public async Task<MemberShipRegisterTransactionDto> GetCurrentActiveMembership(int accountId)
+        {
+            var transaction = await MemberShipRegisterDao.Instance.GetAllMembershipPackageInAccount(accountId);
+
+            var membershipTransaction = transaction.FirstOrDefault(m => m.Status == (int)MembershipRegisterEnum.current);
+            return _mapper.Map<MemberShipRegisterTransactionDto>(membershipTransaction);
+        }
     }
 }
