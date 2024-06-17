@@ -29,14 +29,14 @@ namespace Repository.Implement
         }
 
 
-        public async Task<MemberShipRegisterTransactionDto> RegisterMembership(int accountId, int membershipId, double membershipFee)
+        public async Task<MemberShipRegisterTransactionDto> RegisterMembership(int accountId, int membershipId, double membershipFee, int status)
         {
 
             var membershipTransaction = new MemberShipRegisterTransaction
             {
                 AccountID = accountId,
                 MemberShipID = membershipId,
-                Status = (int)MembershipRegisterEnum.Pending,
+                Status = status,
                 DateRegister = DateTime.Now,
                 TnxRef = DateTime.Now.Ticks.ToString(),
                 PackageFee = membershipFee

@@ -37,13 +37,55 @@ namespace Service.Implement
                 throw new ServiceException("this membership package now is not available");
             }
 
-            return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId, registerMemberShipDto.MembershipId, (double)membership.MemberShipFee);
+            if (await _membershipRegisterRepository.GetCurrentActiveMembership(registerMemberShipDto.AccountId) != null)
+            {
+                throw new ServiceException("There is an active membership, cannot register new membership");
+            }
+
+            return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId,
+                registerMemberShipDto.MembershipId, (double)membership.MemberShipFee, (int)MembershipRegisterEnum.pending);
         }
 
-        public async Task<MemberShipRegisterTransactionDto> ConfirmTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
+        public async Task<MemberShipRegisterTransactionDto> ExtendMembership(RegisterMemberShipDto registerMemberShipDto)
+        {
+            var membership = await _memberShipRepository.GetMembershipById(registerMemberShipDto.MembershipId);
+
+            if (membership == null || membership?.Status == (int)MemberShipEnum.Expire)
+            {
+                throw new ServiceException("this membership package now is not available");
+            }
+
+            if (await _membershipRegisterRepository.GetCurrentActiveMembership(registerMemberShipDto.AccountId) == null)
+            {
+                throw new ServiceException("There is no old membership to extend");
+            }
+
+
+            return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId,
+                registerMemberShipDto.MembershipId, (double)membership.MemberShipFee, (int)MembershipRegisterEnum.pending_extend);
+        }
+
+        public async Task<MemberShipRegisterTransactionDto> UpdateMembership(RegisterMemberShipDto registerMemberShipDto)
+        {
+            var membership = await _memberShipRepository.GetMembershipById(registerMemberShipDto.MembershipId);
+
+            if (membership == null || membership?.Status == (int)MemberShipEnum.Expire)
+            {
+                throw new ServiceException("this membership package now is not available");
+            }
+
+            if (await _membershipRegisterRepository.GetCurrentActiveMembership(registerMemberShipDto.AccountId) == null)
+            {
+                throw new ServiceException("There is no old membership to update");
+            }
+
+
+            return await _membershipRegisterRepository.RegisterMembership(registerMemberShipDto.AccountId, registerMemberShipDto.MembershipId, (double)membership.MemberShipFee, (int)MembershipRegisterEnum.pending_update);
+        }
+
+        public async Task<MemberShipRegisterTransactionDto> ConfirmTransaction(VnPayReturnUrlDto vnPayReturnUrlDto, int accountId)
         {
             var membershipTransaction = await _membershipRegisterRepository.GetMembershipTransactionBaseOnTnxRef(vnPayReturnUrlDto.TnxRef);
-
 
             if (vnPayReturnUrlDto == null)
             {
@@ -51,23 +93,48 @@ namespace Service.Implement
             }
             var membership = await _memberShipRepository.GetMembershipById((int)membershipTransaction.MemberShipID);
 
-            membershipTransaction.Status = (int)MembershipRegisterEnum.Done;
+            membershipTransaction.Status = (int)MembershipRegisterEnum.current;
 
-            DateTime? expireDate = membershipTransaction.DateExpire;
-
-
-            if (expireDate == null)
+            if (membership.Status == (int)MembershipRegisterEnum.pending)
             {
                 membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
+                await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
             }
-            else if (expireDate?.DayOfYear > DateTime.Now.DayOfYear)
+            else
             {
-                membershipTransaction.DateExpire = expireDate?.AddMonths((int)membership.Month);
-            }
+                var oldMembership = await _membershipRegisterRepository.GetCurrentActiveMembership(accountId);
 
-            await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
+                if (oldMembership == null)
+                {
+                    throw new ServiceException("No old membership transaction match");
+                }
+
+                if (membership.Status == (int)MembershipRegisterEnum.pending_extend)
+                {
+                    oldMembership.Status = (int)MembershipRegisterEnum.extended;
+                    await _membershipRegisterRepository.UpdateMembership(oldMembership);
+
+                    membershipTransaction.DateExpire = oldMembership.DateExpire.Value.AddMonths((int)membership.Month);
+                    await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
+                }
+
+                if (membership.Status == (int)MembershipRegisterEnum.pending_update)
+                {
+                    oldMembership.Status = (int)MembershipRegisterEnum.updated;
+                    await _membershipRegisterRepository.UpdateMembership(oldMembership);
+
+                    //update case only update to the expired date of the current package, after update could extend later
+                    membershipTransaction.DateExpire = oldMembership.DateExpire.Value;
+                    await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
+                }
+            }
 
             return membershipTransaction;
+        }
+
+        public async Task<MemberShipRegisterTransactionDto> GetCurrentActiveMembership(int accountId)
+        {
+            return await _membershipRegisterRepository.GetCurrentActiveMembership(accountId);
         }
     }
 }

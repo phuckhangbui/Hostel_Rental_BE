@@ -80,10 +80,10 @@ namespace DAO
         public async Task<ProfileDto> GetProfileAccount(int accountID)
         {
             var context = new DataContext();
-            var package = await context.MembershipsRegisterTransaction.Include(x => x.MemberShip).Where(x => x.Status == (int)MembershipRegisterEnum.Done && x.AccountID == accountID).FirstOrDefaultAsync();
+            var package = await context.MembershipsRegisterTransaction.Include(x => x.MemberShip).Where(x => x.Status == (int)MembershipRegisterEnum.current && x.AccountID == accountID).FirstOrDefaultAsync();
             var account = await context.Account.Where(x => x.AccountID == accountID)
                 .FirstOrDefaultAsync();
-            if(package == null)
+            if (package == null)
             {
                 var inf = new ProfileDto()
                 {
