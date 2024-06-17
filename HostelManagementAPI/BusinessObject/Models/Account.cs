@@ -18,7 +18,9 @@
         public bool? IsLoginWithGmail { get; set; }
         public string? OtpToken { get; set; }
         public string? RefreshToken { get; set; }
-        public DateTime RefreshTokenExpiryTime { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
+        public string? FirebaseToken { get; set; }
+
 
         public IList<Hostel> Hostels { get; set; }
         public IList<MemberShipRegisterTransaction> Memberships { get; set; }
