@@ -28,7 +28,7 @@ namespace Service.Implement
         {
             _accountRepository = accountRepository; _tokenService = tokenService; _mapper = mapper;
             _mailService = mailService;
-            _cache = cache;
+            //_cache = cache;
         }
 
         private AccountDto AdminLogin(EmailLoginDto emailLoginDto)
