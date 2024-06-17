@@ -24,7 +24,7 @@ namespace Service.Implement
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
 
-        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService, IMemoryCache cache)
+        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService/*, IMemoryCache cache*/)
         {
             _accountRepository = accountRepository; _tokenService = tokenService; _mapper = mapper;
             _mailService = mailService;
