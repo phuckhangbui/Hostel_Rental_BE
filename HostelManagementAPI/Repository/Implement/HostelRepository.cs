@@ -26,7 +26,7 @@ namespace Repository.Implement
 				HostelAddress = createHostelRequestDto.HostelAddress,
 				HostelDescription = createHostelRequestDto.HostelDescription,
 				AccountID = createHostelRequestDto.AccountID,
-				Status = (int)HostelEnum.Available,
+				Status = (int)HostelEnum.Prepare,
 				HostelType = HostelTypeExtensions.ToFriendlyString(hostelType),
 				CreateDate = DateTime.Now,
 			};
