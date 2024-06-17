@@ -36,6 +36,11 @@ namespace Service.Implement
                 throw new ServiceException("Invalid status value");
             }
 
+            if (status == (int)HostelEnum.Available && currentHostel.NumOfAvailableRoom == 0)
+            {
+                throw new ServiceException("Can not change hostel status to available because no room is available");
+            }
+
             await _hostelRepository.UpdateHostelStatus(hostelId, status);
         }
 
