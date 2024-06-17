@@ -26,7 +26,7 @@ namespace HostelManagementWebAPI.Controllers
             _vnpayService = vnpayService;
         }
 
-        [HttpGet("bill-payment/owner/{ownerId}")]
+        [HttpGet("bill-payment/last-month-bills/{ownerId}")]
         public async Task<ActionResult> GetLastMonthBillPaymentsByOwnerId(int ownerId)
         {
             try
