@@ -135,7 +135,16 @@ public class AutoMapperProfile : Profile
         //     .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice))
         //     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
-        CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>().ReverseMap();
+        CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>()
+        .ForMember(dest => dest.MemberShipName, opt => opt.MapFrom(src => src.MemberShip.MemberShipName))
+        .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip.CapacityHostel))
+        .ForMember(dest => dest.MemberShipFee, opt => opt.MapFrom(src => src.MemberShip.MemberShipFee))
+        .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.MemberShip.Month));
+
+
+
+
+        CreateMap<MemberShipRegisterTransactionDto, MemberShipRegisterTransaction>();
 
         CreateMap<BillPayment, BillPaymentDto>()
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Contract.Room.RoomName))

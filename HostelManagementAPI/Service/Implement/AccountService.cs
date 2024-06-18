@@ -5,7 +5,6 @@ using DTOs.AccountAuthentication;
 using DTOs.Enum;
 using DTOs.MemberShipRegisterTransaction;
 using Google.Apis.Auth;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
@@ -24,7 +23,7 @@ namespace Service.Implement
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
 
-        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService/*, IMemoryCache cache*/)
+        public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService)
         {
             _accountRepository = accountRepository; _tokenService = tokenService; _mapper = mapper;
             _mailService = mailService;

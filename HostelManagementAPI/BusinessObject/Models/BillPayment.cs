@@ -14,6 +14,10 @@
         public int? BillPaymentStatus { get; set; }
         public int? BillType { get; set; } //1 deposit, 2 monthly payment
         public string? TnxRef { get; set; }
+        public int? AccountPayId { get; set; }
+        public Account? AccountPay { get; set; }
+        public int? AccountReceiveId { get; set; }
+        public Account? AccountReceive { get; set; }
 
         public IList<BillPaymentDetail> Details { get; set; }
     }
