@@ -20,7 +20,8 @@ namespace Service.Implement
         }
         public async Task<IEnumerable<ViewHistoryMemberShipDtos>> GetAllMembershipPackageInAccount(int accountID)
         {
-            return await _membershipRegisterRepository.GetAllMembershipPackageInAccount(accountID);
+            var membershipTransactions = await _membershipRegisterRepository.GetAllMembershipPackageInAccount(accountID);
+            return membershipTransactions.Where(t => t.Status != (int)MembershipRegisterEnum.pending || t.Status != (int)MembershipRegisterEnum.pending_extend || t.Status != (int)MembershipRegisterEnum.pending_update);
         }
 
         public async Task<IEnumerable<ViewTransactionMembership>> GetAllTransactionInAdmin()
