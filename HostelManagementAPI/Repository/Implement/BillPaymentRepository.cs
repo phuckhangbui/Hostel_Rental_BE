@@ -253,6 +253,7 @@ namespace Repository.Implement
 
                     var defaultBillPaymentDto = new BillPaymentDto
                     {
+                        RoomId = contract.RoomID.Value,
                         ContractId = contract.ContractID,
                         BillType = (int)BillType.MonthlyPayment,
                         RoomName = room.RoomName,
