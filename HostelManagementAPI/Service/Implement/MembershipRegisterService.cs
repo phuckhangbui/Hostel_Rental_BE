@@ -93,37 +93,38 @@ namespace Service.Implement
             }
             var membership = await _memberShipRepository.GetMembershipById((int)membershipTransaction.MemberShipID);
 
-            membershipTransaction.Status = (int)MembershipRegisterEnum.current;
 
-            if (membership.Status == (int)MembershipRegisterEnum.pending)
+            if (membershipTransaction.Status == (int)MembershipRegisterEnum.pending)
             {
+                membershipTransaction.Status = (int)MembershipRegisterEnum.current;
                 membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
                 await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
             }
             else
             {
-                var oldMembership = await _membershipRegisterRepository.GetCurrentActiveMembership(accountId);
+                var oldMembershipTransaction = await _membershipRegisterRepository.GetCurrentActiveMembership(accountId);
 
-                if (oldMembership == null)
+                if (oldMembershipTransaction == null)
                 {
                     throw new ServiceException("No old membership transaction match");
                 }
 
-                if (membership.Status == (int)MembershipRegisterEnum.pending_extend)
+                if (membershipTransaction.Status == (int)MembershipRegisterEnum.pending_extend)
                 {
-                    oldMembership.Status = (int)MembershipRegisterEnum.extended;
-                    await _membershipRegisterRepository.UpdateMembership(oldMembership);
+                    oldMembershipTransaction.Status = (int)MembershipRegisterEnum.extended;
+                    await _membershipRegisterRepository.UpdateMembership(oldMembershipTransaction);
 
-                    membershipTransaction.DateExpire = oldMembership.DateExpire.Value.AddMonths((int)membership.Month);
+                    membershipTransaction.Status = (int)MembershipRegisterEnum.current;
+                    membershipTransaction.DateExpire = oldMembershipTransaction.DateExpire.Value.AddMonths((int)membership.Month);
                     await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
                 }
 
-                if (membership.Status == (int)MembershipRegisterEnum.pending_update)
+                if (membershipTransaction.Status == (int)MembershipRegisterEnum.pending_update)
                 {
-                    oldMembership.Status = (int)MembershipRegisterEnum.updated;
-                    await _membershipRegisterRepository.UpdateMembership(oldMembership);
+                    oldMembershipTransaction.Status = (int)MembershipRegisterEnum.updated;
+                    await _membershipRegisterRepository.UpdateMembership(oldMembershipTransaction);
 
-                    //update case only update to the expired date of the current package, after update could extend later
+                    membershipTransaction.Status = (int)MembershipRegisterEnum.current;
                     membershipTransaction.DateExpire = DateTime.Now.AddMonths((int)membership.Month);
                     await _membershipRegisterRepository.UpdateMembership(membershipTransaction);
                 }
