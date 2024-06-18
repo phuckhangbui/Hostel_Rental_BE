@@ -63,8 +63,8 @@ namespace Service.Implement
                     throw new ServiceException($"Contract not found for ID: {contractId}");
                 }
 
-                //var currentDate = DateTime.Now;
-                var currentDate = new DateTime(2024, 7, 1);
+                var currentDate = DateTime.Now;
+                //var currentDate = new DateTime(2024, 7, 1);
                 var nextMonthDate = currentDate.AddMonths(1);
                 var nextMonth = nextMonthDate.Month;
                 var nextMonthYear = nextMonthDate.Year;
