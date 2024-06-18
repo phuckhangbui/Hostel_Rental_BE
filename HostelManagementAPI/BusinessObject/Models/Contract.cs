@@ -20,5 +20,8 @@
 
         // chua nguoi o chung voi chu contract
         public IList<ContractMember> Members { get; set; }
+
+        public double? InitWaterNumber { get; set; }
+        public double? InitElectricityNumber { get; set; }
     }
 }

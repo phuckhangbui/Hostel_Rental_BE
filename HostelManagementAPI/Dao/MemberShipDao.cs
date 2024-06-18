@@ -46,7 +46,7 @@ namespace DAO
 
             return await context.MembershipsRegisterTransaction
                 .Include(m => m.MemberShip)
-                .Where(m => m.AccountID == accountId && m.Status == (int)MembershipRegisterEnum.Done)
+                .Where(m => m.AccountID == accountId && m.Status == (int)MembershipRegisterEnum.current)
                 .OrderByDescending(m => m.DateRegister)
                 .FirstOrDefaultAsync();
         }
