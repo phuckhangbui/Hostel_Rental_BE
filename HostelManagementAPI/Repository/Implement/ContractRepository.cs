@@ -31,6 +31,8 @@ namespace Repository.Implement
                 Status = (int)ContractStatusEnum.pending,
                 RoomFee = contractDto.RoomFee,
                 DepositFee = contractDto.DepositFee,
+                InitWaterNumber = contractDto.InitWater,
+                InitElectricityNumber = contractDto.InitElec
             };
 
             await ContractDao.Instance.CreateAsync(contract);

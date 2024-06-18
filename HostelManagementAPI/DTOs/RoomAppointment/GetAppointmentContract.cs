@@ -11,6 +11,7 @@ namespace DTOs.RoomAppointment
         public int RoomId { get; set; }
         public string RoomName { get; set; }
         public double? RoomFee { get; set; }
+        public int Capacity { get; set; }
         public IEnumerable<AccountAppointment> AccountAppointments { get; set; }
     }
 }

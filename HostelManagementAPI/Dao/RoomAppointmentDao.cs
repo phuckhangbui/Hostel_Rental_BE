@@ -110,6 +110,7 @@ namespace DAO
                     RoomId = ra.RoomId,
                     RoomFee = ra.Room.RoomFee,
                     RoomName = ra.Room.RoomName,
+                    Capacity = (int)ra.Room.Capacity,
                     AccountAppointments = appointment
                 }).FirstOrDefaultAsync();
 
