@@ -63,9 +63,11 @@ namespace Service.Implement
                     throw new ServiceException($"Contract not found for ID: {contractId}");
                 }
 
-                var currentDate = DateTime.Now;
-                var year = currentDate.Year;
-                var month = currentDate.Month;
+                //var currentDate = DateTime.Now;
+                var currentDate = new DateTime(2024, 7, 1);
+                var nextMonthDate = currentDate.AddMonths(1);
+                var nextMonth = nextMonthDate.Month;
+                var nextMonthYear = nextMonthDate.Year;
 
                 var firstBillingMonth = new DateTime(currentContract.DateStart.Value.Year, currentContract.DateStart.Value.Month, 1);
                 var contractStartDate = currentContract.DateStart.Value;
@@ -75,7 +77,7 @@ namespace Service.Implement
                 bool isFirstMonth = monthsSinceStart == 0;
                 var billingMonth = isFirstMonth ? contractStartDate : firstBillingMonth.AddMonths(monthsSinceStart);
 
-                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, month, year);
+                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, nextMonth, nextMonthYear);
                 if (existingBillPayment != null)
                 {
                     continue;

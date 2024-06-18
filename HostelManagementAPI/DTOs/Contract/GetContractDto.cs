@@ -28,5 +28,7 @@ namespace DTOs.Contract
         public Double? DepositFee { get; set; }
         public List<RoomServiceResponseForContractDto> RoomServiceDetails { get; set;}
         public List<GetContractDetailsDto> ContractMemberDetails { get; set; }
+        public double? InitWaterNumber { get; set; }
+        public double? InitElectricityNumber { get; set; }
     }
 }

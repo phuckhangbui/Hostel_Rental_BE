@@ -106,7 +106,9 @@ public class AutoMapperProfile : Profile
                 TypeServiceName = rs.TypeService.TypeName,
                 ServiceName = rs.TypeService.Unit,
                 ServicePrice = rs.Price ?? 0
-            }).ToList()));
+            }).ToList()))
+            .ForMember(dest => dest.InitWaterNumber, opt => opt.MapFrom(src => src.InitWaterNumber))
+            .ForMember(dest => dest.InitElectricityNumber, opt => opt.MapFrom(src => src.InitElectricityNumber));
         CreateMap<GetContractDto, Contract>();
 
         CreateMap<RoomService, RoomServiceResponseForContractDto>()
