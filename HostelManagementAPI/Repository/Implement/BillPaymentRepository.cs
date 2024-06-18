@@ -18,6 +18,44 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
+        public async Task CreateFirstBill(
+            RoomDetailResponseDto hiredRoomDto,
+            GetContractDto currentContractDto,
+            DateTime billingMonth)
+        {
+            double? totalAmount = 0;
+            int daysInMonth = DateTime.DaysInMonth(billingMonth.Year, billingMonth.Month);
+            DateTime contractStartDate = currentContractDto.DateStart.Value;
+            int contractStartDay = contractStartDate.Day;
+
+            int daysStayed = daysInMonth - contractStartDay + 1;
+            double dailyRoomFee = (double)currentContractDto.RoomFee / daysInMonth;
+            totalAmount += dailyRoomFee * daysStayed;
+
+            // Subtract deposit fee if applicable
+            totalAmount -= currentContractDto.DepositFee;
+            if (totalAmount < 0)
+            {
+                totalAmount = 0;
+            }
+
+            var billPayment = new BillPayment
+            {
+                ContractId = currentContractDto.ContractID,
+                BillAmount = totalAmount, 
+                Month = billingMonth.Month,
+                Year = billingMonth.Year,
+                CreatedDate = DateTime.Now,
+                TotalAmount = totalAmount,
+                BillPaymentStatus = (int)BillPaymentStatus.Pending,
+                BillType = (int)BillType.MonthlyPayment,
+                Details = new List<BillPaymentDetail>() 
+            };
+
+            await BillPaymentDao.Instance.CreateAsync(billPayment);
+        }
+
+
         public async Task CreateBillPaymentMonthly(
             RoomDetailResponseDto hiredRoomDto,
             GetContractDto currentContractDto,
@@ -25,23 +63,8 @@ namespace Repository.Implement
             DateTime billingMonth)
         {
             double? totalAmount = 0;
-            int daysInMonth = DateTime.DaysInMonth(billingMonth.Year, billingMonth.Month);
-            int contractStartDay = currentContractDto.DateStart.Value.Day;
 
-            bool isFirstMonth = billingMonth.Year == currentContractDto.DateStart.Value.Year &&
-                                billingMonth.Month == currentContractDto.DateStart.Value.Month;
-
-            if (isFirstMonth)
-            {
-                int daysStayed = daysInMonth - contractStartDay + 1;
-                double dailyRoomFee = (double)hiredRoomDto.RoomFee / daysInMonth;
-                totalAmount += dailyRoomFee * daysStayed;
-                totalAmount = totalAmount - currentContractDto.DepositFee;
-            }
-            else
-            {
-                totalAmount += (double)hiredRoomDto.RoomFee;
-            }
+            totalAmount += (double)currentContractDto.RoomFee;
 
             var billPaymentDetails = new List<BillPaymentDetail>();
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
@@ -52,13 +75,6 @@ namespace Repository.Implement
                 if (service.TypeService.Unit.Equals("Month"))
                 {
                     double servicePrice = service.Price ?? 0;
-
-                    if (isFirstMonth)
-                    {
-                        int daysStayed = daysInMonth - contractStartDay + 1;
-                        double dailyServicePrice = servicePrice / daysInMonth;
-                        servicePrice = dailyServicePrice * daysStayed;
-                    }
 
                     totalAmount += servicePrice;
 
@@ -113,7 +129,7 @@ namespace Repository.Implement
             var billPayment = new BillPayment
             {
                 ContractId = currentContractDto.ContractID,
-                BillAmount = (double)hiredRoomDto.RoomFee,
+                BillAmount = (double)currentContractDto.RoomFee,
                 Month = billingMonth.Month,
                 Year = billingMonth.Year,
                 CreatedDate = DateTime.Now,

@@ -6,6 +6,10 @@ namespace Repository.Interface
 {
     public interface IBillPaymentRepository
     {
+        Task CreateFirstBill(
+            RoomDetailResponseDto hiredRoomDto,
+            GetContractDto currentContractDto,
+            DateTime billingMonth);
         Task CreateBillPaymentMonthly (
             RoomDetailResponseDto hiredRoomDto,
             GetContractDto currentContract,
