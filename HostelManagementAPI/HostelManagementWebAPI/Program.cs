@@ -27,6 +27,7 @@ builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("Vn
 
 var modelBuilder = new ODataConventionModelBuilder();
 modelBuilder.EntitySet<Complain>("Complains");
+modelBuilder.EntitySet<Notification>("Notifications");
 
 builder.Services.AddControllers().AddOData(
     options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
@@ -93,6 +94,8 @@ app.UseAuthorization();
 //    var logger = services.GetService<ILogger<Program>>();
 //    logger.LogError(ex, "An error occured during migration");
 //}
+
+//var cache = app.Services.GetRequiredService<IMemoryCache>();
 
 app.MapControllers();
 

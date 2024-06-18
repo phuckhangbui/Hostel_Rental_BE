@@ -43,6 +43,7 @@ namespace Repository.Implement
 					Status = (int)RoomServiceEnum.Active,
 					TypeServiceId = roomService.TypeServiceId,
 					Price = roomService.Price,
+					IsSelected = false,
 				};
 
 				room.RoomServices.Add(newRoomService);
@@ -50,7 +51,16 @@ namespace Repository.Implement
 
 			await RoomDao.Instance.CreateAsync(room);
 
-			return room.RoomID;
+            //
+            var currentAvailableRoom = await RoomDao.Instance.GetAvailableRoomCountByHostelId(createRoomRequestDto.HostelID);
+            if (currentAvailableRoom == 1)
+            {
+                var hostel = await HostelDao.Instance.GetHostelById(createRoomRequestDto.HostelID);
+                hostel.Status = (int)HostelEnum.Available;
+                await HostelDao.Instance.UpdateAsync(hostel);
+            }
+
+            return room.RoomID;
 		}
 
 		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
@@ -93,10 +103,25 @@ namespace Repository.Implement
 		{
 			var room = await RoomDao.Instance.GetRoomById(roomId);
 
-			room.Status = status;
+            room.Status = status;
 
-			await RoomDao.Instance.UpdateAsync(room);
-		}
+            await RoomDao.Instance.UpdateAsync(room);
+
+            var currentAvailableRoom = await RoomDao.Instance.GetAvailableRoomCountByHostelId((int)room.HostelID);
+            if (currentAvailableRoom == 0)
+            {
+                var hostel = await HostelDao.Instance.GetHostelById((int)room.HostelID);
+                hostel.Status = (int)HostelEnum.Full;
+                await HostelDao.Instance.UpdateAsync(hostel);
+            }
+
+            if (currentAvailableRoom == 1)
+            {
+                var hostel = await HostelDao.Instance.GetHostelById((int)room.HostelID);
+                hostel.Status = (int)HostelEnum.Available;
+                await HostelDao.Instance.UpdateAsync(hostel);
+            }
+        }
 
 		public async Task UploadRoomImage(int roomId, List<string> imageUrls)
 		{

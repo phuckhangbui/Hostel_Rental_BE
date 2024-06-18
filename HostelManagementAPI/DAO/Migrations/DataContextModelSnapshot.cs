@@ -42,6 +42,9 @@ namespace DAO.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirebaseToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
 
@@ -69,7 +72,7 @@ namespace DAO.Migrations
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("RoleId")
@@ -90,6 +93,12 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillPaymentID"));
+
+                    b.Property<int?>("AccountPayId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AccountReceiveId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("BillAmount")
                         .HasColumnType("float");
@@ -122,6 +131,10 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("BillPaymentID");
+
+                    b.HasIndex("AccountPayId");
+
+                    b.HasIndex("AccountReceiveId");
 
                     b.HasIndex("ContractId");
 
@@ -222,6 +235,12 @@ namespace DAO.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("DepositFee")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("InitElectricityNumber")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("InitWaterNumber")
                         .HasColumnType("float");
 
                     b.Property<int?>("OwnerAccountID")
@@ -400,33 +419,39 @@ namespace DAO.Migrations
                     b.ToTable("MembershipsRegisterTransaction");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Notice", b =>
+            modelBuilder.Entity("BusinessObject.Models.Notification", b =>
                 {
-                    b.Property<int>("NoticeID")
+                    b.Property<int>("NotificationID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NoticeID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"));
 
-                    b.Property<int?>("AccountID")
+                    b.Property<int?>("AccountNoticeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateNotice")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("NoticeAccountAccountID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NoticeText")
+                    b.Property<string>("NotificationText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("NoticeID");
+                    b.Property<int?>("NotificationType")
+                        .HasColumnType("int");
 
-                    b.HasIndex("AccountID");
+                    b.Property<int?>("ReceiveAccountId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("NoticeAccountAccountID");
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Notice");
+                    b.HasKey("NotificationID");
+
+                    b.HasIndex("AccountNoticeId");
+
+                    b.HasIndex("ReceiveAccountId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Room", b =>
@@ -574,9 +599,23 @@ namespace DAO.Migrations
 
             modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
                 {
+                    b.HasOne("BusinessObject.Models.Account", "AccountPay")
+                        .WithMany("BillPaymentPays")
+                        .HasForeignKey("AccountPayId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("BusinessObject.Models.Account", "AccountReceive")
+                        .WithMany("BillPaymentReceives")
+                        .HasForeignKey("AccountReceiveId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany()
                         .HasForeignKey("ContractId");
+
+                    b.Navigation("AccountPay");
+
+                    b.Navigation("AccountReceive");
 
                     b.Navigation("Contract");
                 });
@@ -687,20 +726,19 @@ namespace DAO.Migrations
                     b.Navigation("OwnerAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Notice", b =>
+            modelBuilder.Entity("BusinessObject.Models.Notification", b =>
                 {
-                    b.HasOne("BusinessObject.Models.Account", "ReceiveAccount")
-                        .WithMany("AccountNoticeReceive")
-                        .HasForeignKey("AccountID")
+                    b.HasOne("BusinessObject.Models.Account", "AccountNotice")
+                        .WithMany("AccountNotice")
+                        .HasForeignKey("AccountNoticeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Account", "NoticeAccount")
-                        .WithMany("AccountNotice")
-                        .HasForeignKey("NoticeAccountAccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("BusinessObject.Models.Account", "ReceiveAccount")
+                        .WithMany("AccountNoticeReceive")
+                        .HasForeignKey("ReceiveAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("NoticeAccount");
+                    b.Navigation("AccountNotice");
 
                     b.Navigation("ReceiveAccount");
                 });
@@ -772,6 +810,10 @@ namespace DAO.Migrations
                     b.Navigation("AccountNoticeReceive");
 
                     b.Navigation("Appointments");
+
+                    b.Navigation("BillPaymentPays");
+
+                    b.Navigation("BillPaymentReceives");
 
                     b.Navigation("Hostels");
 

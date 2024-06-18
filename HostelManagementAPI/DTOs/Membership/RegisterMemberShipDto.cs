@@ -8,6 +8,7 @@ namespace DTOs.Membership
         public int AccountId { get; set; }
         [Required]
         public int MembershipId { get; set; }
+        [Required]
         public string ReturnUrl { get; set; }
     }
 }

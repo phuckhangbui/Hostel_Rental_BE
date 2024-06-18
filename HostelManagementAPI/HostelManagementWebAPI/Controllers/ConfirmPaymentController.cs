@@ -50,7 +50,6 @@ namespace HostelManagementWebAPI.Controllers
                 if (paymentType == (int)TnxPaymentType.package_register)
                 {
                     await ConfirmRegisterPayment(vnPayReturnUrlDto, accountId);
-
                 }
 
                 else
@@ -72,7 +71,7 @@ namespace HostelManagementWebAPI.Controllers
 
         private async Task ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto, int accountId)
         {
-            await _membershipRegisterService.ConfirmTransaction(vnPayReturnUrlDto);
+            await _membershipRegisterService.ConfirmTransaction(vnPayReturnUrlDto, accountId);
 
             await _accountService.UpdateAccountPackageStatus(accountId, (int)AccountPackageStatusEnum.Active);
         }

@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -55,7 +56,7 @@ namespace DAO
             using (var context = new DataContext())
             {
                 return await context.BillPayment
-                    .Where(b => b.ContractId == contractId)
+                    .Where(b => b.ContractId == contractId && b.BillType == (int)BillType.MonthlyPayment)
                      .Include(bp => bp.Contract)
                         .ThenInclude(c => c.Room)
                     .Include(bp => bp.Contract)
@@ -114,6 +115,33 @@ namespace DAO
                         .ThenInclude(d => d.RoomService)
                         .ThenInclude(rs => rs.TypeService)
                     .FirstOrDefaultAsync(bp => bp.BillPaymentID == billPaymentId);
+            }
+        }
+
+        public async Task<IEnumerable<BillPayment>> GetLastBillPaymentsByOwnerId(int ownerId)
+        {
+            using (var context = new DataContext())
+            {
+                var rooms = await context.Room
+                    .Include(r => r.RoomContract)
+                    .Where(r => r.Hostel.AccountID == ownerId)
+                    .ToListAsync();
+
+                var lastBillPayments = new List<BillPayment>();
+
+                foreach (var room in rooms)
+                {
+                    foreach (var contract in room.RoomContract)
+                    {
+                        var lastBillPayment = await GetLastBillPayment(contract.ContractID);
+                        if (lastBillPayment != null)
+                        {
+                            lastBillPayments.Add(lastBillPayment);
+                        }
+                    }
+                }
+
+                return lastBillPayments;
             }
         }
     }

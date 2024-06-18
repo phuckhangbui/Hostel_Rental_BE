@@ -1,4 +1,5 @@
 ﻿using DTOs.Membership;
+using DTOs.MemberShipRegisterTransaction;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -97,6 +98,79 @@ namespace HostelManagementWebAPI.Controllers
                     paymentUrl,
                     membershipRegistered
                 });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
+        [HttpPost("memberships/extend")]
+        public async Task<ActionResult> ExtendMemberShip(RegisterMemberShipDto registerMemberShipDto)
+        {
+            try
+            {
+                var membershipRegistered = await _memberShipRegisteredService.ExtendMembership(registerMemberShipDto);
+
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, registerMemberShipDto.ReturnUrl, "Register package", _vnPayProperties);
+
+                return Ok(new
+                {
+                    paymentUrl,
+                    membershipRegistered
+                });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
+        [HttpPost("memberships/update")]
+        public async Task<ActionResult> UpdateMemberShip(MembershipUpdatePackageDto membershipUpdatePackageDto)
+        {
+            try
+            {
+                var membershipRegistered = await _memberShipRegisteredService.UpdateMembership(membershipUpdatePackageDto);
+
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, membershipUpdatePackageDto.ReturnUrl, "Register package", _vnPayProperties);
+
+                return Ok(new
+                {
+                    paymentUrl,
+                    membershipRegistered
+                });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
+        [HttpGet("memberships/current-active")]
+        public async Task<ActionResult<MemberShipRegisterTransactionDto>> GetCurrentActiveMembership()
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+                var membership = await _memberShipRegisteredService.GetCurrentActiveMembership(accountId);
+
+                return Ok(membership);
             }
             catch (ServiceException ex)
             {

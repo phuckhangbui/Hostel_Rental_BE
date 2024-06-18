@@ -101,5 +101,15 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task<int> GetAvailableRoomCountByHostelId(int hostelId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.Room
+                    .Where(r => r.HostelID == hostelId && r.Status == (int)RoomEnum.Available)
+                    .CountAsync();
+            }
+        }
     }
 }
