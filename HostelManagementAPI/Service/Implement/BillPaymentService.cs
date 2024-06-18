@@ -67,9 +67,13 @@ namespace Service.Implement
                 var year = currentDate.Year;
                 var month = currentDate.Month;
 
-                int monthsSinceStart = ((currentDate.Year - currentContract.DateStart.Value.Year) * 12) +
-                                       currentDate.Month - currentContract.DateStart.Value.Month;
-                var billingMonth = currentContract.DateStart.Value.AddMonths(monthsSinceStart);
+                var firstBillingMonth = new DateTime(currentContract.DateStart.Value.Year, currentContract.DateStart.Value.Month, 1);
+                var contractStartDate = currentContract.DateStart.Value;
+                var monthsSinceStart = ((currentDate.Year - contractStartDate.Year) * 12) + currentDate.Month - contractStartDate.Month;
+
+
+                bool isFirstMonth = monthsSinceStart == 0;
+                var billingMonth = isFirstMonth ? contractStartDate : firstBillingMonth.AddMonths(monthsSinceStart);
 
                 var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, month, year);
                 if (existingBillPayment != null)
@@ -80,11 +84,17 @@ namespace Service.Implement
                 var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
                 if (hiredRoom != null)
                 {
-                    await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
+                    //await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
+                    if (isFirstMonth)
+                    {
+                        await _billPaymentRepository.CreateFirstBill(hiredRoom, currentContract, billingMonth);
+                    }
+                    else
+                    {
+                        await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
+                    }
                 }
             }
-
-            
         }
 
         public async Task<BillPaymentDto> CreateDepositPayment(DepositRoomInputDto depositRoomInputDto, int accountId)
