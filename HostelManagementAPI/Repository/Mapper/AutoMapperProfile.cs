@@ -150,7 +150,8 @@ public class AutoMapperProfile : Profile
 
         CreateMap<BillPayment, BillPaymentDto>()
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Contract.Room.RoomName))
-            .ForMember(dest => dest.RenterName, opt => opt.MapFrom(src => src.Contract.StudentLeadAccount.Name));
+            .ForMember(dest => dest.RenterName, opt => opt.MapFrom(src => src.Contract.StudentLeadAccount.Name))
+            .ForMember(dest => dest.RoomId, opt => opt.MapFrom(src => src.Contract.RoomID));
 
         CreateMap<BillPaymentDto, BillPayment>();
 
