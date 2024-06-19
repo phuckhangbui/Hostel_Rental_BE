@@ -1,8 +1,6 @@
 ﻿using DTOs;
 using DTOs.BillPayment;
-using DTOs.Contract;
 using DTOs.Enum;
-using DTOs.Room;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -112,6 +110,8 @@ namespace Service.Implement
                 ContractId = contract.ContractID,
                 BillAmount = contract.DepositFee,
                 TotalAmount = contract.DepositFee,
+                AccountPayId = contract.StudentAccountID,
+                AccountReceiveId = contract.OwnerAccountId,
                 BillType = (int)BillType.Deposit,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 CreatedDate = DateTime.Now,

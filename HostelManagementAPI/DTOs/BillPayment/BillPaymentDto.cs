@@ -17,7 +17,10 @@
         public string? RoomName { get; set; }
         public string? RenterName { get; set; }
         public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set;}
+        public DateTime? EndDate { get; set; }
         public int? RoomId { get; set; }
+        public int? AccountPayId { get; set; }
+        public int? AccountReceiveId { get; set; }
+
     }
 }
