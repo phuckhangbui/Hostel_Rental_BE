@@ -41,14 +41,16 @@ namespace Repository.Implement
             var billPayment = new BillPayment
             {
                 ContractId = currentContractDto.ContractID,
-                BillAmount = totalAmount, 
+                BillAmount = totalAmount,
                 Month = billingMonth.Month,
                 Year = billingMonth.Year,
                 CreatedDate = DateTime.Now,
                 TotalAmount = totalAmount,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 BillType = (int)BillType.MonthlyPayment,
-                Details = new List<BillPaymentDetail>() 
+                AccountPayId = currentContractDto.StudentAccountID,
+                AccountReceiveId = currentContractDto.OwnerAccountId,
+                Details = new List<BillPaymentDetail>()
             };
 
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
@@ -191,7 +193,9 @@ namespace Repository.Implement
                 TotalAmount = totalAmount,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 BillType = (int)BillType.MonthlyPayment,
-                Details = billPaymentDetails
+                Details = billPaymentDetails,
+                AccountPayId = currentContractDto.StudentAccountID,
+                AccountReceiveId = currentContractDto.OwnerAccountId,
             };
 
             await BillPaymentDao.Instance.CreateAsync(billPayment);
@@ -255,7 +259,7 @@ namespace Repository.Implement
                     bool isFirstMonth = billingMonth.Month == contract.DateStart.Value.Month && billingMonth.Year == contract.DateStart.Value.Year;
 
                     var startDate = isFirstMonth ? contract.DateStart.Value : new DateTime(billingMonth.Year, billingMonth.Month, 1);
-                    var endDate = isFirstMonth 
+                    var endDate = isFirstMonth
                         ? new DateTime(contract.DateStart.Value.Year, contract.DateStart.Value.Month, DateTime.DaysInMonth(contract.DateStart.Value.Year, contract.DateStart.Value.Month))
                         : startDate.AddMonths(1).AddDays(-1);
 
@@ -282,7 +286,7 @@ namespace Repository.Implement
                         EndDate = endDate,
                     };
 
-                    foreach(var service in selectedServices)
+                    foreach (var service in selectedServices)
                     {
                         if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
                         {
