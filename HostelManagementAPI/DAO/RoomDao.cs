@@ -50,7 +50,7 @@ namespace DAO
         public async Task<Room> GetRoomById(int roomId)
         {
             var context = new DataContext();
-            return await context.Room.Include(x => x.Hostel).FirstOrDefaultAsync(r => r.RoomID == roomId);
+            return await context.Room.Include(x => x.Hostel).ThenInclude(h => h.OwnerAccount).FirstOrDefaultAsync(r => r.RoomID == roomId);
         }
 
         public async Task<IEnumerable<Room>> GetRoomListByHostelId(int hostelId)

@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.Enum;
+﻿using DTOs.Enum;
 using DTOs.Hostel;
 using DTOs.Room;
 using DTOs.RoomAppointment;
@@ -14,25 +13,25 @@ namespace Service.Implement
 {
     public class RoomService : IRoomService
     {
-		private readonly IRoomRepository _roomRepository;
-		private readonly IHostelRepository _hostelRepository;
-		private readonly IAccountRepository _accountRepository;
-		//private readonly IContractRepository _contractRepository;
-		private readonly ICloudinaryService _cloudinaryService;
-		private readonly IMailService _mailService;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IHostelRepository _hostelRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IContractRepository _contractRepository;
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly IMailService _mailService;
 
-		public RoomService(
+        public RoomService(
             IRoomRepository roomRepository,
             IHostelRepository hostelRepository,
             IAccountRepository accountRepository,
-            //IContractRepository contractRepository,
+            IContractRepository contractRepository,
             ICloudinaryService cloudinaryService,
             IMailService mailService)
         {
             _roomRepository = roomRepository;
             _hostelRepository = hostelRepository;
             _accountRepository = accountRepository;
-            //_contractRepository = contractRepository;
+            _contractRepository = contractRepository;
             _cloudinaryService = cloudinaryService;
             _mailService = mailService;
         }
@@ -175,7 +174,7 @@ namespace Service.Implement
             await _roomRepository.CreateRoomAppointmentAsync(createRoomAppointmentDto);
             var ownerInfo = await _roomRepository.GetOwnerInfoByRoomId(createAppointmentSendEmailDto.RoomId);
             _mailService.SendMail(SendRoomAppointment.SendViewingAppointmentNotification(
-                ownerInfo.Email, 
+                ownerInfo.Email,
                 ownerInfo.Name,
                 createAppointmentSendEmailDto.RoomName,
                 createAppointmentSendEmailDto.AppointmentTime.ToString()));
@@ -186,30 +185,30 @@ namespace Service.Implement
             await _roomRepository.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
         }
 
-		public async Task<bool> UpdateRoomStatus(int roomId, int status)
-		{
-			var room = await _roomRepository.GetRoomById(roomId);
-			if (room == null)
-			{
-				throw new ServiceException("Room not found with this ID");
-			}
+        public async Task<bool> UpdateRoomStatus(int roomId, int status)
+        {
+            var room = await _roomRepository.GetRoomById(roomId);
+            if (room == null)
+            {
+                throw new ServiceException("Room not found with this ID");
+            }
 
-			if (!Enum.IsDefined(typeof(RoomEnum), status))
-			{
-				throw new ServiceException("Invalid status value");
-			}
+            if (!Enum.IsDefined(typeof(RoomEnum), status))
+            {
+                throw new ServiceException("Invalid status value");
+            }
 
-			await _roomRepository.UpdateRoomStatus(roomId, status);
-			return true;
-		}
+            await _roomRepository.UpdateRoomStatus(roomId, status);
+            return true;
+        }
         public async Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID)
         {
-			return await _roomRepository.GetApppointmentToCreateContract(roomID);
+            return await _roomRepository.GetApppointmentToCreateContract(roomID);
         }
 
         public async Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId)
         {
-			return await _roomRepository.GetRoomServicesByRoom(roomId);
+            return await _roomRepository.GetRoomServicesByRoom(roomId);
         }
 
         public async Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId)
@@ -225,17 +224,52 @@ namespace Service.Implement
         public async Task CancelAppointmentRoom(int appointmentID)
         {
             await _roomRepository.CancelAppointmentRoom(appointmentID);
-			var account = await _roomRepository.GetAppointmentById(appointmentID);
+            var account = await _roomRepository.GetAppointmentById(appointmentID);
 
             var room = await _roomRepository.GetAppointmentById(appointmentID);
-			var hostel = _roomRepository.GetRoomById(room.RoomId).Result.Hostel;
-			var inf = new InformationHouse()
-			{
-				HostelName = hostel.HostelName,
-				Address = hostel.HostelAddress,
-				RoomName = room.RoomName,
-			};
-			_mailService.SendMail(SendMailUserHiring.SendEmailDeclineAppointment(account.ViewerEmail, account.ViewerName, inf));
+            var hostel = _roomRepository.GetRoomById(room.RoomId).Result.Hostel;
+            var inf = new InformationHouse()
+            {
+                HostelName = hostel.HostelName,
+                Address = hostel.HostelAddress,
+                RoomName = room.RoomName,
+            };
+            _mailService.SendMail(SendMailUserHiring.SendEmailDeclineAppointment(account.ViewerEmail, account.ViewerName, inf));
+        }
+
+        public async Task<List<MemberRoomRentedResponse>> GetRentedRoomList(int accountId)
+        {
+            var contracts = await _contractRepository.GetContractByStudentId(accountId);
+
+            contracts = contracts.Where(c => c.Status != (int)ContractStatusEnum.pending);
+
+            var rooms = new List<MemberRoomRentedResponse>();
+
+            foreach (var contract in contracts)
+            {
+                var room = await _roomRepository.GetRoomById((int)contract.RoomID);
+                var roomDetail = await _roomRepository.GetRoomDetailById((int)contract.RoomID);
+                var memberRoomRentedResponse = new MemberRoomRentedResponse
+                {
+                    RoomID = room.RoomID,
+                    RoomName = room.RoomName,
+                    HostelID = room.HostelID,
+                    HostelName = room.Hostel.HostelName,
+                    OwnerId = room.Hostel.AccountID,
+                    OwnerName = room.Hostel.OwnerAccount.Name,
+                    Status = contract.Status,
+                    RoomThumbnail = roomDetail.RoomThumbnail,
+                    StudentAccountId = accountId,
+                    ContractId = contract.ContractID,
+                    DateStart = contract.DateStart,
+                    DateEnd = contract.DateEnd,
+                    RoomFee = contract.RoomFee,
+                };
+
+                rooms.Add(memberRoomRentedResponse);
+            }
+
+            return rooms;
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
