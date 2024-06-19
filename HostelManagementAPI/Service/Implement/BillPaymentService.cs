@@ -80,7 +80,7 @@ namespace Service.Implement
                 var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, currentDate.Month, currentDate.Year);
                 if (existingBillPayment != null)
                 {
-                    throw new ServiceException("Bill for this month already exists");
+                    continue;
                 }
 
                 var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
