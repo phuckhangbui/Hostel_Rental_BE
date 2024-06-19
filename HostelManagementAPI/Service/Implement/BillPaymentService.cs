@@ -77,16 +77,15 @@ namespace Service.Implement
                 bool isFirstMonth = monthsSinceStart == 0;
                 var billingMonth = isFirstMonth ? contractStartDate : firstBillingMonth.AddMonths(monthsSinceStart);
 
-                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, nextMonth, nextMonthYear);
+                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, currentDate.Month, currentDate.Year);
                 if (existingBillPayment != null)
                 {
-                    continue;
+                    throw new ServiceException("Bill for this month already exists");
                 }
 
                 var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
                 if (hiredRoom != null)
                 {
-                    //await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
                     if (isFirstMonth)
                     {
                         await _billPaymentRepository.CreateFirstBill(hiredRoom, currentContract, billingMonth);
