@@ -16,6 +16,7 @@ namespace DTOs.Account
         public string? Phone { get; set; }
         public string? CitizenCard { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public int Gender { get; set; }
         public int? Status { get; set; }
     }
 }
