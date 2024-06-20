@@ -55,7 +55,7 @@ namespace Service.Implement
             {
                 var contractId = roomBillPayment.ContractId;
 
-                var currentContract = await _contractRepository.GetContractById(contractId);
+                var currentContract = await _contractRepository.GetContractDetailsByContractId(contractId);
                 if (currentContract == null)
                 {
                     throw new ServiceException($"Contract not found for ID: {contractId}");

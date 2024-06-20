@@ -49,8 +49,8 @@ namespace Repository.Implement
                 TotalAmount = totalAmount,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 BillType = (int)BillType.MonthlyPayment,
-                //AccountPayId = currentContractDto.StudentAccountID,
-                //AccountReceiveId = currentContractDto.OwnerAccountId,
+                AccountPayId = currentContractDto.StudentAccountID,
+                AccountReceiveId = currentContractDto.OwnerAccountId,
                 Details = new List<BillPaymentDetail>()
             };
 
@@ -195,8 +195,8 @@ namespace Repository.Implement
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 BillType = (int)BillType.MonthlyPayment,
                 Details = billPaymentDetails,
-                //AccountPayId = currentContractDto.StudentAccountID,
-                //AccountReceiveId = currentContractDto.OwnerAccountId,
+                AccountPayId = currentContractDto.StudentAccountID,
+                AccountReceiveId = currentContractDto.OwnerAccountId,
             };
 
             await BillPaymentDao.Instance.CreateAsync(billPayment);
