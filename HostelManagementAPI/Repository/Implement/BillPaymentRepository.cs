@@ -6,6 +6,7 @@ using DTOs.Contract;
 using DTOs.Enum;
 using DTOs.Room;
 using Repository.Interface;
+using System.Diagnostics.Contracts;
 
 namespace Repository.Implement
 {
@@ -48,8 +49,8 @@ namespace Repository.Implement
                 TotalAmount = totalAmount,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 BillType = (int)BillType.MonthlyPayment,
-                AccountPayId = currentContractDto.StudentAccountID,
-                AccountReceiveId = currentContractDto.OwnerAccountId,
+                //AccountPayId = currentContractDto.StudentAccountID,
+                //AccountReceiveId = currentContractDto.OwnerAccountId,
                 Details = new List<BillPaymentDetail>()
             };
 
@@ -194,8 +195,8 @@ namespace Repository.Implement
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 BillType = (int)BillType.MonthlyPayment,
                 Details = billPaymentDetails,
-                AccountPayId = currentContractDto.StudentAccountID,
-                AccountReceiveId = currentContractDto.OwnerAccountId,
+                //AccountPayId = currentContractDto.StudentAccountID,
+                //AccountReceiveId = currentContractDto.OwnerAccountId,
             };
 
             await BillPaymentDao.Instance.CreateAsync(billPayment);
@@ -209,6 +210,7 @@ namespace Repository.Implement
 
             var currentDate = DateTime.Now;
             //var currentDate = new DateTime(2024, 8, 1);
+            var existingBills = new List<BillPaymentDto>();
 
             foreach (var billPaymentDto in billPaymentDtos)
             {
@@ -238,6 +240,12 @@ namespace Repository.Implement
                     billPaymentDto.Month = billingMonth.Month;
                     billPaymentDto.StartDate = billingMonth;
                     billPaymentDto.EndDate = billingMonth.AddMonths(1).AddDays(-1);
+                }
+
+                var existingBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contract.ContractID, currentDate.Month, currentDate.Year);
+                if (existingBillPayment != null && existingBillPayment.ContractId == billPaymentDto.ContractId)
+                {
+                    existingBills.Add(billPaymentDto);
                 }
             }
 
@@ -349,6 +357,11 @@ namespace Repository.Implement
 
                     billPaymentDtos.Add(defaultBillPaymentDto);
                 }
+            }
+
+            foreach (var bill in existingBills)
+            {
+                billPaymentDtos.Remove(bill);
             }
 
             return new MonthlyBillPaymentResponseDto
