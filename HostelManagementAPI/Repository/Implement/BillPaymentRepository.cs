@@ -6,7 +6,6 @@ using DTOs.Contract;
 using DTOs.Enum;
 using DTOs.Room;
 using Repository.Interface;
-using System.Diagnostics.Contracts;
 
 namespace Repository.Implement
 {
