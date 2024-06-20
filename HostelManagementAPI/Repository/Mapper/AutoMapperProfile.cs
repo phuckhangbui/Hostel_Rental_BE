@@ -76,8 +76,7 @@ public class AutoMapperProfile : Profile
            .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.CapacityHostel : 0))
            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.Month : 0));
         CreateMap<Contract, UpdateContractDto>();
-        CreateMap<Contract, GetContractDto>()
-            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
+        //.ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.Acc));
         CreateMap<Account, CustomerViewAccount>().ReverseMap();
         //CreateMap<Contract, GetContractDto>()
         //    .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccountID))
@@ -85,7 +84,7 @@ public class AutoMapperProfile : Profile
         //    .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
         //    .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
         CreateMap<Contract, GetContractDto>()
-            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID))
+            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccountID))
             .ForMember(dest => dest.OwnerAccountName, opt => opt.MapFrom(src => src.OwnerAccount.Name))
             .ForMember(dest => dest.OwnerPhone, opt => opt.MapFrom(src => src.OwnerAccount.Phone))
             .ForMember(dest => dest.OwnerCitizen, opt => opt.MapFrom(src => src.OwnerAccount.CitizenCard))
