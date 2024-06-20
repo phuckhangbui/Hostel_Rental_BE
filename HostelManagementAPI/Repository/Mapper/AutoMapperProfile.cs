@@ -163,8 +163,9 @@ public class AutoMapperProfile : Profile
         CreateMap<BillPaymentDetailResponseDto, BillPaymentDetail>();
 
         CreateMap<RoomService, RoomServiceView>()
-        .ForMember(dest => dest.TypeName, opt => opt.MapFrom(src => src.TypeService.TypeName))
-        .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.TypeService.Unit));
+        .ForMember(dest => dest.TypeServiceName, opt => opt.MapFrom(src => src.TypeService.TypeName))
+        .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.TypeService.Unit))
+        .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Price));
 
         CreateMap<Complain, ComplainDto>()
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID));

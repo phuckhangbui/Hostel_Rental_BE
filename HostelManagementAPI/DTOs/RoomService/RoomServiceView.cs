@@ -8,11 +8,10 @@ namespace DTOs.RoomService
 {
     public class RoomServiceView
     {
-        public int? RoomServiceId { get; set; }
-        public int? TypeServiceID { get; set; }
-        public string TypeName { get; set; }
-        public string Unit { get; set; }
-        public double? Price { get; set; }
-        public int Status { get; set; }
+        public int RoomId { get; set; }
+        public int RoomServiceId { get; set; }
+        public string TypeServiceName { get; set; }
+        public string ServiceName { get; set; }
+        public double ServicePrice { get; set; }
     }
 }
