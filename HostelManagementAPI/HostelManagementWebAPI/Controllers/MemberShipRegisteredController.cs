@@ -182,6 +182,26 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Owner")]
+        [HttpGet("memberships/history")]
+        public async Task<ActionResult> GetDetailMemberShipRegister()
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+                var membershipRegistered = await _memberShipRegisteredService.GetAllMembershipPackageInAccount(accountId);
+                return Ok(membershipRegistered);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         //[Authorize(Policy = "Owner")]
         //[HttpPost("memberships/register/confirm-payment")]
         //public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)

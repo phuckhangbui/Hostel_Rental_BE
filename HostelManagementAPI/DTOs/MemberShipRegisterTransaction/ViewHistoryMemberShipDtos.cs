@@ -9,5 +9,6 @@
         public double PackageFee { get; set; }
         public DateTime? DateRegister { get; set; }
         public DateTime? DateExpire { get; set; }
+        public int? Status { get; set; }
     }
 }

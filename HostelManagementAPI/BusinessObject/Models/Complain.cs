@@ -11,6 +11,7 @@ namespace BusinessObject.Models
         public Room? Room { get; set; }
         public int? RoomID { get; set; }
         public string? ComplainText { get; set; }
+        public string? ComplainResponse { get; set; }
         public DateTime? DateComplain { get; set; }
         public int? Status { get; set; }  //1 send, 2 processing, 3 resolved 
         public DateTime? DateUpdate { get; set; }

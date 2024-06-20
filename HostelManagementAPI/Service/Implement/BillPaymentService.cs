@@ -1,8 +1,6 @@
 ﻿using DTOs;
 using DTOs.BillPayment;
-using DTOs.Contract;
 using DTOs.Enum;
-using DTOs.Room;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -57,15 +55,17 @@ namespace Service.Implement
             {
                 var contractId = roomBillPayment.ContractId;
 
-                var currentContract = await _contractRepository.GetContractById(contractId);
+                var currentContract = await _contractRepository.GetContractDetailsByContractId(contractId);
                 if (currentContract == null)
                 {
                     throw new ServiceException($"Contract not found for ID: {contractId}");
                 }
 
                 var currentDate = DateTime.Now;
-                var year = currentDate.Year;
-                var month = currentDate.Month;
+                //var currentDate = new DateTime(2024, 7, 1);
+                var nextMonthDate = currentDate.AddMonths(1);
+                var nextMonth = nextMonthDate.Month;
+                var nextMonthYear = nextMonthDate.Year;
 
                 var firstBillingMonth = new DateTime(currentContract.DateStart.Value.Year, currentContract.DateStart.Value.Month, 1);
                 var contractStartDate = currentContract.DateStart.Value;
@@ -75,7 +75,7 @@ namespace Service.Implement
                 bool isFirstMonth = monthsSinceStart == 0;
                 var billingMonth = isFirstMonth ? contractStartDate : firstBillingMonth.AddMonths(monthsSinceStart);
 
-                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, month, year);
+                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, currentDate.Month, currentDate.Year);
                 if (existingBillPayment != null)
                 {
                     continue;
@@ -84,7 +84,6 @@ namespace Service.Implement
                 var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
                 if (hiredRoom != null)
                 {
-                    //await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
                     if (isFirstMonth)
                     {
                         await _billPaymentRepository.CreateFirstBill(hiredRoom, currentContract, billingMonth);
@@ -111,6 +110,8 @@ namespace Service.Implement
                 ContractId = contract.ContractID,
                 BillAmount = contract.DepositFee,
                 TotalAmount = contract.DepositFee,
+                AccountPayId = contract.StudentAccountID,
+                AccountReceiveId = contract.OwnerAccountId,
                 BillType = (int)BillType.Deposit,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 CreatedDate = DateTime.Now,

@@ -12,6 +12,8 @@ namespace DTOs.Contract
         public DateTime? DateEnd { get; set; }
         public double? RoomFee { get; set; }
         public double? DepositFee { get; set; }
+        public double? InitWater {  get; set; }
+        public double? InitElec { get; set; }
         public IEnumerable<CreateContractMemberDto> ContractMember {  get; set; }
         public IEnumerable<int> RoomService { get; set; }
     }
