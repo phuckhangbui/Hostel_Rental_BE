@@ -233,6 +233,12 @@ namespace Repository.Implement
 			return _mapper.Map<IEnumerable<RentingRoomResponseDto>>(hiringRooms);
         }
 
+        public async Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request)
+        {
+            await RoomServiceDao.Instance.UpdateRoomServicePrice(request);
+        }
+
+
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
         //{
         //	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService

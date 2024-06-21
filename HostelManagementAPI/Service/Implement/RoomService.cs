@@ -272,6 +272,11 @@ namespace Service.Implement
             return rooms;
         }
 
+        public async Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request)
+        {
+            await _roomRepository.UpdateRoomServicePrice(request);
+        }
+
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)
         //     {
         //return _roomRepository.AddRoomServicesAsync(addRoomServicesDto); ;

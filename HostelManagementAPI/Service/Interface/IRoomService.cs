@@ -31,5 +31,6 @@ namespace Service.Interface
         Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int accountID);
         Task CancelAppointmentRoom(int appointmentID);
         Task<List<MemberRoomRentedResponse>> GetRentedRoomList(int accountId);
+        Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request);
     }
 }
