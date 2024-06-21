@@ -67,10 +67,16 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty))
             .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Phone : string.Empty))
             .ForMember(dest => dest.NumberOfRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
+
         CreateMap<Complain, CreateComplainDto>().ReverseMap();
+        CreateMap<ComplainDto, Complain>();
         CreateMap<Complain, ComplainDto>()
-            .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : string.Empty))
-            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : string.Empty));
+            .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : null))
+            .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID != null ? src.Room.Hostel.AccountID : null))
+            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Room.Hostel.HostelName != null ? src.Room.Hostel.HostelName : null))
+            .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Room.Hostel.OwnerAccount.Name != null ? src.Room.Hostel.OwnerAccount.Name : null))
+            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : null));
+
         CreateMap<MemberShipRegisterTransaction, ViewHistoryMemberShipDtos>()
            .ForMember(dest => dest.MembershipName, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.MemberShipName : string.Empty))
            .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.CapacityHostel : 0))
@@ -166,10 +172,7 @@ public class AutoMapperProfile : Profile
         .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.TypeService.Unit))
         .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Price));
 
-        CreateMap<Complain, ComplainDto>()
-            .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID));
 
-        CreateMap<ComplainDto, Complain>();
 
         CreateMap<Room, RentingRoomResponseDto>()
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault() != null ? src.RoomImages.FirstOrDefault().RoomUrl : null))
