@@ -53,12 +53,10 @@ namespace DAO
             return reals;
         }
 
-        public async Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth()
+        public async Task<IEnumerable<TypeMonthDtos>> GetAmountProfitEachMonth(int year)
         {
             var context = new DataContext();
             var utils = new Utils();
-            DateTime date = DateTime.Now;
-            int year = date.Year;
             var profit = context.MembershipsRegisterTransaction.Where(x => x.DateRegister.Value.Year == year)
         .GroupBy(x => x.DateRegister.Value.Month)
         .Select(group => new TypeMonthDtos

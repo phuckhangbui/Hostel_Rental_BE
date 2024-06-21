@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
 using DTOs.Complain;
+using DTOs.Enum;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -18,49 +19,44 @@ namespace Service.Implement
             _complainRepository = complainRepository;
         }
 
-        public Task CreateComplain(CreateComplainDto complainDto, int complainCreatorId)
+        public Task CreateComplain(CreateComplainDto complainDto)
         {
             var complain = _mapper.Map<Complain>(complainDto);
-            complain.AccountID = complainCreatorId;
+            complain.AccountID = complainDto.AccountID;
             complain.DateComplain = DateTime.Now;
-            complain.DateUpdate = DateTime.Now;
-            complain.Status = 1;
+            complain.Status = (int)ComplainEnum.sent;
 
             return _complainRepository.CreateComplain(complain);
         }
 
-        public async Task<DisplayComplainDto> GetComplainById(int id)
+        public async Task<ComplainDto> GetComplainById(int id)
         {
             var complain = await _complainRepository.GetComplainById(id);
-            var displayComplain = _mapper.Map<DisplayComplainDto>(complain);
+            var displayComplain = _mapper.Map<ComplainDto>(complain);
             return displayComplain;
         }
 
-        public async Task<IEnumerable<DisplayComplainDto>> GetComplains()
+        public async Task<IEnumerable<ComplainDto>> GetComplains()
         {
-            var complains = await _complainRepository.GetComplains();
-
-            var displayComplains = _mapper.Map<IEnumerable<DisplayComplainDto>>(complains);
-
-            return displayComplains;
+            return await _complainRepository.GetComplains();
         }
 
-        public async Task<IEnumerable<DisplayComplainDto>> GetComplainsByAccountCreator(int id)
+        public async Task<IEnumerable<ComplainDto>> GetComplainsByAccountCreator(int id)
         {
             var complains = await _complainRepository.GetComplains();
             var selectedComplains = complains.Where(c => c.AccountID == id);
 
-            var displayComplains = _mapper.Map<IEnumerable<DisplayComplainDto>>(selectedComplains);
+            var displayComplains = _mapper.Map<IEnumerable<ComplainDto>>(selectedComplains);
 
             return displayComplains;
         }
 
-        public async Task<IEnumerable<DisplayComplainDto>> GetComplainsByRoom(int id)
+        public async Task<IEnumerable<ComplainDto>> GetComplainsByRoom(int id)
         {
             var complains = await _complainRepository.GetComplains();
             var selectedComplains = complains.Where(c => c.RoomID == id);
 
-            var displayComplains = _mapper.Map<IEnumerable<DisplayComplainDto>>(selectedComplains);
+            var displayComplains = _mapper.Map<IEnumerable<ComplainDto>>(selectedComplains);
 
             return displayComplains;
         }
@@ -73,8 +69,9 @@ namespace Service.Implement
                 throw new ServiceException("Complain not found");
             }
 
-            complain.Status = updateComplainRequest.Status;
+            complain.Status = (int)ComplainEnum.done;
             complain.DateUpdate = DateTime.Now;
+            complain.ComplainResponse = updateComplainRequest.ComplainResponse;
             await _complainRepository.UpdateComplain(complain);
         }
     }

@@ -1,6 +1,5 @@
-﻿using DTOs;
-using DTOs.Enum;
-using DTOs.Membership;
+﻿using DTOs.Membership;
+using DTOs.MemberShipRegisterTransaction;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +84,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Owner")]
-        [HttpPost("register")]
+        [HttpPost("memberships/register")]
         public async Task<ActionResult> RegisterMemberShip(RegisterMemberShipDto registerMemberShipDto)
         {
             try
@@ -111,22 +110,20 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Owner")]
-        [HttpPost("register/confirm-payment")]
-        public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        [HttpPost("memberships/extend")]
+        public async Task<ActionResult> ExtendMemberShip(RegisterMemberShipDto registerMemberShipDto)
         {
-            int accountId = GetLoginAccountId();
-
             try
             {
-                if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+                var membershipRegistered = await _memberShipRegisteredService.ExtendMembership(registerMemberShipDto);
+
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, registerMemberShipDto.ReturnUrl, "Register package", _vnPayProperties);
+
+                return Ok(new
                 {
-                    return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
-                }
-
-                await _memberShipRegisteredService.ConfirmTransaction(vnPayReturnUrlDto);
-
-                await _accountService.UpdateAccountPackageStatus(accountId, (int)AccountPackageStatusEnum.Active);
-                return Ok();
+                    paymentUrl,
+                    membershipRegistered
+                });
             }
             catch (ServiceException ex)
             {
@@ -137,6 +134,101 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+        [Authorize(Policy = "Owner")]
+        [HttpPost("memberships/update")]
+        public async Task<ActionResult> UpdateMemberShip(MembershipUpdatePackageDto membershipUpdatePackageDto)
+        {
+            try
+            {
+                var membershipRegistered = await _memberShipRegisteredService.UpdateMembership(membershipUpdatePackageDto);
+
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(membershipRegistered.TnxRef, (double)membershipRegistered.PackageFee, membershipUpdatePackageDto.ReturnUrl, "Register package", _vnPayProperties);
+
+                return Ok(new
+                {
+                    paymentUrl,
+                    membershipRegistered
+                });
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
+        [HttpGet("memberships/current-active")]
+        public async Task<ActionResult<MemberShipRegisterTransactionDto>> GetCurrentActiveMembership()
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+                var membership = await _memberShipRegisteredService.GetCurrentActiveMembership(accountId);
+
+                return Ok(membership);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
+        [HttpGet("memberships/history")]
+        public async Task<ActionResult> GetDetailMemberShipRegister()
+        {
+            try
+            {
+                int accountId = GetLoginAccountId();
+                var membershipRegistered = await _memberShipRegisteredService.GetAllMembershipPackageInAccount(accountId);
+                return Ok(membershipRegistered);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Policy = "Owner")]
+        //[HttpPost("memberships/register/confirm-payment")]
+        //public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        //{
+        //    int accountId = GetLoginAccountId();
+
+        //    try
+        //    {
+        //        if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+        //        {
+        //            return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
+        //        }
+
+        //        await _memberShipRegisteredService.ConfirmTransaction(vnPayReturnUrlDto);
+
+        //        await _accountService.UpdateAccountPackageStatus(accountId, (int)AccountPackageStatusEnum.Active);
+        //        return Ok();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //    }
+        //}
 
     }
 }

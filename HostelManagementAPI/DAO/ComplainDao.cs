@@ -38,6 +38,15 @@ namespace DAO
             return complain;
         }
 
-
+        public async Task<IEnumerable<Complain>> GetComplainWithOnwerId()
+        {
+            var complains = new List<Complain>();
+            using (var context = new DataContext())
+            {
+                complains = await context.Complain.Include(c => c.ComplainAccount).Include(c => c.Room).ThenInclude(r => r.Hostel).ThenInclude(h => h.OwnerAccount)
+                    .ToListAsync();
+            }
+            return complains;
+        }
     }
 }

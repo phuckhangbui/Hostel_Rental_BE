@@ -42,6 +42,9 @@ namespace DAO.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirebaseToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
 
@@ -69,7 +72,7 @@ namespace DAO.Migrations
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("RoleId")
@@ -80,7 +83,7 @@ namespace DAO.Migrations
 
                     b.HasKey("AccountID");
 
-                    b.ToTable("Account");
+                    b.ToTable("Account", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
@@ -90,6 +93,12 @@ namespace DAO.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillPaymentID"));
+
+                    b.Property<int?>("AccountPayId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AccountReceiveId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("BillAmount")
                         .HasColumnType("float");
@@ -109,6 +118,9 @@ namespace DAO.Migrations
                     b.Property<int?>("Month")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("TnxRef")
                         .HasColumnType("nvarchar(max)");
 
@@ -120,9 +132,13 @@ namespace DAO.Migrations
 
                     b.HasKey("BillPaymentID");
 
+                    b.HasIndex("AccountPayId");
+
+                    b.HasIndex("AccountReceiveId");
+
                     b.HasIndex("ContractId");
 
-                    b.ToTable("BillPayment");
+                    b.ToTable("BillPayment", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPaymentDetail", b =>
@@ -157,7 +173,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("RoomServiceID");
 
-                    b.ToTable("BillPaymentDetail");
+                    b.ToTable("BillPaymentDetail", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Complain", b =>
@@ -170,6 +186,9 @@ namespace DAO.Migrations
 
                     b.Property<int?>("AccountID")
                         .HasColumnType("int");
+
+                    b.Property<string>("ComplainResponse")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ComplainText")
                         .HasColumnType("nvarchar(max)");
@@ -192,7 +211,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("RoomID");
 
-                    b.ToTable("Complain");
+                    b.ToTable("Complain", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Contract", b =>
@@ -221,6 +240,12 @@ namespace DAO.Migrations
                     b.Property<double?>("DepositFee")
                         .HasColumnType("float");
 
+                    b.Property<double?>("InitElectricityNumber")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("InitWaterNumber")
+                        .HasColumnType("float");
+
                     b.Property<int?>("OwnerAccountID")
                         .HasColumnType("int");
 
@@ -244,7 +269,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("StudentAccountID");
 
-                    b.ToTable("Contract");
+                    b.ToTable("Contract", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
@@ -271,7 +296,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ContractID");
 
-                    b.ToTable("ContractMember");
+                    b.ToTable("ContractMember", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
@@ -307,7 +332,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("AccountID");
 
-                    b.ToTable("Hostel");
+                    b.ToTable("Hostel", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.HostelImage", b =>
@@ -328,7 +353,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("HostelID");
 
-                    b.ToTable("HostelImages");
+                    b.ToTable("HostelImages", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
@@ -356,7 +381,7 @@ namespace DAO.Migrations
 
                     b.HasKey("MemberShipID");
 
-                    b.ToTable("Membership");
+                    b.ToTable("Membership", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
@@ -394,36 +419,42 @@ namespace DAO.Migrations
 
                     b.HasIndex("MemberShipID");
 
-                    b.ToTable("MembershipsRegisterTransaction");
+                    b.ToTable("MembershipsRegisterTransaction", (string)null);
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Notice", b =>
+            modelBuilder.Entity("BusinessObject.Models.Notification", b =>
                 {
-                    b.Property<int>("NoticeID")
+                    b.Property<int>("NotificationID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NoticeID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"));
 
-                    b.Property<int?>("AccountID")
+                    b.Property<int?>("AccountNoticeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateNotice")
+                    b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("NoticeAccountAccountID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NoticeText")
+                    b.Property<string>("NotificationText")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("NoticeID");
+                    b.Property<int?>("NotificationType")
+                        .HasColumnType("int");
 
-                    b.HasIndex("AccountID");
+                    b.Property<int?>("ReceiveAccountId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("NoticeAccountAccountID");
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Notice");
+                    b.HasKey("NotificationID");
+
+                    b.HasIndex("AccountNoticeId");
+
+                    b.HasIndex("ReceiveAccountId");
+
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Room", b =>
@@ -465,7 +496,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("HostelID");
 
-                    b.ToTable("Room");
+                    b.ToTable("Room", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomAppointment", b =>
@@ -494,7 +525,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ViewerId");
 
-                    b.ToTable("RoomAppointments");
+                    b.ToTable("RoomAppointments", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
@@ -515,7 +546,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("RoomID");
 
-                    b.ToTable("RoomsImage");
+                    b.ToTable("RoomsImage", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
@@ -547,7 +578,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("TypeServiceId");
 
-                    b.ToTable("RoomService");
+                    b.ToTable("RoomService", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
@@ -566,14 +597,28 @@ namespace DAO.Migrations
 
                     b.HasKey("TypeServiceID");
 
-                    b.ToTable("TypeService");
+                    b.ToTable("TypeService", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
                 {
+                    b.HasOne("BusinessObject.Models.Account", "AccountPay")
+                        .WithMany("BillPaymentPays")
+                        .HasForeignKey("AccountPayId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("BusinessObject.Models.Account", "AccountReceive")
+                        .WithMany("BillPaymentReceives")
+                        .HasForeignKey("AccountReceiveId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("BusinessObject.Models.Contract", "Contract")
                         .WithMany()
                         .HasForeignKey("ContractId");
+
+                    b.Navigation("AccountPay");
+
+                    b.Navigation("AccountReceive");
 
                     b.Navigation("Contract");
                 });
@@ -684,20 +729,19 @@ namespace DAO.Migrations
                     b.Navigation("OwnerAccount");
                 });
 
-            modelBuilder.Entity("BusinessObject.Models.Notice", b =>
+            modelBuilder.Entity("BusinessObject.Models.Notification", b =>
                 {
-                    b.HasOne("BusinessObject.Models.Account", "ReceiveAccount")
-                        .WithMany("AccountNoticeReceive")
-                        .HasForeignKey("AccountID")
+                    b.HasOne("BusinessObject.Models.Account", "AccountNotice")
+                        .WithMany("AccountNotice")
+                        .HasForeignKey("AccountNoticeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("BusinessObject.Models.Account", "NoticeAccount")
-                        .WithMany("AccountNotice")
-                        .HasForeignKey("NoticeAccountAccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("BusinessObject.Models.Account", "ReceiveAccount")
+                        .WithMany("AccountNoticeReceive")
+                        .HasForeignKey("ReceiveAccountId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("NoticeAccount");
+                    b.Navigation("AccountNotice");
 
                     b.Navigation("ReceiveAccount");
                 });
@@ -769,6 +813,10 @@ namespace DAO.Migrations
                     b.Navigation("AccountNoticeReceive");
 
                     b.Navigation("Appointments");
+
+                    b.Navigation("BillPaymentPays");
+
+                    b.Navigation("BillPaymentReceives");
 
                     b.Navigation("Hostels");
 

@@ -5,7 +5,7 @@ namespace Repository.Interface
 {
     public interface IAccountRepository
     {
-
+        Task<AccountDto> FirebaseTokenExisted(string firebaseToken);
         Task<IEnumerable<AccountDto>> GetAllAsync();
         Task<AccountDto> GetAccountByEmail(string email);
         Task CreateAccount(AccountDto accountDto);
@@ -16,6 +16,7 @@ namespace Repository.Interface
         Task<AccountDto> GetAccountWithHostelById(int id);
         Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip();
         Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid);
-
+        Task<ProfileDto> GetProfileAccount(int accountID);
+        Task UpdateOwnerProfile(AccountUpdate accountUpdate);
     }
 }

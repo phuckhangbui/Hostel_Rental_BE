@@ -6,10 +6,14 @@ namespace Repository.Interface
 {
     public interface IBillPaymentRepository
     {
+        Task CreateFirstBill(
+            RoomDetailResponseDto hiredRoomDto,
+            GetContractDto currentContractDto,
+            DateTime billingMonth);
         Task CreateBillPaymentMonthly (
             RoomDetailResponseDto hiredRoomDto,
             GetContractDto currentContract,
-            CreateBillPaymentRequestDto createBillPaymentRequestDto,
+            RoomBillPaymentDto roomBillPaymentDto,
             DateTime billingMonth);
         Task<BillPaymentDto> GetCurrentMonthBillPayment(int contractId, int month, int year);
         Task<BillPaymentDto> GetLastMonthBillPayment(int contractId, int roomId);
@@ -19,5 +23,6 @@ namespace Repository.Interface
         Task<BillPaymentDto> UpdateBillPayment(BillPaymentDto billPaymentDto);
         Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId);
         Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId);
+        Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId);
     }
 }

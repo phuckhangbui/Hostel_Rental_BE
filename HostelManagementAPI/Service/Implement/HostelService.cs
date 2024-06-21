@@ -12,15 +12,18 @@ namespace Service.Implement
         private readonly IHostelRepository _hostelRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly IMembershipRegisterRepository _membershipRegisterRepository;
 
         public HostelService(
             IHostelRepository hostelRepository,
             IAccountRepository accountRepository,
-            ICloudinaryService cloudinaryService)
+            ICloudinaryService cloudinaryService,
+            IMembershipRegisterRepository membershipRegisterRepository)
         {
             _hostelRepository = hostelRepository;
             _accountRepository = accountRepository;
             _cloudinaryService = cloudinaryService;
+            _membershipRegisterRepository = membershipRegisterRepository;
         }
 
         public async Task ChangeHostelStatus(int hostelId, int status)
@@ -34,6 +37,11 @@ namespace Service.Implement
             if (!Enum.IsDefined(typeof(HostelEnum), status))
             {
                 throw new ServiceException("Invalid status value");
+            }
+
+            if (status == (int)HostelEnum.Available && currentHostel.NumOfAvailableRoom == 0)
+            {
+                throw new ServiceException("Can not change hostel status to available because no room is available");
             }
 
             await _hostelRepository.UpdateHostelStatus(hostelId, status);
@@ -50,6 +58,13 @@ namespace Service.Implement
             if (!Enum.TryParse(typeof(HostelTypeEnum), createHostelRequestDto.HostelType, out var hostelTypeEnum) || !Enum.IsDefined(typeof(HostelTypeEnum), hostelTypeEnum))
             {
                 throw new ServiceException("Invalid hostel type provided.");
+            }
+
+            var currentHostels = await _hostelRepository.GetOwnerHostels(ownerAccount.AccountId);
+            var currentMemberShip = await _membershipRegisterRepository.GetCurrentActiveMembership(ownerAccount.AccountId);
+            if (currentMemberShip != null && currentMemberShip.CapacityHostel == currentHostels.Count())
+            {
+                throw new ServiceException("You reach maximum number of hostel can create. Please update your pagekage.");
             }
 
             var newHostelId = await _hostelRepository.CreateHostel(createHostelRequestDto);

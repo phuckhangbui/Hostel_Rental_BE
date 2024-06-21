@@ -29,14 +29,14 @@ namespace Repository.Implement
         }
 
 
-        public async Task<MemberShipRegisterTransactionDto> RegisterMembership(int accountId, int membershipId, double membershipFee)
+        public async Task<MemberShipRegisterTransactionDto> RegisterMembership(int accountId, int membershipId, double membershipFee, int status)
         {
 
             var membershipTransaction = new MemberShipRegisterTransaction
             {
                 AccountID = accountId,
                 MemberShipID = membershipId,
-                Status = (int)MembershipRegisterEnum.Pending,
+                Status = status,
                 DateRegister = DateTime.Now,
                 TnxRef = DateTime.Now.Ticks.ToString(),
                 PackageFee = membershipFee
@@ -60,6 +60,14 @@ namespace Repository.Implement
             var membershipTransaction = _mapper.Map<MemberShipRegisterTransaction>(memberShipRegisterTransactionDto);
 
             await MemberShipRegisterDao.Instance.UpdateAsync(membershipTransaction);
+        }
+
+        public async Task<MemberShipRegisterTransactionDto> GetCurrentActiveMembership(int accountId)
+        {
+            var transaction = await MemberShipRegisterDao.Instance.GetAllMembershipPackageInAccount(accountId);
+
+            var membershipTransaction = transaction.FirstOrDefault(m => m.Status == (int)MembershipRegisterEnum.current);
+            return _mapper.Map<MemberShipRegisterTransactionDto>(membershipTransaction);
         }
     }
 }

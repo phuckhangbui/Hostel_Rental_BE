@@ -16,6 +16,12 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
+        public async Task<AccountDto> FirebaseTokenExisted(string firebaseToken)
+        {
+            var list = await AccountDAO.Instance.GetAllAsync();
+            var account = list.FirstOrDefault(x => x.FirebaseToken == firebaseToken);
+            return _mapper.Map<AccountDto>(account);
+        }
 
 
         public async Task<IEnumerable<AccountDto>> GetAllAsync()
@@ -77,6 +83,22 @@ namespace Repository.Implement
         {
             var account = await AccountDAO.Instance.GetAccountById(accountid);
             return _mapper.Map<AccountMemberShipInformationDtos>(account);
+        }
+
+        public async Task<ProfileDto> GetProfileAccount(int accountID)
+        {
+            return await AccountDAO.Instance.GetProfileAccount(accountID);
+        }
+
+        public async Task UpdateOwnerProfile(AccountUpdate accountUpdate)
+        {
+            var account = await AccountDAO.Instance.GetAccountById(accountUpdate.AccountID);
+            account.Address = accountUpdate.Address;
+            account.CitizenCard = accountUpdate.CitizenCard;
+            account.Email = accountUpdate.Email;
+            account.Name = accountUpdate.Name;
+            account.Phone = accountUpdate.Phone;
+            await AccountDAO.Instance.UpdateAsync(account);
         }
     }
 }

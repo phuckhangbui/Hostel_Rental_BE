@@ -37,53 +37,62 @@ namespace Service.Implement
         public async Task<BillPaymentDto> GetLastMonthBillPayment(int contractId)
         {
             var currentContract = await _contractRepository.GetContractById(contractId);
-            if (currentContract == null) 
+            if (currentContract == null)
             {
                 throw new ServiceException("Contract not found with this ID");
             }
 
             var roomId = currentContract.RoomID;
 
-            return await _billPaymentRepository.GetLastMonthBillPayment(contractId, (int)roomId);
+            var lastMonthBillPayment = await _billPaymentRepository.GetLastMonthBillPayment(contractId, (int)roomId);
+
+            return lastMonthBillPayment;
         }
 
         public async Task CreateBillPaymentMonthly(CreateBillPaymentRequestDto createBillPaymentRequestDto)
         {
-            var contractId = createBillPaymentRequestDto.ContractId;
+            foreach (var roomBillPayment in createBillPaymentRequestDto.RoomBillPayments)
+            {
+                var contractId = roomBillPayment.ContractId;
 
-            var currentContract = await _contractRepository.GetContractById(contractId);
-            if (currentContract == null)
-            {
-                throw new ServiceException("Contract not found with this ID");
-            }
-            else
-            {
+                var currentContract = await _contractRepository.GetContractDetailsByContractId(contractId);
+                if (currentContract == null)
+                {
+                    throw new ServiceException($"Contract not found for ID: {contractId}");
+                }
+
                 var currentDate = DateTime.Now;
-                var year = currentDate.Year;
-                var month = currentDate.Month;
+                //var currentDate = new DateTime(2024, 7, 1);
+                var nextMonthDate = currentDate.AddMonths(1);
+                var nextMonth = nextMonthDate.Month;
+                var nextMonthYear = nextMonthDate.Year;
 
-                //if (currentDate < currentContract.DateStart || currentDate > currentContract.DateEnd)
-                //{
-                //    throw new ServiceException("Contract is not active yet");
-                //}
+                var firstBillingMonth = new DateTime(currentContract.DateStart.Value.Year, currentContract.DateStart.Value.Month, 1);
+                var contractStartDate = currentContract.DateStart.Value;
+                var monthsSinceStart = ((currentDate.Year - contractStartDate.Year) * 12) + currentDate.Month - contractStartDate.Month;
 
-                int monthsSinceStart = ((currentDate.Year - currentContract.DateStart.Value.Year) * 12) +
-                    currentDate.Month - currentContract.DateStart.Value.Month;
-                var billingMonth = currentContract.DateStart.Value.AddMonths(monthsSinceStart);
 
-                //Check bill exist or not
-                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, month, year);
+                bool isFirstMonth = monthsSinceStart == 0;
+                var billingMonth = isFirstMonth ? contractStartDate : firstBillingMonth.AddMonths(monthsSinceStart);
+
+                var existingBillPayment = await _billPaymentRepository.GetCurrentMonthBillPayment(contractId, currentDate.Month, currentDate.Year);
                 if (existingBillPayment != null)
                 {
-                    throw new ServiceException("A bill for this month already exists.");
+                    continue;
                 }
 
                 var hiredRoom = await _roomRepository.GetRoomDetailById((int)currentContract.RoomID);
                 if (hiredRoom != null)
                 {
-                    await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, createBillPaymentRequestDto, billingMonth);
+                    if (isFirstMonth)
+                    {
+                        await _billPaymentRepository.CreateFirstBill(hiredRoom, currentContract, billingMonth);
+                    }
+                    else
+                    {
+                        await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
+                    }
                 }
-
             }
         }
 
@@ -91,13 +100,18 @@ namespace Service.Implement
         {
             var contract = await _contractRepository.GetContractById(depositRoomInputDto.ContractId);
 
-
+            if (contract == null)
+            {
+                throw new ServiceException("Contract does not existed");
+            }
 
             var billpayment = new BillPaymentDto
             {
                 ContractId = contract.ContractID,
                 BillAmount = contract.DepositFee,
                 TotalAmount = contract.DepositFee,
+                AccountPayId = contract.StudentAccountID,
+                AccountReceiveId = contract.OwnerAccountId,
                 BillType = (int)BillType.Deposit,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
                 CreatedDate = DateTime.Now,
@@ -109,33 +123,6 @@ namespace Service.Implement
             return billpayment;
         }
 
-        public async Task<BillPaymentDto> ConfirmDepositTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
-        {
-            var billPayment = await _billPaymentRepository.GetBillPaymentByTnxRef(vnPayReturnUrlDto.TnxRef);
-
-            if (billPayment == null)
-            {
-                throw new ServiceException("No bill match");
-            }
-
-
-            if (vnPayReturnUrlDto == null)
-            {
-                throw new ServiceException("No transaction match");
-            }
-
-            if (billPayment.BillPaymentStatus != (int)BillPaymentStatus.Pending)
-            {
-                throw new ServiceException("Billpayment has been paid");
-            }
-
-            billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
-
-            await _billPaymentRepository.UpdateBillPayment(billPayment);
-
-            return billPayment;
-        }
-
         public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
         {
             var billPayment = await _billPaymentRepository.GetBillPaymentById(billPaymentId);
@@ -145,6 +132,64 @@ namespace Service.Implement
             }
 
             return await _billPaymentRepository.GetBillPaymentDetail(billPaymentId);
+        }
+
+        public async Task<BillPaymentDto> PrepareBillingForMonthlyPayment(int billpaymentId, int accountId)
+        {
+            var billpayment = await _billPaymentRepository.GetBillPaymentById(billpaymentId);
+
+            if (billpayment == null)
+            {
+                throw new ServiceException("Bill payment not found with this ID");
+            }
+
+            var contract = await _contractRepository.GetContractById((int)billpayment.ContractId);
+            if (contract == null || contract?.StudentAccountID != accountId)
+            {
+                throw new ServiceException("User are not allow to using this function");
+            }
+
+            if (billpayment.BillPaymentStatus != (int)BillPaymentStatus.Pending || billpayment.BillType != (int)BillType.MonthlyPayment)
+            {
+                throw new ServiceException("Bill is not suiable for this transaction");
+            }
+
+            billpayment.TnxRef = DateTime.Now.Ticks.ToString();
+            await _billPaymentRepository.UpdateBillPayment(billpayment);
+
+            return billpayment;
+        }
+
+        public async Task<BillPaymentDto> ConfirmBillingTransaction(VnPayReturnUrlDto vnPayReturnUrlDto)
+        {
+            var billPayment = await _billPaymentRepository.GetBillPaymentByTnxRef(vnPayReturnUrlDto.TnxRef);
+
+            if (billPayment == null)
+            {
+                throw new ServiceException("No bill match");
+            }
+
+            if (vnPayReturnUrlDto == null)
+            {
+                throw new ServiceException("No transaction match");
+            }
+
+            if (billPayment.BillPaymentStatus == (int)BillPaymentStatus.Paid)
+            {
+                throw new ServiceException("Billpayment has been paid");
+            }
+
+            billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+            billPayment.PaidDate = DateTime.Now;
+
+            await _billPaymentRepository.UpdateBillPayment(billPayment);
+
+            return billPayment;
+        }
+
+        public async Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId)
+        {
+            return await _billPaymentRepository.GetLastMonthBillPaymentsByOwnerId(ownerId);
         }
     }
 }

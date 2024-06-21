@@ -11,5 +11,7 @@ namespace DTOs.AccountAuthentication
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public string? FirebaseRegisterToken { get; set; }
     }
 }

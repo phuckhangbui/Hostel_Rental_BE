@@ -4,11 +4,11 @@ namespace Service.Interface
 {
     public interface IComplainService
     {
-        Task CreateComplain(CreateComplainDto complainDto, int complainCreatorId);
-        Task<DisplayComplainDto> GetComplainById(int id);
-        Task<IEnumerable<DisplayComplainDto>> GetComplains();
-        Task<IEnumerable<DisplayComplainDto>> GetComplainsByRoom(int id);
-        Task<IEnumerable<DisplayComplainDto>> GetComplainsByAccountCreator(int id);
+        Task CreateComplain(CreateComplainDto complainDto);
+        Task<ComplainDto> GetComplainById(int id);
+        Task<IEnumerable<ComplainDto>> GetComplains();
+        Task<IEnumerable<ComplainDto>> GetComplainsByRoom(int id);
+        Task<IEnumerable<ComplainDto>> GetComplainsByAccountCreator(int id);
         Task UpdateComplainStatus(UpdateComplainStatusDto updateComplainRequest);
     }
 }

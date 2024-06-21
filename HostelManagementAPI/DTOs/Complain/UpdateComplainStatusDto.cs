@@ -3,6 +3,7 @@
     public class UpdateComplainStatusDto
     {
         public int ComplainId { get; set; }
-        public int Status { get; set; }
+        public string? ComplainResponse { get; set; }
+
     }
 }

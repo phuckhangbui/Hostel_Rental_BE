@@ -26,5 +26,9 @@ namespace Service.Interface
         Task<IEnumerable<ViewMemberShipDto>> GetAllMemberShip();
         Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountId);
         Task UpdateAccountPackageStatus(int accountId, int status);
+        Task<ProfileDto> GetProfileAccount(int accountID);
+        Task UpdateOwnerProfile(AccountUpdate accountUpdate);
+        Task UpdateOwnerPassword(ChangePassword newPassword);
+        Task GetOldPassword(ChangePassword oldPassword);
     }
 }

@@ -5,6 +5,7 @@ using DTOs.AccountAuthentication;
 using DTOs.Enum;
 using DTOs.MemberShipRegisterTransaction;
 using Google.Apis.Auth;
+using Microsoft.IdentityModel.Tokens;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -21,10 +22,12 @@ namespace Service.Implement
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IMailService _mailService;
+
         public AccountService(IAccountRepository accountRepository, ITokenService tokenService, IMapper mapper, IMailService mailService)
         {
             _accountRepository = accountRepository; _tokenService = tokenService; _mapper = mapper;
             _mailService = mailService;
+            //_cache = cache;
         }
 
         private AccountDto AdminLogin(EmailLoginDto emailLoginDto)
@@ -67,6 +70,9 @@ namespace Service.Implement
             var adminAccount = AdminLogin(login);
             if (adminAccount != null)
             {
+
+
+
                 return _mapper.Map<AccountLoginDto>(adminAccount);
             }
 
@@ -91,25 +97,42 @@ namespace Service.Implement
                 }
 
 
+
+
                 using var hmac = new HMACSHA512(accountDto.PasswordSalt);
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
                 for (int i = 0; i < computedHash.Length; i++)
                 {
                     if (computedHash[i] != accountDto.PasswordHash[i])
                     {
-                        return null;
+                        throw new ServiceException("Wrong password");
                     }
-
-
-                    accountDto.Token = _tokenService.CreateToken(accountDto);
-
-                    var refreshToken = _tokenService.GenerateRefreshToken();
-                    accountDto.RefreshToken = refreshToken;
-                    accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
-                    await _accountRepository.UpdateAccount(accountDto);
-
-                    return _mapper.Map<AccountLoginDto>(accountDto);
                 }
+
+                accountDto.Token = _tokenService.CreateToken(accountDto);
+
+                var refreshToken = _tokenService.GenerateRefreshToken();
+                accountDto.RefreshToken = refreshToken;
+                accountDto.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+                if (login.FirebaseRegisterToken.IsNullOrEmpty())
+                {
+
+                }
+                else if (!login.FirebaseRegisterToken.Equals(accountDto.FirebaseToken))
+                {
+                    var firebaseTokenExistedAccount = await _accountRepository.FirebaseTokenExisted(login.FirebaseRegisterToken);
+                    if (firebaseTokenExistedAccount != null)
+                    {
+                        firebaseTokenExistedAccount.FirebaseToken = null;
+                        await _accountRepository.UpdateAccount(firebaseTokenExistedAccount);
+                    }
+                    accountDto.FirebaseToken = login.FirebaseRegisterToken;
+                }
+                await _accountRepository.UpdateAccount(accountDto);
+
+                return _mapper.Map<AccountLoginDto>(accountDto);
+
             }
             throw new ServiceException("No account associate with this email");
         }
@@ -187,6 +210,9 @@ namespace Service.Implement
                 RoleId = emailRegisterDto.RoleId,
                 IsLoginWithGmail = false,
                 OtpToken = otp,
+                Address = emailRegisterDto.Address,
+                Phone = emailRegisterDto.Phone,
+                CitizenCard = emailRegisterDto.CitizenCard
             };
 
             if (newAccount.RoleId == (int)AccountRoleEnum.Owner)
@@ -403,6 +429,47 @@ namespace Service.Implement
             account.PackageStatus = status;
 
             await _accountRepository.UpdateAccount(account);
+        }
+
+        public async Task<ProfileDto> GetProfileAccount(int accountID)
+        {
+            return await _accountRepository.GetProfileAccount(accountID);
+        }
+
+        public async Task UpdateOwnerProfile(AccountUpdate accountUpdate)
+        {
+            await _accountRepository.UpdateOwnerProfile(accountUpdate);
+        }
+
+        public async Task UpdateOwnerPassword(ChangePassword newPassword)
+        {
+            var account = await _accountRepository.GetAccountById(newPassword.AccountID);
+            using var hmac = new HMACSHA512();
+
+            account.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newPassword.Password));
+            account.PasswordSalt = hmac.Key;
+            try
+            {
+                await _accountRepository.UpdateAccount(account);
+            }
+            catch (Exception ex)
+            {
+                throw new ServiceException("Cannot update the password");
+            }
+        }
+
+        public async Task GetOldPassword(ChangePassword oldPassword)
+        {
+            var account = await _accountRepository.GetAccountById(oldPassword.AccountID);
+            using var hmac = new HMACSHA512(account.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(oldPassword.Password));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != account.PasswordHash[i])
+                {
+                    throw new Exception("Old password do not equal your password!");
+                }
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
+using AutoMapper;
 using BusinessObject.Models;
 using DAO;
-ï»¿using AutoMapper;
 using DTOs.BillPayment;
-using Repository.Interface;
-using DTOs.Enum;
 using DTOs.Contract;
+using DTOs.Enum;
 using DTOs.Room;
+using Repository.Interface;
 
 namespace Repository.Implement
 {
@@ -18,13 +18,111 @@ namespace Repository.Implement
             _mapper = mapper;
         }
 
-        public async Task CreateBillPaymentMonthly(
+        public async Task CreateFirstBill(
             RoomDetailResponseDto hiredRoomDto,
-            GetContractDto currentContractDto, 
-            CreateBillPaymentRequestDto createBillPaymentRequestDto,
+            GetContractDto currentContractDto,
             DateTime billingMonth)
         {
-            double totalAmount = (double)hiredRoomDto.RoomFee;
+            double? totalAmount = 0;
+            int daysInMonth = DateTime.DaysInMonth(billingMonth.Year, billingMonth.Month);
+            DateTime contractStartDate = currentContractDto.DateStart.Value;
+            int contractStartDay = contractStartDate.Day;
+
+            int daysStayed = daysInMonth - contractStartDay + 1;
+            double dailyRoomFee = (double)currentContractDto.RoomFee / daysInMonth;
+            totalAmount += dailyRoomFee * daysStayed;
+
+            totalAmount -= currentContractDto.DepositFee;
+            if (totalAmount < 0)
+            {
+                totalAmount = 0;
+            }
+
+            var billPayment = new BillPayment
+            {
+                ContractId = currentContractDto.ContractID,
+                BillAmount = totalAmount,
+                Month = billingMonth.Month,
+                Year = billingMonth.Year,
+                CreatedDate = DateTime.Now,
+                TotalAmount = totalAmount,
+                BillPaymentStatus = (int)BillPaymentStatus.Pending,
+                BillType = (int)BillType.MonthlyPayment,
+                AccountPayId = currentContractDto.StudentAccountID,
+                AccountReceiveId = currentContractDto.OwnerAccountId,
+                Details = new List<BillPaymentDetail>()
+            };
+
+            var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
+            foreach (var service in selectedServices)
+            {
+                if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
+                {
+                    var initWaterService = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        OldNumberService = currentContractDto.InitWaterNumber,
+                        NewNumberService = currentContractDto.InitWaterNumber,
+                        Quantity = 0,
+                        ServiceTotalAmount = 0,
+                    };
+
+                    billPayment.Details.Add(initWaterService);
+                    continue;
+                }
+
+                if (service.TypeService.Unit.Equals("kWh") && service.TypeService.TypeName.Equals("Electricity"))
+                {
+                    var initElectricityService = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        OldNumberService = currentContractDto.InitWaterNumber,
+                        NewNumberService = currentContractDto.InitElectricityNumber,
+                        Quantity = 0,
+                        ServiceTotalAmount = 0,
+                    };
+
+                    billPayment.Details.Add(initElectricityService);
+                    continue;
+                }
+
+                if (service.TypeService.Unit.Equals("Month"))
+                {
+                    double servicePrice = service.Price ?? 0;
+                    double dailyServicePrice = servicePrice / daysInMonth;
+                    double proratedServicePrice = dailyServicePrice * daysStayed;
+
+                    var monthlyService = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        OldNumberService = 0,
+                        NewNumberService = 0,
+                        Quantity = 1,
+                        ServiceTotalAmount = proratedServicePrice,
+                    };
+
+                    billPayment.Details.Add(monthlyService);
+                    totalAmount += proratedServicePrice;
+                    continue;
+                }
+            }
+
+            billPayment.TotalAmount = totalAmount;
+
+            await BillPaymentDao.Instance.CreateAsync(billPayment);
+        }
+
+
+        public async Task CreateBillPaymentMonthly(
+            RoomDetailResponseDto hiredRoomDto,
+            GetContractDto currentContractDto,
+            RoomBillPaymentDto roomBillPaymentDto,
+            DateTime billingMonth)
+        {
+            double? totalAmount = 0;
+
+            totalAmount += (double)currentContractDto.RoomFee;
+
             var billPaymentDetails = new List<BillPaymentDetail>();
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
 
@@ -33,7 +131,9 @@ namespace Repository.Implement
                 //Serivce fix price per month
                 if (service.TypeService.Unit.Equals("Month"))
                 {
-                    totalAmount += service.Price ?? 0;
+                    double servicePrice = service.Price ?? 0;
+
+                    totalAmount += servicePrice;
 
                     var billPaymentDetail = new BillPaymentDetail
                     {
@@ -41,7 +141,7 @@ namespace Repository.Implement
                         OldNumberService = 0,
                         NewNumberService = 0,
                         Quantity = 1,
-                        ServiceTotalAmount = service.Price,
+                        ServiceTotalAmount = servicePrice,
                     };
 
                     billPaymentDetails.Add(billPaymentDetail);
@@ -57,12 +157,12 @@ namespace Repository.Implement
                     }
 
                     //
-                    var serviceReading = createBillPaymentRequestDto.ServiceReadings
+                    var serviceReading = roomBillPaymentDto.ServiceReadings
                         .FirstOrDefault(sr => sr.RoomServiceId == service.RoomServiceId);
-                    if (serviceReading == null)
-                    {
-                        throw new Exception($"No new number service value provided for RoomServiceId {service.RoomServiceId}");
-                    }
+                    //if (serviceReading == null)
+                    //{
+                    //    throw new Exception($"No new number service value provided for RoomServiceId {service.RoomServiceId}");
+                    //}
 
                     //Calculate usage service => total price
                     double newNumberService = serviceReading.NewNumberService;
@@ -86,22 +186,192 @@ namespace Repository.Implement
             var billPayment = new BillPayment
             {
                 ContractId = currentContractDto.ContractID,
-                BillAmount = (double)hiredRoomDto.RoomFee,
+                BillAmount = (double)currentContractDto.RoomFee,
                 Month = billingMonth.Month,
                 Year = billingMonth.Year,
                 CreatedDate = DateTime.Now,
                 TotalAmount = totalAmount,
                 BillPaymentStatus = (int)BillPaymentStatus.Pending,
-                BillType = createBillPaymentRequestDto.BillType,
-                Details = billPaymentDetails
+                BillType = (int)BillType.MonthlyPayment,
+                Details = billPaymentDetails,
+                AccountPayId = currentContractDto.StudentAccountID,
+                AccountReceiveId = currentContractDto.OwnerAccountId,
             };
 
             await BillPaymentDao.Instance.CreateAsync(billPayment);
         }
 
+        public async Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId)
+        {
+            var lastBillPayments = await BillPaymentDao.Instance.GetLastBillPaymentsByOwnerId(ownerId);
+
+            var billPaymentDtos = _mapper.Map<IEnumerable<BillPaymentDto>>(lastBillPayments).ToList();
+
+            var currentDate = DateTime.Now;
+            //var currentDate = new DateTime(2024, 8, 1);
+            var existingBills = new List<BillPaymentDto>();
+
+            foreach (var billPaymentDto in billPaymentDtos)
+            {
+                var contract = await ContractDao.Instance.GetContractByContractIDAsync(billPaymentDto.ContractId.Value);
+                var room = await RoomDao.Instance.GetRoomById(contract.RoomID.Value);
+                billPaymentDto.RoomName = room.RoomName;
+                billPaymentDto.RenterName = contract.StudentLeadAccount.Name;
+
+                var billPaymentDetails = await BillPaymentDao.Instance.GetBillPaymentDetail(billPaymentDto.BillPaymentID.Value);
+                billPaymentDto.BillPaymentDetails = _mapper.Map<List<BillPaymentDetailResponseDto>>(billPaymentDetails);
+
+                var firstBillingMonth = new DateTime(contract.DateStart.Value.Year, contract.DateStart.Value.Month, 1);
+                var contractStartDate = contract.DateStart.Value;
+                var monthsSinceStart = ((currentDate.Year - contractStartDate.Year) * 12) + currentDate.Month - contractStartDate.Month;
+
+
+                bool isFirstMonth = monthsSinceStart == 0;
+                var billingMonth = isFirstMonth ? contractStartDate : firstBillingMonth.AddMonths(monthsSinceStart);
+
+                if (isFirstMonth)
+                {
+                    billPaymentDto.StartDate = contract.DateStart.Value;
+                    billPaymentDto.EndDate = new DateTime(contract.DateStart.Value.Year, contract.DateStart.Value.Month, DateTime.DaysInMonth(contract.DateStart.Value.Year, contract.DateStart.Value.Month));
+                }
+                else
+                {
+                    billPaymentDto.Month = billingMonth.Month;
+                    billPaymentDto.StartDate = billingMonth;
+                    billPaymentDto.EndDate = billingMonth.AddMonths(1).AddDays(-1);
+                }
+
+                var existingBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contract.ContractID, currentDate.Month, currentDate.Year);
+                if (existingBillPayment != null && existingBillPayment.ContractId == billPaymentDto.ContractId)
+                {
+                    existingBills.Add(billPaymentDto);
+                }
+            }
+
+            var allContracts = await ContractDao.Instance.GetContractsByOwnerIDAsync(ownerId);
+            var signedContracts = allContracts.Where(c => c.Status == (int)ContractStatusEnum.signed).ToList();
+
+            var existingContractIds = billPaymentDtos.Select(bp => bp.ContractId).ToList();
+
+            foreach (var contract in signedContracts)
+            {
+                if (!existingContractIds.Contains(contract.ContractID))
+                {
+                    var room = await RoomDao.Instance.GetRoomById(contract.RoomID.Value);
+                    var renterName = contract.StudentLeadAccount.Name;
+                    var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected(room.RoomID);
+
+                    var firstBillingMonth = new DateTime(contract.DateStart.Value.Year, contract.DateStart.Value.Month, 1);
+                    var billingMonth = firstBillingMonth.AddMonths(((currentDate.Year - contract.DateStart.Value.Year) * 12) + currentDate.Month - contract.DateStart.Value.Month);
+                    bool isFirstMonth = billingMonth.Month == contract.DateStart.Value.Month && billingMonth.Year == contract.DateStart.Value.Year;
+
+                    var startDate = isFirstMonth ? contract.DateStart.Value : new DateTime(billingMonth.Year, billingMonth.Month, 1);
+                    var endDate = isFirstMonth
+                        ? new DateTime(contract.DateStart.Value.Year, contract.DateStart.Value.Month, DateTime.DaysInMonth(contract.DateStart.Value.Year, contract.DateStart.Value.Month))
+                        : startDate.AddMonths(1).AddDays(-1);
+
+                    int daysInMonth = DateTime.DaysInMonth(billingMonth.Year, billingMonth.Month);
+                    DateTime contractStartDate = contract.DateStart.Value;
+                    int contractStartDay = contractStartDate.Day;
+
+                    int daysStayed = daysInMonth - contractStartDay + 1;
+
+                    var defaultBillPaymentDto = new BillPaymentDto
+                    {
+                        RoomId = contract.RoomID.Value,
+                        ContractId = contract.ContractID,
+                        BillType = (int)BillType.MonthlyPayment,
+                        RoomName = room.RoomName,
+                        RenterName = renterName,
+                        CreatedDate = DateTime.Now,
+                        BillAmount = contract.RoomFee,
+                        Month = DateTime.Now.Month,
+                        Year = DateTime.Now.Year,
+                        BillPaymentStatus = (int)BillPaymentStatus.Pending,
+                        BillPaymentDetails = new List<BillPaymentDetailResponseDto>(),
+                        StartDate = startDate,
+                        EndDate = endDate,
+                    };
+
+                    foreach (var service in selectedServices)
+                    {
+                        if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
+                        {
+                            var initWaterService = new BillPaymentDetailResponseDto
+                            {
+                                RoomServiceID = service.RoomServiceId,
+                                OldNumberService = contract.InitWaterNumber,
+                                NewNumberService = contract.InitWaterNumber,
+                                Quantity = 0,
+                                ServiceTotalAmount = 0,
+                                ServicePrice = service.Price,
+                                ServiceType = service.TypeService.TypeName,
+                                ServiceUnit = service.TypeService.Unit,
+                            };
+
+                            defaultBillPaymentDto.BillPaymentDetails.Add(initWaterService);
+                            continue;
+                        }
+
+                        if (service.TypeService.Unit.Equals("kWh") && service.TypeService.TypeName.Equals("Electricity"))
+                        {
+                            var initElectricityService = new BillPaymentDetailResponseDto
+                            {
+                                RoomServiceID = service.RoomServiceId,
+                                OldNumberService = contract.InitWaterNumber,
+                                NewNumberService = contract.InitElectricityNumber,
+                                Quantity = 0,
+                                ServiceTotalAmount = 0,
+                                ServicePrice = service.Price,
+                                ServiceType = service.TypeService.TypeName,
+                                ServiceUnit = service.TypeService.Unit,
+                            };
+
+                            defaultBillPaymentDto.BillPaymentDetails.Add(initElectricityService);
+                            continue;
+                        }
+
+                        if (service.TypeService.Unit.Equals("Month"))
+                        {
+                            double servicePrice = service.Price ?? 0;
+                            double dailyServicePrice = servicePrice / daysInMonth;
+                            double proratedServicePrice = dailyServicePrice * daysStayed;
+
+                            var monthlyService = new BillPaymentDetailResponseDto
+                            {
+                                RoomServiceID = service.RoomServiceId,
+                                OldNumberService = 0,
+                                NewNumberService = 0,
+                                Quantity = 1,
+                                ServiceTotalAmount = proratedServicePrice,
+                                ServicePrice = service.Price,
+                                ServiceType = service.TypeService.TypeName,
+                                ServiceUnit = service.TypeService.Unit,
+                            };
+
+                            defaultBillPaymentDto.BillPaymentDetails.Add(monthlyService);
+                            continue;
+                        }
+                    }
+
+                    billPaymentDtos.Add(defaultBillPaymentDto);
+                }
+            }
+
+            foreach (var bill in existingBills)
+            {
+                billPaymentDtos.Remove(bill);
+            }
+
+            return new MonthlyBillPaymentResponseDto
+            {
+                billPaymentDtos = billPaymentDtos
+            };
+        }
+
         public async Task<BillPaymentDto> GetCurrentMonthBillPayment(int contractId, int month, int year)
         {
-            
+
             var currentBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contractId, month, year);
             if (currentBillPayment != null)
             {
@@ -115,6 +385,13 @@ namespace Repository.Implement
         {
             var lastBillPayment = await BillPaymentDao.Instance.GetLastBillPayment(contractId);
             var lastBillPaymentDto = _mapper.Map<BillPaymentDto>(lastBillPayment);
+            if (lastBillPaymentDto == null)
+            {
+                lastBillPaymentDto = new BillPaymentDto();
+                lastBillPaymentDto.ContractId = contractId;
+                lastBillPaymentDto.BillType = (int)BillType.MonthlyPayment;
+                lastBillPaymentDto.BillPaymentID = 0;
+            }
 
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
             var billPaymentDetails = new List<BillPaymentDetail>();
@@ -125,6 +402,16 @@ namespace Repository.Implement
                 if (lastBillPaymentDetail != null)
                 {
                     billPaymentDetails.Add(lastBillPaymentDetail);
+                }
+                else
+                {
+                    var billPaymentDetail = new BillPaymentDetail
+                    {
+                        RoomServiceID = service.RoomServiceId,
+                        RoomService = service,
+                    };
+
+                    billPaymentDetails.Add(billPaymentDetail);
                 }
             }
 
@@ -175,7 +462,7 @@ namespace Repository.Implement
 
         public async Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId)
         {
-            var billPayment = await BillPaymentDao.Instance.GetBillPayment(billPaymentId);
+            var billPayment = await BillPaymentDao.Instance.GetBillPaymentByBillPaymentId(billPaymentId);
             var billPaymentDto = _mapper.Map<BillPaymentDto>(billPayment);
 
             var billPaymentDetail = await BillPaymentDao.Instance.GetBillPaymentDetail(billPaymentId);

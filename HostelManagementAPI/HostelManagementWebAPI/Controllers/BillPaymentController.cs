@@ -1,5 +1,4 @@
-﻿using DTOs;
-using DTOs.BillPayment;
+﻿using DTOs.BillPayment;
 using DTOs.Enum;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
@@ -27,13 +26,31 @@ namespace HostelManagementWebAPI.Controllers
             _vnpayService = vnpayService;
         }
 
+        [HttpGet("bill-payment/last-month-bills/{ownerId}")]
+        public async Task<ActionResult> GetLastMonthBillPaymentsByOwnerId(int ownerId)
+        {
+            try
+            {
+                var result = await _billPaymentService.GetLastMonthBillPaymentsByOwnerId(ownerId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         [HttpPost("bill-payment/monthly")]
-        public async Task<ActionResult> Create([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
+        public async Task<ActionResult> CreateBillPaymentMonthly([FromBody] CreateBillPaymentRequestDto createBillPaymentRequestDto)
         {
             try
             {
                 await _billPaymentService.CreateBillPaymentMonthly(createBillPaymentRequestDto);
-                return Ok();
+                return Ok(new ApiResponseStatus(Ok().StatusCode, "Create new monthly bill successfully"));
             }
             catch (ServiceException ex)
             {
@@ -100,7 +117,7 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("billPayment/deposit")]
+        [HttpPost("bill-payment/deposit")]
         public async Task<ActionResult> DepositRoom(DepositRoomInputDto depositRoomInputDto)
         {
             int accountId = GetLoginAccountId();
@@ -134,23 +151,21 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         [Authorize(Policy = "Member")]
-        [HttpPost("billPayment/deposit/confirm-payment")]
-        public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        [HttpPost("bill-payment/pay/monthly")]
+        public async Task<ActionResult> MonthlyBillPayment(MonthlyBillPaymentInputDto monthlyBillPaymentInputDto)
         {
             int accountId = GetLoginAccountId();
-
             try
             {
-                if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+                var billPayment = await _billPaymentService.PrepareBillingForMonthlyPayment(monthlyBillPaymentInputDto.BillPaymentId, accountId);
+
+                string paymentUrl = _vnpayService.CreateVnpayPaymentLink(billPayment.TnxRef, (double)billPayment.TotalAmount, monthlyBillPaymentInputDto.ReturnUrl, "Monthly bill payment", _vnPayProperties);
+
+                return Ok(new
                 {
-                    return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
-                }
-
-                var billPayment = await _billPaymentService.ConfirmDepositTransaction(vnPayReturnUrlDto);
-
-                await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
-
-                return Ok();
+                    paymentUrl,
+                    billPayment
+                });
             }
             catch (ServiceException ex)
             {
@@ -161,5 +176,38 @@ namespace HostelManagementWebAPI.Controllers
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+
+        //[Authorize(Policy = "Member")]
+        //[HttpPost("bill-payment/confirm-payment")]
+        //public async Task<ActionResult> ConfirmRegisterPayment(VnPayReturnUrlDto vnPayReturnUrlDto)
+        //{
+        //    int accountId = GetLoginAccountId();
+
+        //    try
+        //    {
+        //        if (!_vnpayService.ConfirmReturnUrl(vnPayReturnUrlDto.Url, vnPayReturnUrlDto.TnxRef, _vnPayProperties))
+        //        {
+        //            return BadRequest(new ApiResponseStatus(400, "The transaction is not valid"));
+        //        }
+
+        //        var billPayment = await _billPaymentService.ConfirmBillingTransaction(vnPayReturnUrlDto);
+
+        //        if (billPayment.BillType == (int)BillType.Deposit)
+        //        {
+        //            await _contractService.ChangeContractStatus((int)billPayment.ContractId, (int)ContractStatusEnum.signed, DateTime.Now);
+        //        }
+
+        //        return Ok();
+        //    }
+        //    catch (ServiceException ex)
+        //    {
+        //        return BadRequest(new ApiResponseStatus(400, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+        //    }
+        //}
     }
 }

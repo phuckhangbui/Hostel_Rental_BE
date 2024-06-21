@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
+using DTOs;
 using DTOs.Account;
 using DTOs.BillPayment;
 using DTOs.Complain;
@@ -66,17 +67,22 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Email : string.Empty))
             .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.OwnerAccount != null ? src.OwnerAccount.Phone : string.Empty))
             .ForMember(dest => dest.NumberOfRoom, opt => opt.MapFrom(src => src.Rooms != null ? src.Rooms.Count() : 0));
+
         CreateMap<Complain, CreateComplainDto>().ReverseMap();
-        CreateMap<Complain, DisplayComplainDto>()
-            .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : string.Empty))
-            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : string.Empty));
+        CreateMap<ComplainDto, Complain>();
+        CreateMap<Complain, ComplainDto>()
+            .ForMember(dest => dest.AccountComplainName, opt => opt.MapFrom(src => src.ComplainAccount != null ? src.ComplainAccount.Name : null))
+            .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.Room.Hostel.AccountID != null ? src.Room.Hostel.AccountID : null))
+            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Room.Hostel.HostelName != null ? src.Room.Hostel.HostelName : null))
+            .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Room.Hostel.OwnerAccount.Name != null ? src.Room.Hostel.OwnerAccount.Name : null))
+            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomName : null));
+
         CreateMap<MemberShipRegisterTransaction, ViewHistoryMemberShipDtos>()
            .ForMember(dest => dest.MembershipName, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.MemberShipName : string.Empty))
            .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.CapacityHostel : 0))
            .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.MemberShip != null ? src.MemberShip.Month : 0));
         CreateMap<Contract, UpdateContractDto>();
-        CreateMap<Contract, GetContractDto>()
-            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID));
+        //.ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.Acc));
         CreateMap<Account, CustomerViewAccount>().ReverseMap();
         //CreateMap<Contract, GetContractDto>()
         //    .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccountID))
@@ -84,15 +90,37 @@ public class AutoMapperProfile : Profile
         //    .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
         //    .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
         CreateMap<Contract, GetContractDto>()
-            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccount.AccountID))
+            .ForMember(dest => dest.OwnerAccountId, opt => opt.MapFrom(src => src.OwnerAccountID))
             .ForMember(dest => dest.OwnerAccountName, opt => opt.MapFrom(src => src.OwnerAccount.Name))
+            .ForMember(dest => dest.OwnerPhone, opt => opt.MapFrom(src => src.OwnerAccount.Phone))
+            .ForMember(dest => dest.OwnerCitizen, opt => opt.MapFrom(src => src.OwnerAccount.CitizenCard))
             .ForMember(dest => dest.StudentAccountID, opt => opt.MapFrom(src => src.StudentAccountID))
             .ForMember(dest => dest.StudentLeadAccountName, opt => opt.MapFrom(src => src.StudentLeadAccount.Name))
+            .ForMember(dest => dest.StudentLeadPhone, opt => opt.MapFrom(src => src.StudentLeadAccount.Phone))
+            .ForMember(dest => dest.StudentLeadCitizen, opt => opt.MapFrom(src => src.StudentLeadAccount.CitizenCard))
             .ForMember(dest => dest.RoomID, opt => opt.MapFrom(src => src.RoomID))
             .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.RoomName))
+            .ForMember(dest => dest.RoomDescription, opt => opt.MapFrom(src => src.Room.Description))
             .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Room.Hostel.HostelName))
-            .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members));
+            .ForMember(dest => dest.HostelAddress, opt => opt.MapFrom(src => src.Room.Hostel.HostelAddress))
+            .ForMember(dest => dest.ContractMemberDetails, opt => opt.MapFrom(src => src.Members))
+            .ForMember(dest => dest.RoomServiceDetails, opt => opt.MapFrom(src => src.Room.RoomServices.Select(rs => new RoomServiceResponseForContractDto
+            {
+                RoomId = rs.RoomId,
+                RoomServiceId = rs.RoomServiceId,
+                TypeServiceName = rs.TypeService.TypeName,
+                ServiceName = rs.TypeService.Unit,
+                ServicePrice = rs.Price ?? 0
+            }).ToList()))
+            .ForMember(dest => dest.InitWaterNumber, opt => opt.MapFrom(src => src.InitWaterNumber))
+            .ForMember(dest => dest.InitElectricityNumber, opt => opt.MapFrom(src => src.InitElectricityNumber));
         CreateMap<GetContractDto, Contract>();
+
+        CreateMap<RoomService, RoomServiceResponseForContractDto>()
+            .ForMember(dest => dest.RoomServiceId, opt => opt.MapFrom(src => src.RoomServiceId))
+            .ForMember(dest => dest.TypeServiceName, opt => opt.MapFrom(src => src.TypeService.TypeName))
+            .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.TypeService.Unit))
+            .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Price));
 
         CreateMap<ContractMember, GetContractDetailsDto>()
             .ForMember(dest => dest.ContractMemberID, opt => opt.MapFrom(src => src.ContractMemberID))
@@ -114,13 +142,54 @@ public class AutoMapperProfile : Profile
         //     .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Service.ServicePrice))
         //     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
-        CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>().ReverseMap();
+        CreateMap<MemberShipRegisterTransaction, MemberShipRegisterTransactionDto>()
+        .ForMember(dest => dest.MemberShipName, opt => opt.MapFrom(src => src.MemberShip.MemberShipName))
+        .ForMember(dest => dest.CapacityHostel, opt => opt.MapFrom(src => src.MemberShip.CapacityHostel))
+        .ForMember(dest => dest.MemberShipFee, opt => opt.MapFrom(src => src.MemberShip.MemberShipFee))
+        .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.MemberShip.Month));
 
-        CreateMap<BillPayment, BillPaymentDto>().ReverseMap();
+
+
+
+        CreateMap<MemberShipRegisterTransactionDto, MemberShipRegisterTransaction>();
+
+        CreateMap<BillPayment, BillPaymentDto>()
+            .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Contract.Room.RoomName))
+            .ForMember(dest => dest.RenterName, opt => opt.MapFrom(src => src.Contract.StudentLeadAccount.Name))
+            .ForMember(dest => dest.RoomId, opt => opt.MapFrom(src => src.Contract.RoomID));
+
+        CreateMap<BillPaymentDto, BillPayment>();
+
         CreateMap<BillPaymentDetail, BillPaymentDetailResponseDto>()
             .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.RoomService != null ? src.RoomService.Price : (double?)null))
             .ForMember(dest => dest.ServiceType, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.TypeName : null))
-            .ForMember(dest => dest.ServiceUnit, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.Unit : null))
-            .ReverseMap();
+            .ForMember(dest => dest.ServiceUnit, opt => opt.MapFrom(src => src.RoomService != null && src.RoomService.TypeService != null ? src.RoomService.TypeService.Unit : null));
+
+        CreateMap<BillPaymentDetailResponseDto, BillPaymentDetail>();
+
+        CreateMap<RoomService, RoomServiceView>()
+        .ForMember(dest => dest.TypeServiceName, opt => opt.MapFrom(src => src.TypeService.TypeName))
+        .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.TypeService.Unit))
+        .ForMember(dest => dest.ServicePrice, opt => opt.MapFrom(src => src.Price));
+
+
+
+        CreateMap<Room, RentingRoomResponseDto>()
+            .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault() != null ? src.RoomImages.FirstOrDefault().RoomUrl : null))
+            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName))
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.Name : null))
+            .ForMember(dest => dest.StudentAccountId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.AccountID : (int?)null))
+            .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().ContractID : (int?)null));
+
+        CreateMap<Notification, NotificationDto>().ReverseMap();
+
+        //CreateMap<Room, MemberRoomRentedResponse>()
+        //     .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault() != null ? src.RoomImages.FirstOrDefault().RoomUrl : null))
+        //    .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName))
+        //    .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.Name : null))
+        //    .ForMember(dest => dest.StudentAccountId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.AccountID : (int?)null))
+        //    .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().ContractID : (int?)null));
+
+
     }
 }

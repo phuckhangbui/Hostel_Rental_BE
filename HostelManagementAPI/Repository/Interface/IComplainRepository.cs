@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Complain;
 
 namespace Repository.Interface
 {
@@ -6,7 +7,7 @@ namespace Repository.Interface
     {
         Task CreateComplain(Complain complain);
         Task<Complain> GetComplainById(int id);
-        Task<IEnumerable<Complain>> GetComplains();
+        Task<IEnumerable<ComplainDto>> GetComplains();
         Task UpdateComplain(Complain complain);
     }
 }

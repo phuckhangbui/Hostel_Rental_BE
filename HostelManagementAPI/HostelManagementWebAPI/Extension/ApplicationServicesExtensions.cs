@@ -26,7 +26,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IBillPaymentRepository, BillPaymentRepository>();
 
         services.AddScoped<IVnpayService, VnpayService>();
-        //services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IMemberShipService, MemberShipService>();
@@ -45,11 +45,16 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IHostelService, HostelService>();
         services.AddScoped<IContractService, ContractService>();
         services.AddScoped<IContractRepository, ContractRepository>();
-        //services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IBillPaymentService, BillPaymentService>();
 
         services.AddScoped<IBillPaymentRepository, BillPaymentRepository>();
         services.AddScoped<IBillPaymentService, BillPaymentService>();
+
+        services.AddScoped<IComplainService, ComplainService>();
+        services.AddScoped<IComplainRepository, ComplainRepository>();
+
+        services.AddScoped<IPaymentService, PaymentService>();
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
@@ -58,6 +63,14 @@ public static class ApplicationServicesExtensions
             opt.AddPolicy("CorsPolicy", policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
         });
 
+        services.AddSingleton<IFirebaseMessagingService>(provider =>
+        {
+            // Assuming jsonCredentialsPath is configured elsewhere, possibly in appsettings.json
+            var jsonCredentialsPath = config["Firebase:CredentialsPath"];
+            return new FirebaseMessagingService(jsonCredentialsPath);
+        });
+
         return services;
+
     }
 }

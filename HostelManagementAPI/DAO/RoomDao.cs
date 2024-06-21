@@ -1,4 +1,6 @@
 ﻿using BusinessObject.Models;
+using DTOs.Enum;
+using DTOs.Room;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -25,10 +27,30 @@ namespace DAO
             }
         }
 
+        public async Task<OwnerInfoDto> GetOwnerInfoByRoomId(int roomId)
+        {
+            using (var context = new DataContext())
+            {
+                // Query to get the owner's info based on roomId
+                var ownerInfo = await (from room in context.Room
+                                       join hostel in context.Hostel on room.HostelID equals hostel.HostelID
+                                       join account in context.Account on hostel.AccountID equals account.AccountID
+                                       where room.RoomID == roomId
+                                       select new OwnerInfoDto
+                                       {
+                                           Name = account.Name,
+                                           Phone = account.Phone,
+                                           Email = account.Email
+                                       }).FirstOrDefaultAsync();
+
+                return ownerInfo;
+            }
+        }
+
         public async Task<Room> GetRoomById(int roomId)
         {
             var context = new DataContext();
-            return await context.Room.FirstOrDefaultAsync(r => r.RoomID == roomId);
+            return await context.Room.Include(x => x.Hostel).ThenInclude(h => h.OwnerAccount).FirstOrDefaultAsync(r => r.RoomID == roomId);
         }
 
         public async Task<IEnumerable<Room>> GetRoomListByHostelId(int hostelId)
@@ -64,6 +86,30 @@ namespace DAO
                                           ri => ri.RoomID,
                                           (r, ri) => ri.RoomUrl)
                                     .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Room>> GetHiringRoomForOwner(int ownerId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.Room
+                    .Include(r => r.Hostel)
+                    .Include(r => r.RoomImages)
+                    .Include(r => r.RoomContract)
+                        .ThenInclude(rc => rc.StudentLeadAccount)
+                    .Where(r => r.Hostel.AccountID == ownerId && r.Status == (int)RoomEnum.Hiring)
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<int> GetAvailableRoomCountByHostelId(int hostelId)
+        {
+            using (var context = new DataContext())
+            {
+                return await context.Room
+                    .Where(r => r.HostelID == hostelId && r.Status == (int)RoomEnum.Available)
+                    .CountAsync();
+            }
         }
     }
 }

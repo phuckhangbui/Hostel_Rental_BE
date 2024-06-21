@@ -20,9 +20,10 @@ namespace Repository.Implement
             memberShip.Status = 0;
             return await MemberShipDao.Instance.CreateAsync(memberShip);
         }
-        public async Task<MemberShip> GetMembershipById(int memberShipID)
+        public async Task<GetMemberShipDto> GetMembershipById(int memberShipID)
         {
-            return await MemberShipDao.Instance.GetMemberShipById(memberShipID);
+            var membership = await MemberShipDao.Instance.GetMemberShipById(memberShipID);
+            return _mapper.Map<GetMemberShipDto>(membership);
         }
 
         public async Task<IEnumerable<GetMemberShipDto>> GetMembershipsActive()
@@ -81,9 +82,9 @@ namespace Repository.Implement
             return result.ToList();
         }
 
-        public async Task<bool> UpdateMembershipStatus(MemberShip memberShip)
+        public async Task<bool> UpdateMembershipStatus(GetMemberShipDto memberShipdto)
         {
-            if (memberShip == null)
+            if (memberShipdto == null)
             {
                 return false;
             }
@@ -91,7 +92,8 @@ namespace Repository.Implement
             {
                 try
                 {
-                    await MemberShipDao.Instance.UpdateAsync(memberShip);
+                    var membership = _mapper.Map<MemberShip>(memberShipdto);
+                    await MemberShipDao.Instance.UpdateAsync(membership);
                     return true;
                 }
                 catch (Exception)
@@ -102,9 +104,10 @@ namespace Repository.Implement
             }
         }
 
-        public async Task UpdateMemberShip(MemberShip memberShip)
+        public async Task UpdateMemberShip(GetMemberShipDto memberShipDto)
         {
-            await MemberShipDao.Instance.UpdateAsync(memberShip);
+            var membership = _mapper.Map<MemberShip>(memberShipDto);
+            await MemberShipDao.Instance.UpdateAsync(membership);
         }
 
         public async Task<bool> CheckMembershipNameExist(string memberShipName)
@@ -119,7 +122,7 @@ namespace Repository.Implement
 
         public async Task<GetMemberShipDto> GetDetailMemberShip(int packageID)
         {
-            var membership = MemberShipDao.Instance.GetMemberShipById(packageID);
+            var membership = await MemberShipDao.Instance.GetMemberShipById(packageID);
             return _mapper.Map<GetMemberShipDto>(membership);
         }
     }

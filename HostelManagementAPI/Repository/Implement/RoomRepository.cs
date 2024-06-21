@@ -9,7 +9,7 @@ using DTOs.RoomService;
 
 namespace Repository.Implement
 {
-	public class RoomRepository : IRoomRepository
+    public class RoomRepository : IRoomRepository
 	{
 		private readonly IMapper _mapper;
 
@@ -43,6 +43,7 @@ namespace Repository.Implement
 					Status = (int)RoomServiceEnum.Active,
 					TypeServiceId = roomService.TypeServiceId,
 					Price = roomService.Price,
+					IsSelected = false,
 				};
 
 				room.RoomServices.Add(newRoomService);
@@ -50,7 +51,16 @@ namespace Repository.Implement
 
 			await RoomDao.Instance.CreateAsync(room);
 
-			return room.RoomID;
+            //
+            var currentAvailableRoom = await RoomDao.Instance.GetAvailableRoomCountByHostelId(createRoomRequestDto.HostelID);
+            if (currentAvailableRoom == 1)
+            {
+                var hostel = await HostelDao.Instance.GetHostelById(createRoomRequestDto.HostelID);
+                hostel.Status = (int)HostelEnum.Available;
+                await HostelDao.Instance.UpdateAsync(hostel);
+            }
+
+            return room.RoomID;
 		}
 
 		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
@@ -93,10 +103,25 @@ namespace Repository.Implement
 		{
 			var room = await RoomDao.Instance.GetRoomById(roomId);
 
-			room.Status = status;
+            room.Status = status;
 
-			await RoomDao.Instance.UpdateAsync(room);
-		}
+            await RoomDao.Instance.UpdateAsync(room);
+
+            var currentAvailableRoom = await RoomDao.Instance.GetAvailableRoomCountByHostelId((int)room.HostelID);
+            if (currentAvailableRoom == 0)
+            {
+                var hostel = await HostelDao.Instance.GetHostelById((int)room.HostelID);
+                hostel.Status = (int)HostelEnum.Full;
+                await HostelDao.Instance.UpdateAsync(hostel);
+            }
+
+            if (currentAvailableRoom == 1)
+            {
+                var hostel = await HostelDao.Instance.GetHostelById((int)room.HostelID);
+                hostel.Status = (int)HostelEnum.Available;
+                await HostelDao.Instance.UpdateAsync(hostel);
+            }
+        }
 
 		public async Task UploadRoomImage(int roomId, List<string> imageUrls)
 		{
@@ -152,7 +177,7 @@ namespace Repository.Implement
 				RoomId = createRoomAppointmentDto.RoomId,
 				ViewerId = createRoomAppointmentDto.ViewerId,
 				AppointmentTime = DateTime.Now,
-				Status = 1,
+				Status = (int) AppointmentStatus.View,
 			};
             var roomAppointment = _mapper.Map<RoomAppointment>(room);
 			
@@ -168,6 +193,44 @@ namespace Repository.Implement
         {
 			var selectedServices =  await RoomServiceDao.Instance.GetRoomServicesIsSelected(roomId);
 			return _mapper.Map<IEnumerable<RoomServiceResponseDto>>(selectedServices);
+        }
+        public async Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId)
+        {
+            var service = await RoomServiceDao.Instance.GetRoomServicesByRoom(roomId);
+            return _mapper.Map<IEnumerable<RoomServiceView>>(service);
+        }
+
+        public async Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID)
+        {
+            var appointmentDetails = await RoomAppointmentDao.Instance.GetApppointmentToCreateContract(roomID);
+            return appointmentDetails;
+        }
+
+        public async Task<List<int>> UpdateAppointmentRoom(int? roomID, int accountID)
+        {
+            return await RoomAppointmentDao.Instance.UpdateAppointmentRoom(roomID, accountID);
+        }
+
+        public async Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int hostelID)
+        {
+            return await RoomAppointmentDao.Instance.GetRoomAppointmentListByOwner(hostelID);
+        }
+
+        public async Task CancelAppointmentRoom(int appointmentID)
+        {
+            await RoomAppointmentDao.Instance.CancelAppointmentRoom(appointmentID);
+        }
+
+        public async Task<OwnerInfoDto> GetOwnerInfoByRoomId(int roomId)
+        {
+            return await RoomDao.Instance.GetOwnerInfoByRoomId(roomId);
+        }
+
+        public async Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId)
+        {
+            var hiringRooms = await RoomDao.Instance.GetHiringRoomForOwner(ownerId);
+
+			return _mapper.Map<IEnumerable<RentingRoomResponseDto>>(hiringRooms);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
