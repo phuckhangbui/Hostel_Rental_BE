@@ -70,10 +70,12 @@ namespace Repository.Implement
 			return _mapper.Map<IEnumerable<RoomListResponseDto>>(rooms);
 		}
 
-		public async Task<Room> GetRoomById(int roomId)
+		public async Task<RoomListResponseDto> GetRoomById(int roomId)
 		{
-			return await RoomDao.Instance.GetRoomById(roomId);
-		}
+			var room =  await RoomDao.Instance.GetRoomById(roomId);
+
+            return _mapper.Map<RoomListResponseDto>(room);
+        }
 
 		public async Task<RoomDetailResponseDto> GetRoomDetailById(int roomId)
 		{

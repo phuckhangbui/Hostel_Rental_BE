@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Models;
+using DTOs.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -93,6 +94,16 @@ namespace DAO
                         .ThenInclude(t => t.TypeService)
                 .Include(c => c.Members)
                 .FirstOrDefaultAsync(c => c.ContractID == contractID);
+        }
+
+        public async Task<Contract> GetCurrentContractByRoom(int roomId)
+        {
+            var context = new DataContext();
+            return await context.Contract
+                .Where(c => c.RoomID == roomId && 
+                    (c.Status == (int)ContractStatusEnum.signed || c.Status == (int)ContractStatusEnum.extended))
+                .OrderByDescending(c => c.CreatedDate)
+                .FirstOrDefaultAsync();
         }
 
     }
