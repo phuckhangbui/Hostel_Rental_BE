@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DAO
 {
-    public class RoomAppointmentDao: BaseDAO<RoomAppointment>
+    public class RoomAppointmentDao : BaseDAO<RoomAppointment>
     {
         private static RoomAppointmentDao instance = null;
         private static readonly object instacelock = new object();
@@ -48,6 +48,26 @@ namespace DAO
                     ViewerPhone = ra.Viewer.Phone,
                     ViewerEmail = ra.Viewer.Email,
                     ViewerCitizenCard = ra.Viewer.CitizenCard,
+                    AppointmentTime = ra.AppointmentTime,
+                    Status = ra.Status
+                })
+                .ToListAsync();
+
+            return appointments;
+        }
+
+        public async Task<List<GetAppointmentMember>> GetRoomAppointmentMemberAsync(int accountId)
+        {
+            var context = new DataContext();
+            var appointments = await context.RoomAppointments
+                .Include(ra => ra.Room)
+                .Include(ra => ra.Viewer)
+                .Where(ra => ra.ViewerId == accountId)
+                .Select(ra => new GetAppointmentMember
+                {
+                    ViewRoomAppointmentId = ra.ViewRoomAppointmentId,
+                    RoomId = ra.RoomId,
+                    RoomName = ra.Room.RoomName,
                     AppointmentTime = ra.AppointmentTime,
                     Status = ra.Status
                 })
@@ -131,7 +151,7 @@ namespace DAO
                 .Where(ra => ra.RoomId == roomID && (ra.Status == (int)AppointmentStatus.View || ra.Status == (int)AppointmentStatus.Hire_Directly))
                 .ToListAsync();
 
-            foreach(var item in appointments)
+            foreach (var item in appointments)
             {
                 item.Status = (int)AppointmentStatus.Cancel;
                 await UpdateAsync(item);

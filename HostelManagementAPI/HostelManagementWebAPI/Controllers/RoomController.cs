@@ -191,6 +191,25 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [HttpGet("rooms/appointment/member/{accountID}")]
+        [Authorize(policy: "Member")]
+        public async Task<ActionResult> GetRoomAppointmentListByMember(int accountID)
+        {
+            try
+            {
+                var roomAppointments = await _roomService.GetRoomAppointmentListByMember(accountID);
+                return Ok(roomAppointments);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         [HttpPost("rooms/appointment")]
         public async Task<ActionResult> CreateRoomAppointment([FromBody] CreateAppointmentSendEmailDto createRoomAppointmentDto)
         {

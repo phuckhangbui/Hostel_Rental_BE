@@ -238,6 +238,10 @@ namespace Repository.Implement
             await RoomServiceDao.Instance.UpdateRoomServicePrice(request);
         }
 
+        public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
+        {
+            return await RoomAppointmentDao.Instance.GetRoomAppointmentMemberAsync(accountID);
+        }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
         //{
