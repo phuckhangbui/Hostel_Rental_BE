@@ -27,6 +27,7 @@ namespace Repository.Interface
         Task<List<int>> UpdateAppointmentRoom(int? roomID, int accountID);
         Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId);
         Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int accountID);
+        Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID);
         Task CancelAppointmentRoom(int appointmentID);
         //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
         //   Task RemoveRoomServiceAsync(int roomId, int serviceId);

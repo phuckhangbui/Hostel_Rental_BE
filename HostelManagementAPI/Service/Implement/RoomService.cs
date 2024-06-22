@@ -1,4 +1,5 @@
-﻿using DTOs.Enum;
+﻿using BusinessObject.Models;
+using DTOs.Enum;
 using DTOs.Hostel;
 using DTOs.Room;
 using DTOs.RoomAppointment;
@@ -270,6 +271,11 @@ namespace Service.Implement
             }
 
             return rooms;
+        }
+
+        public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
+        {
+            return await _roomRepository.GetRoomAppointmentListByMember(accountID);
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)

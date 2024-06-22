@@ -233,6 +233,11 @@ namespace Repository.Implement
 			return _mapper.Map<IEnumerable<RentingRoomResponseDto>>(hiringRooms);
         }
 
+        public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
+        {
+            return await RoomAppointmentDao.Instance.GetRoomAppointmentMemberAsync(accountID);
+        }
+
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)
         //{
         //	var roomServices = roomServicesDto.ServiceId.Select(serviceId => new RoomService
