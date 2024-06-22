@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObject.Models;
 using DTOs.Complain;
+using DTOs.Enum;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -23,8 +24,7 @@ namespace Service.Implement
             var complain = _mapper.Map<Complain>(complainDto);
             complain.AccountID = complainDto.AccountID;
             complain.DateComplain = DateTime.Now;
-            complain.DateUpdate = DateTime.Now;
-            complain.Status = 1;
+            complain.Status = (int)ComplainEnum.sent;
 
             return _complainRepository.CreateComplain(complain);
         }
@@ -38,11 +38,7 @@ namespace Service.Implement
 
         public async Task<IEnumerable<ComplainDto>> GetComplains()
         {
-            var complains = await _complainRepository.GetComplains();
-
-            var displayComplains = _mapper.Map<IEnumerable<ComplainDto>>(complains);
-
-            return displayComplains;
+            return await _complainRepository.GetComplains();
         }
 
         public async Task<IEnumerable<ComplainDto>> GetComplainsByAccountCreator(int id)
@@ -73,8 +69,9 @@ namespace Service.Implement
                 throw new ServiceException("Complain not found");
             }
 
-            complain.Status = updateComplainRequest.Status;
+            complain.Status = (int)ComplainEnum.done;
             complain.DateUpdate = DateTime.Now;
+            complain.ComplainResponse = updateComplainRequest.ComplainResponse;
             await _complainRepository.UpdateComplain(complain);
         }
     }

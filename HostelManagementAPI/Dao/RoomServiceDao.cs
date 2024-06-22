@@ -104,5 +104,28 @@ namespace DAO
                     .ToListAsync();
             }
         }
+
+        public async Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request)
+        {
+           using (var context = new DataContext())
+           {
+                var roomServices = await context.RoomService
+            .Where(rs => rs.RoomId == request.RoomId &&
+                         request.Services.Select(s => s.TypeServiceId).Contains(rs.TypeServiceId))
+            .ToListAsync();
+
+                foreach (var roomService in roomServices)
+                {
+                    var serviceToUpdate = request.Services.FirstOrDefault(s => s.TypeServiceId == roomService.TypeServiceId);
+                    if (serviceToUpdate != null)
+                    {
+                        roomService.Price = serviceToUpdate.Price ?? roomService.Price;
+                    }
+                }
+
+                await context.SaveChangesAsync();
+            }
+            
+        }
     }
 }

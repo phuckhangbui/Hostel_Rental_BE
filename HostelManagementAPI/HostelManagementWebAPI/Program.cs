@@ -1,5 +1,6 @@
 using API.Extensions;
 using BusinessObject.Models;
+using DTOs.Complain;
 using HostelManagementWebAPI.Extensions;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
@@ -26,7 +27,7 @@ ConfigurationHelper.Initialize(builder.Configuration);
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
 
 var modelBuilder = new ODataConventionModelBuilder();
-modelBuilder.EntitySet<Complain>("Complains");
+modelBuilder.EntitySet<ComplainDto>("Complains");
 modelBuilder.EntitySet<Notification>("Notifications");
 
 builder.Services.AddControllers().AddOData(

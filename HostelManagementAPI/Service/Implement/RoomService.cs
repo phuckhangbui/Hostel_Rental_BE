@@ -273,6 +273,11 @@ namespace Service.Implement
             return rooms;
         }
 
+        public async Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request)
+        {
+            await _roomRepository.UpdateRoomServicePrice(request);
+        }
+
         public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
         {
             return await _roomRepository.GetRoomAppointmentListByMember(accountID);

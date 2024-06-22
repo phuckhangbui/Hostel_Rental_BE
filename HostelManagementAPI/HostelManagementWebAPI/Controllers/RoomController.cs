@@ -377,6 +377,26 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        //[Authorize(policy: "Owner")]
+        [HttpPost("rooms/UpdateServicePrice")]
+        public async Task<IActionResult> UpdateRoomServicesPrices([FromBody] UpdateRoomServicesPriceRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid request data.");
+            }
+
+            try
+            {
+                await _roomService.UpdateRoomServicePrice(request);
+                return Ok("Room service prices updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating room service prices.");
+            }
+        }
+
         //      [HttpPost("roomServiceAdd")]
         //      public async Task<IActionResult> AddRoomServices([FromBody] AddRoomServicesDto roomServicesDto)
         //      {
