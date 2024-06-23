@@ -70,10 +70,12 @@ namespace Repository.Implement
 			return _mapper.Map<IEnumerable<RoomListResponseDto>>(rooms);
 		}
 
-		public async Task<Room> GetRoomById(int roomId)
+		public async Task<RoomListResponseDto> GetRoomById(int roomId)
 		{
-			return await RoomDao.Instance.GetRoomById(roomId);
-		}
+			var room =  await RoomDao.Instance.GetRoomById(roomId);
+
+            return _mapper.Map<RoomListResponseDto>(room);
+        }
 
 		public async Task<RoomDetailResponseDto> GetRoomDetailById(int roomId)
 		{
@@ -231,6 +233,16 @@ namespace Repository.Implement
             var hiringRooms = await RoomDao.Instance.GetHiringRoomForOwner(ownerId);
 
 			return _mapper.Map<IEnumerable<RentingRoomResponseDto>>(hiringRooms);
+        }
+
+        public async Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request)
+        {
+            await RoomServiceDao.Instance.UpdateRoomServicePrice(request);
+        }
+
+        public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
+        {
+            return await RoomAppointmentDao.Instance.GetRoomAppointmentMemberAsync(accountID);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

@@ -7,7 +7,6 @@ using DTOs.Enum;
 using DTOs.Room;
 using DTOs.Service;
 using Repository.Interface;
-using System.Diagnostics.Contracts;
 
 namespace Repository.Implement
 {
@@ -33,12 +32,6 @@ namespace Repository.Implement
             int daysStayed = daysInMonth - contractStartDay + 1;
             double dailyRoomFee = (double)currentContractDto.RoomFee / daysInMonth;
             totalAmount += dailyRoomFee * daysStayed;
-
-            totalAmount -= currentContractDto.DepositFee;
-            if (totalAmount < 0)
-            {
-                totalAmount = 0;
-            }
 
             var billPayment = new BillPayment
             {
@@ -107,6 +100,12 @@ namespace Repository.Implement
                     totalAmount += proratedServicePrice;
                     continue;
                 }
+            }
+
+            totalAmount -= currentContractDto.DepositFee;
+            if (totalAmount < 0)
+            {
+                totalAmount = 0;
             }
 
             billPayment.TotalAmount = totalAmount;
@@ -209,8 +208,8 @@ namespace Repository.Implement
 
             var billPaymentDtos = _mapper.Map<IEnumerable<BillPaymentDto>>(lastBillPayments).ToList();
 
-            var currentDate = DateTime.Now;
-            //var currentDate = new DateTime(2024, 8, 1);
+            //var currentDate = DateTime.Now;
+            var currentDate = new DateTime(2024, 7, 1);
             var existingBills = new List<BillPaymentDto>();
 
             foreach (var billPaymentDto in billPaymentDtos)
@@ -241,6 +240,7 @@ namespace Repository.Implement
                     billPaymentDto.Month = billingMonth.Month;
                     billPaymentDto.StartDate = billingMonth;
                     billPaymentDto.EndDate = billingMonth.AddMonths(1).AddDays(-1);
+                    billPaymentDto.IsFirstBill = false;
                 }
 
                 var existingBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contract.ContractID, currentDate.Month, currentDate.Year);
@@ -293,6 +293,7 @@ namespace Repository.Implement
                         BillPaymentDetails = new List<BillPaymentDetailResponseDto>(),
                         StartDate = startDate,
                         EndDate = endDate,
+                        IsFirstBill = true,
                     };
 
                     foreach (var service in selectedServices)

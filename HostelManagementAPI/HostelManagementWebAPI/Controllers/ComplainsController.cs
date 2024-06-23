@@ -1,5 +1,6 @@
 ﻿using DTOs.Complain;
 using HostelManagementWebAPI.MessageStatusResponse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -33,8 +34,8 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        //[Authorize(Policy = "Member")]
-        //[HttpPost("complains")]
+        [Authorize(Policy = "Member")]
+        [HttpPost("complains")]
         public async Task<ActionResult> Post([FromBody] CreateComplainDto createComplainRequestDto)
         {
             try
@@ -52,8 +53,8 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
-        //[Authorize(Policy = "OwnerAndAdmin")]
-        //[HttpPut("complains")]
+        [Authorize(Policy = "OwnerAndAdmin")]
+        [HttpPut("complains")]
         public async Task<ActionResult> Put([FromODataUri] int key, [FromBody] UpdateComplainStatusDto updateComplainRequestDto)
         {
             try

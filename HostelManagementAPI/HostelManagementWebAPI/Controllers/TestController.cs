@@ -16,8 +16,15 @@ namespace HostelManagementWebAPI.Controllers
         private readonly VnPayProperties _vnPayProperties;
         private readonly IVnpayService _vnpayService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
+        private readonly IMembershipRegisterRepository _membershipRegisterRepository;
 
-        public TestController(ILogger<TestController> logger, IAccountService accountService, IAccountRepository accountRepository, IOptions<VnPayProperties> vnPayProperties, IVnpayService vnpayService, IFirebaseMessagingService firebaseMessagingService)
+        public TestController(ILogger<TestController> logger, 
+            IAccountService accountService, 
+            IAccountRepository accountRepository, 
+            IOptions<VnPayProperties> vnPayProperties, 
+            IVnpayService vnpayService, 
+            IFirebaseMessagingService firebaseMessagingService,
+            IMembershipRegisterRepository membershipRegisterRepository)
         {
             _logger = logger;
             _accountService = accountService;
@@ -25,6 +32,7 @@ namespace HostelManagementWebAPI.Controllers
             _vnPayProperties = vnPayProperties.Value;
             _vnpayService = vnpayService;
             _firebaseMessagingService = firebaseMessagingService;
+            _membershipRegisterRepository = membershipRegisterRepository;
         }
 
         [HttpGet("vnpayUrl/{TnxRef}")]
@@ -41,6 +49,34 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 string response = await _firebaseMessagingService.SendPushNotification(request.RegistrationToken, request.Title, request.Body, request.Data);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("/background-service/membership")]
+        public async Task<IActionResult> GetAllActiveMembership()
+        {
+            try
+            {
+                var response = await _membershipRegisterRepository.GetAllActiveMembership();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("/background-service/membership/{membershipRegisterId}")]
+        public async Task<IActionResult> GetMembership(int membershipRegisterId)
+        {
+            try
+            {
+                var response = await _membershipRegisterRepository.GetMemberShipRegisterTransactionById(membershipRegisterId);
                 return Ok(response);
             }
             catch (Exception ex)

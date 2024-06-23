@@ -10,5 +10,10 @@
 		public int Status { get; set; }
 		public string? RoomThumbnail { get; set; }
 		public double? Area { get; set; }
-	}
+
+		public string? HostelName { get; set; }
+		public int? OwnerID { get; set; }
+		public string? OwnerName { get; set; }
+
+    }
 }

@@ -11,8 +11,8 @@ namespace DTOs.Contract
         public string OwnerCitizen { get; set; }
         public int? StudentAccountID { get; set; }
         public string StudentLeadAccountName { get; set; }
-        public string StudentLeadPhone {  get; set; }
-        public string StudentLeadCitizen {  get; set; }
+        public string StudentLeadPhone { get; set; }
+        public string StudentLeadCitizen { get; set; }
         public int? RoomID { get; set; }
         public string RoomName { get; set; }
         public string RoomDescription { get; set; }
@@ -27,8 +27,8 @@ namespace DTOs.Contract
         public Double? RoomFee { get; set; }
         public Double? DepositFee { get; set; }
         public double? InitWaterNumber { get; set; }
-        public double? InitElectricityNumber {  get; set; }
-        public List<RoomServiceResponseForContractDto> RoomServiceDetails { get; set;}
+        public double? InitElectricityNumber { get; set; }
+        public List<RoomServiceResponseForContractDto> RoomServiceDetails { get; set; }
         public List<GetContractDetailsDto> ContractMemberDetails { get; set; }
     }
 }

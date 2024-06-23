@@ -26,7 +26,7 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 await _roomService.UpdateRoom(roomId, updateRoomRequestDto);
-                return Ok();
+                return Ok(new ApiResponseStatus(Ok().StatusCode, "Update room information successfully"));
             }
             catch (ServiceException ex)
             {
@@ -179,6 +179,25 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 var roomAppointments = await _roomService.GetRoomAppointmentsAsync();
+                return Ok(roomAppointments);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpGet("rooms/appointment/member/{accountID}")]
+        [Authorize(policy: "Member")]
+        public async Task<ActionResult> GetRoomAppointmentListByMember(int accountID)
+        {
+            try
+            {
+                var roomAppointments = await _roomService.GetRoomAppointmentListByMember(accountID);
                 return Ok(roomAppointments);
             }
             catch (ServiceException ex)
@@ -355,6 +374,26 @@ namespace HostelManagementWebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        //[Authorize(policy: "Owner")]
+        [HttpPost("rooms/UpdateServicePrice")]
+        public async Task<IActionResult> UpdateRoomServicesPrices([FromBody] UpdateRoomServicesPriceRequest request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid request data.");
+            }
+
+            try
+            {
+                await _roomService.UpdateRoomServicePrice(request);
+                return Ok("Room service prices updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating room service prices.");
             }
         }
 

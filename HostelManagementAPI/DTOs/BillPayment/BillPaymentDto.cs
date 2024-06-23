@@ -21,6 +21,6 @@
         public int? RoomId { get; set; }
         public int? AccountPayId { get; set; }
         public int? AccountReceiveId { get; set; }
-
+        public bool? IsFirstBill { get; set; }
     }
 }

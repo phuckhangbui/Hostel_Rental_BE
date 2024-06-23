@@ -83,7 +83,7 @@ namespace DAO.Migrations
 
                     b.HasKey("AccountID");
 
-                    b.ToTable("Account");
+                    b.ToTable("Account", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>
@@ -138,7 +138,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ContractId");
 
-                    b.ToTable("BillPayment");
+                    b.ToTable("BillPayment", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPaymentDetail", b =>
@@ -173,7 +173,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("RoomServiceID");
 
-                    b.ToTable("BillPaymentDetail");
+                    b.ToTable("BillPaymentDetail", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Complain", b =>
@@ -211,7 +211,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("RoomID");
 
-                    b.ToTable("Complain");
+                    b.ToTable("Complain", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Contract", b =>
@@ -269,7 +269,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("StudentAccountID");
 
-                    b.ToTable("Contract");
+                    b.ToTable("Contract", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.ContractMember", b =>
@@ -296,7 +296,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ContractID");
 
-                    b.ToTable("ContractMember");
+                    b.ToTable("ContractMember", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Hostel", b =>
@@ -332,7 +332,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("AccountID");
 
-                    b.ToTable("Hostel");
+                    b.ToTable("Hostel", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.HostelImage", b =>
@@ -353,7 +353,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("HostelID");
 
-                    b.ToTable("HostelImages");
+                    b.ToTable("HostelImages", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShip", b =>
@@ -381,7 +381,7 @@ namespace DAO.Migrations
 
                     b.HasKey("MemberShipID");
 
-                    b.ToTable("Membership");
+                    b.ToTable("Membership", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.MemberShipRegisterTransaction", b =>
@@ -419,7 +419,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("MemberShipID");
 
-                    b.ToTable("MembershipsRegisterTransaction");
+                    b.ToTable("MembershipsRegisterTransaction", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Notification", b =>
@@ -454,7 +454,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ReceiveAccountId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Room", b =>
@@ -496,7 +496,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("HostelID");
 
-                    b.ToTable("Room");
+                    b.ToTable("Room", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomAppointment", b =>
@@ -525,7 +525,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("ViewerId");
 
-                    b.ToTable("RoomAppointments");
+                    b.ToTable("RoomAppointments", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomImage", b =>
@@ -546,7 +546,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("RoomID");
 
-                    b.ToTable("RoomsImage");
+                    b.ToTable("RoomsImage", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.RoomService", b =>
@@ -578,7 +578,7 @@ namespace DAO.Migrations
 
                     b.HasIndex("TypeServiceId");
 
-                    b.ToTable("RoomService");
+                    b.ToTable("RoomService", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.TypeService", b =>
@@ -597,7 +597,7 @@ namespace DAO.Migrations
 
                     b.HasKey("TypeServiceID");
 
-                    b.ToTable("TypeService");
+                    b.ToTable("TypeService", (string)null);
                 });
 
             modelBuilder.Entity("BusinessObject.Models.BillPayment", b =>

@@ -38,12 +38,12 @@ namespace DAO
             return complain;
         }
 
-        public async Task<List<Complain>> GetComplainWithOnwerId()
+        public async Task<IEnumerable<Complain>> GetComplainWithOnwerId()
         {
             var complains = new List<Complain>();
             using (var context = new DataContext())
             {
-                complains = await context.Complain.Include(c => c.Room).Include(c => c.ComplainAccount).Include(c => c.Room).ThenInclude(r => r.Hostel)
+                complains = await context.Complain.Include(c => c.ComplainAccount).Include(c => c.Room).ThenInclude(r => r.Hostel).ThenInclude(h => h.OwnerAccount)
                     .ToListAsync();
             }
             return complains;

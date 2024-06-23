@@ -1,10 +1,14 @@
 using API.Extensions;
 using BusinessObject.Models;
+using DTOs.Complain;
+using Hangfire;
 using HostelManagementWebAPI.Extensions;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Service;
+using Service.Implement;
+using Service.Interface;
 using Service.Vnpay;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,13 +30,24 @@ ConfigurationHelper.Initialize(builder.Configuration);
 builder.Services.Configure<VnPayProperties>(builder.Configuration.GetSection("VnPay"));
 
 var modelBuilder = new ODataConventionModelBuilder();
-modelBuilder.EntitySet<Complain>("Complains");
+modelBuilder.EntitySet<ComplainDto>("Complains");
 modelBuilder.EntitySet<Notification>("Notifications");
 
 builder.Services.AddControllers().AddOData(
     options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
         "odata",
         modelBuilder.GetEdmModel()));
+
+// Hangfire client
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("SqlCloud")));
+
+// Hangfire server
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<IBackgroundService, Service.Implement.BackgroundService>();
 
 builder.Services.AddSwaggerGen(option =>
 {
@@ -98,5 +113,16 @@ app.UseAuthorization();
 //var cache = app.Services.GetRequiredService<IMemoryCache>();
 
 app.MapControllers();
+
+app.UseHangfireDashboard();
+app.MapHangfireDashboard("/hangfire");
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var backgroundService = serviceProvider.GetRequiredService<IBackgroundService>();
+
+    RecurringJob.AddOrUpdate("UpdateMembershipWhenExpire", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(1));
+}
 
 app.Run();
