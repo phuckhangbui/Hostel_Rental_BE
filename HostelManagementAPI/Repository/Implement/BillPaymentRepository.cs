@@ -5,6 +5,7 @@ using DTOs.BillPayment;
 using DTOs.Contract;
 using DTOs.Enum;
 using DTOs.Room;
+using DTOs.Service;
 using Repository.Interface;
 using System.Diagnostics.Contracts;
 
@@ -472,6 +473,29 @@ namespace Repository.Implement
             billPaymentDto.BillPaymentDetails = (List<BillPaymentDetailResponseDto>)billPaymentDetailDtos;
 
             return billPaymentDto;
+        }
+
+        public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
+        {
+            var contractNewest = ContractDao.Instance.GetContractsAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.RoomID == roomID);
+            if(contractNewest == null)
+            {
+                return new NumberService
+                {
+                    ElectricNumber = 0,
+                    WaterNumber = 0
+                };
+            }
+            var typeElectric = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 1 && x.Status == 0).RoomServiceId;
+            var typeWater = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 2 && x.Status == 0).RoomServiceId;
+            var billNewsest = BillPaymentDao.Instance.GetAllAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.ContractId == contractNewest.ContractID);
+            var electricNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeElectric).NewNumberService;
+            var waterNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeWater).NewNumberService;
+            return new NumberService
+            {
+                ElectricNumber = (double)electricNumber,
+                WaterNumber = (double)waterNumber
+            };
         }
     }
 }

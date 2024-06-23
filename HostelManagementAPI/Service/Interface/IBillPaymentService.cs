@@ -1,5 +1,6 @@
 using DTOs;
 using DTOs.BillPayment;
+using DTOs.Service;
 
 namespace Service.Interface
 {
@@ -13,5 +14,6 @@ namespace Service.Interface
         Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId);
         Task<BillPaymentDto> PrepareBillingForMonthlyPayment(int billpaymentId, int accountId);
         Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId);
+        Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID);
     }
 }

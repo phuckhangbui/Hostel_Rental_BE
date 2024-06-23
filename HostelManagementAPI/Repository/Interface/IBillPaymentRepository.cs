@@ -1,6 +1,7 @@
 using DTOs.BillPayment;
 using DTOs.Contract;
 using DTOs.Room;
+using DTOs.Service;
 
 namespace Repository.Interface
 {
@@ -24,5 +25,6 @@ namespace Repository.Interface
         Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId);
         Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId);
         Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId);
+        Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID);
     }
 }

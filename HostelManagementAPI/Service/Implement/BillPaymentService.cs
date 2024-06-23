@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.BillPayment;
 using DTOs.Enum;
+using DTOs.Service;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -190,6 +191,11 @@ namespace Service.Implement
         public async Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId)
         {
             return await _billPaymentRepository.GetLastMonthBillPaymentsByOwnerId(ownerId);
+        }
+
+        public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
+        {
+            return await _billPaymentRepository.GetOldNumberServiceElectricAndWater(roomID);
         }
     }
 }
