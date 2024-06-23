@@ -26,7 +26,7 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 await _roomService.UpdateRoom(roomId, updateRoomRequestDto);
-                return Ok();
+                return Ok(new ApiResponseStatus(Ok().StatusCode, "Update room information successfully"));
             }
             catch (ServiceException ex)
             {
