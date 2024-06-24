@@ -191,5 +191,10 @@ namespace Service.Implement
         {
             return await _billPaymentRepository.GetLastMonthBillPaymentsByOwnerId(ownerId);
         }
+
+        public Task<IEnumerable<BillPaymentHistoryMember>> GetPaymentHistoryByMemberAccount(int memberId)
+        {
+            return _billPaymentRepository.GetBillPaymentHistoryMembers(memberId);
+        }
     }
 }

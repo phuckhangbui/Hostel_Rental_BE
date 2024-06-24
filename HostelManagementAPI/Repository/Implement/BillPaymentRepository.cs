@@ -6,6 +6,7 @@ using DTOs.Contract;
 using DTOs.Enum;
 using DTOs.Room;
 using Repository.Interface;
+using System.Net.WebSockets;
 
 namespace Repository.Implement
 {
@@ -471,6 +472,23 @@ namespace Repository.Implement
             billPaymentDto.BillPaymentDetails = (List<BillPaymentDetailResponseDto>)billPaymentDetailDtos;
 
             return billPaymentDto;
+        }
+
+        public async Task<IEnumerable<BillPaymentHistoryMember>> GetBillPaymentHistoryMembers(int accountId)
+        {
+            var billPayment = await BillPaymentDao.Instance.GetBillPaymentHistoryMember(accountId);
+            var result = billPayment.Select(x => new BillPaymentHistoryMember
+            {
+                BillPaymentId = x.BillPaymentID,
+                BillAmount = x.BillAmount,
+                TotalAmount = x.TotalAmount,
+                CreatedDate = x.CreatedDate,
+                BillType = x.BillType,
+                PaidDate = x.PaidDate
+            });
+
+            result = result.OrderBy(x => x.PaidDate);
+            return result.ToList();
         }
     }
 }

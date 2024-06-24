@@ -24,5 +24,6 @@ namespace Repository.Interface
         Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId);
         Task<BillPaymentDto> GetBillPaymentDetail(int billPaymentId);
         Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId);
+        Task<IEnumerable<BillPaymentHistoryMember>> GetBillPaymentHistoryMembers(int accountId);
     }
 }
