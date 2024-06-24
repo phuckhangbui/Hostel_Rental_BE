@@ -7,6 +7,7 @@ using DTOs.Enum;
 using DTOs.Room;
 using DTOs.Service;
 using Repository.Interface;
+using System.Net.WebSockets;
 
 namespace Repository.Implement
 {
@@ -51,7 +52,7 @@ namespace Repository.Implement
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
             foreach (var service in selectedServices)
             {
-                if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
+                if (service.TypeService.Unit.Equals("mÂ³") && service.TypeService.TypeName.Equals("Water"))
                 {
                     var initWaterService = new BillPaymentDetail
                     {
@@ -298,7 +299,7 @@ namespace Repository.Implement
 
                     foreach (var service in selectedServices)
                     {
-                        if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
+                        if (service.TypeService.Unit.Equals("mÂ³") && service.TypeService.TypeName.Equals("Water"))
                         {
                             var initWaterService = new BillPaymentDetailResponseDto
                             {
@@ -476,6 +477,23 @@ namespace Repository.Implement
             return billPaymentDto;
         }
 
+        public async Task<IEnumerable<BillPaymentHistoryMember>> GetBillPaymentHistoryMembers(int accountId)
+        {
+            var billPayment = await BillPaymentDao.Instance.GetBillPaymentHistoryMember(accountId);
+            var result = billPayment.Select(x => new BillPaymentHistoryMember
+            {
+                BillPaymentId = x.BillPaymentID,
+                BillAmount = x.BillAmount,
+                TotalAmount = x.TotalAmount,
+                CreatedDate = x.CreatedDate,
+                BillType = x.BillType,
+                PaidDate = x.PaidDate
+            });
+
+            result = result.OrderBy(x => x.PaidDate);
+            return result.ToList();
+        }
+        
         public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
         {
             var contractNewest = ContractDao.Instance.GetContractsAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.RoomID == roomID);

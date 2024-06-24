@@ -190,6 +190,11 @@ namespace Service.Implement
             return await _billPaymentRepository.GetLastMonthBillPaymentsByOwnerId(ownerId);
         }
 
+        public Task<IEnumerable<BillPaymentHistoryMember>> GetPaymentHistoryByMemberAccount(int memberId)
+        {
+            return _billPaymentRepository.GetBillPaymentHistoryMembers(memberId);
+        }
+        
         public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
         {
             return await _billPaymentRepository.GetOldNumberServiceElectricAndWater(roomID);
