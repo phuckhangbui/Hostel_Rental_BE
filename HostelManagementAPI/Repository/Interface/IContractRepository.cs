@@ -15,5 +15,6 @@ namespace Repository.Interface
         Task UpdateContract(GetContractDto getContractDto);
         Task AddContractMember(CreateListContractMemberDto contractMemberDto);
         Task<GetContractDto> GetCurrentContractByRoom(int roomId);
+        Task<IEnumerable<GetContractDto>> GetSignedContracs();
     }
 }

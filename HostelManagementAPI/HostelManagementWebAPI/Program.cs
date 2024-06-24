@@ -122,7 +122,8 @@ using (var scope = app.Services.CreateScope())
     var serviceProvider = scope.ServiceProvider;
     var backgroundService = serviceProvider.GetRequiredService<IBackgroundService>();
 
-    RecurringJob.AddOrUpdate("UpdateMembershipWhenExpire", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(1));
+    RecurringJob.AddOrUpdate("ScheduleMembershipWhenExpire", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(5));
+    RecurringJob.AddOrUpdate("ScheduleContractWhenExpire", () => backgroundService.ScheduleContractWhenExpire(), Cron.MinuteInterval(5));
 }
 
 app.Run();

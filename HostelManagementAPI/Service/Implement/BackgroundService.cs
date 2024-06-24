@@ -10,12 +10,54 @@ namespace Service.Implement
     {
         private readonly ILogger<IBackgroundService> _logger;
         private readonly IMembershipRegisterRepository _membershipRegisterRepository;
+        private readonly IContractRepository _contractRepository;
 
-        public BackgroundService(ILogger<IBackgroundService> logger, IMembershipRegisterRepository membershipRegisterRepository)
+        public BackgroundService(ILogger<IBackgroundService> logger, 
+            IMembershipRegisterRepository membershipRegisterRepository,
+            IContractRepository contractRepository)
         {
             _logger = logger;
             _membershipRegisterRepository = membershipRegisterRepository;
+            _contractRepository = contractRepository;
+        }
 
+        public async Task ScheduleContractWhenExpire()
+        {
+            try
+            {
+                var currentDateTime = DateTime.Now;
+
+                var signedContracs = await _contractRepository.GetSignedContracs();
+                if (signedContracs != null && signedContracs.Any())
+                {
+                    _logger.LogInformation("Starting background job for ScheduleContractWhenExpire");
+
+                    foreach (var contract in signedContracs)
+                    {
+                        TimeSpan delayToStart = (TimeSpan)(contract.DateEnd - currentDateTime);
+
+                        BackgroundJob.Schedule(() => UpdateContractToExpired(contract.ContractID), delayToStart);
+                        _logger.LogInformation($"Contract id: {contract.ContractID} scheduled for status change: " +
+                            $"'Expired' at {delayToStart}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while update contract when expire");
+            }
+        }
+
+        public async Task UpdateContractToExpired(int contractId)
+        {
+            var contract = await _contractRepository.GetContractById(contractId);
+            if (contract != null && contract.Status == (int)ContractStatusEnum.signed)
+            {
+                contract.Status = (int)ContractStatusEnum.expired;
+
+                await _contractRepository.UpdateContract(contract);
+                _logger.LogInformation($"Contract id: {contractId} updated to 'expired' successfully at {DateTime.Now}.");
+            }
         }
 
         public async Task ScheduleMembershipWhenExpire()
@@ -27,7 +69,7 @@ namespace Service.Implement
                 var activeMemberships = await _membershipRegisterRepository.GetAllActiveMembership();
                 if (activeMemberships != null && activeMemberships.Any())
                 {
-                    _logger.LogInformation("Starting background job for UpdateMembershipWhenExpire");
+                    _logger.LogInformation("Starting background job for ScheduleMembershipWhenExpire");
 
                     foreach (var membership in activeMemberships)
                     {

@@ -144,5 +144,29 @@ namespace DAO
                 return lastBillPayments;
             }
         }
+
+        public async Task<IEnumerable<BillPayment>> GetBillPaymentHistoryMember(int accountId)
+        {
+            using (var context = new DataContext())
+            {
+                var billPayment = await context.BillPayment
+                    .Where(b => b.AccountPayId == accountId && b.BillPaymentStatus == (int)BillPaymentStatus.Paid)
+                    .ToListAsync();
+                return billPayment;
+            }
+        }
+
+        public async Task<IEnumerable<BillPayment>> GetBillMonthlyPaymentForMember(int accountId)
+        {
+            using (var context = new DataContext())
+            {
+                var billPayment = await context.BillPayment
+                    .Include(b => b.Contract)
+                    .ThenInclude(c => c.Room)
+                    .Where(b => b.AccountPayId == accountId && b.BillType == (int)BillType.MonthlyPayment && b.BillPaymentStatus == (int)BillPaymentStatus.Pending)
+                    .ToListAsync();
+                return billPayment;
+            }
+        }
     }
 }

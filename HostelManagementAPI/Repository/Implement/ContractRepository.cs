@@ -104,5 +104,14 @@ namespace Repository.Implement
 
             return _mapper.Map<GetContractDto>(contract);
         }
+
+        public async Task<IEnumerable<GetContractDto>> GetSignedContracs()
+        {
+            var contracs = await ContractDao.Instance.GetContractsAsync();
+
+            var signedContracts = contracs.Where(c => c.Status == (int)ContractStatusEnum.signed).ToList();
+
+            return _mapper.Map<IEnumerable<GetContractDto>>(signedContracts);
+        }
     }
 }
