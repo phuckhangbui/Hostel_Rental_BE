@@ -3,5 +3,6 @@
     public interface IBackgroundService
     {
         Task ScheduleMembershipWhenExpire();
+        Task ScheduleContractWhenExpire();
     }
 }
