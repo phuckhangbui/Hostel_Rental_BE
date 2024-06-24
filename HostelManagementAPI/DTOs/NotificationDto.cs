@@ -9,5 +9,7 @@
         public DateTime? CreateDate { get; set; }
         public int? NotificationType { get; set; }
         public string? Title { get; set; }
+        public string? ForwardToPath { get; set; }
+        public bool? IsRead { get; set; }
     }
 }

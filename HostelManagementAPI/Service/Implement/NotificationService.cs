@@ -21,5 +21,12 @@ namespace Service.Implement
         {
             await _notificationRepository.CreateNotification(notificationDto);
         }
+
+        public async Task<List<NotificationDto>> GetNotificationsBaseOnReceiveId(int accountId)
+        {
+            var list = await _notificationRepository.GetAllNotifications();
+
+            return list.Where(n => n.ReceiveAccountId == accountId).ToList();
+        }
     }
 }
