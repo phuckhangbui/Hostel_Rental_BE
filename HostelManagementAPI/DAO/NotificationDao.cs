@@ -26,5 +26,10 @@ namespace DAO
 
             }
         }
+
+        //public static Task<Notification> GetNotificationsBaseOnReceiveId(int accountId)
+        //{
+        //    Notification response = new Notification()
+        //}
     }
 }

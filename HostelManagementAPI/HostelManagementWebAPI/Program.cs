@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Service;
-using Service.Implement;
 using Service.Interface;
 using Service.Vnpay;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -77,6 +77,8 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+builder.Services.AddGrpc();
+
 var app = builder.Build();
 
 
@@ -117,6 +119,7 @@ app.MapControllers();
 app.UseHangfireDashboard();
 app.MapHangfireDashboard("/hangfire");
 
+
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
@@ -125,5 +128,8 @@ using (var scope = app.Services.CreateScope())
     RecurringJob.AddOrUpdate("ScheduleMembershipWhenExpire", () => backgroundService.ScheduleMembershipWhenExpire(), Cron.MinuteInterval(5));
     RecurringJob.AddOrUpdate("ScheduleContractWhenExpire", () => backgroundService.ScheduleContractWhenExpire(), Cron.MinuteInterval(5));
 }
+
+app.MapGrpcService<HostelManagementWebAPI.Services.NotificationService>();
+app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();
