@@ -97,5 +97,12 @@ namespace Repository.Implement
         {
             await ContractMemberDao.Instance.AddContractMembersAsync(createListContractMemberDto);
         }
+
+        public async Task<GetContractDto> GetCurrentContractByRoom(int roomId)
+        {
+            var contract = await ContractDao.Instance.GetCurrentContractByRoom(roomId);
+
+            return _mapper.Map<GetContractDto>(contract);
+        }
     }
 }

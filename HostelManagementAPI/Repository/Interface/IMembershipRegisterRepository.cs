@@ -10,5 +10,7 @@ namespace Repository.Interface
         Task<MemberShipRegisterTransactionDto> GetMembershipTransactionBaseOnTnxRef(string tnxRef);
         Task UpdateMembership(MemberShipRegisterTransactionDto memberShipRegisterTransactionDto);
         Task<MemberShipRegisterTransactionDto> GetCurrentActiveMembership(int accountId);
+        Task<IEnumerable<MemberShipRegisterTransactionDto>> GetAllActiveMembership();
+        Task<MemberShipRegisterTransactionDto> GetMemberShipRegisterTransactionById(int memberShipTransactionID);
     }
 }

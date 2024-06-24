@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.Room;
+﻿using DTOs.Room;
 using DTOs.RoomAppointment;
 using DTOs.RoomService;
 
@@ -8,7 +7,7 @@ namespace Repository.Interface
     public interface IRoomRepository
     {
         Task<int> CreateRoom(CreateRoomRequestDto createRoomRequestDto);
-        Task<Room> GetRoomById(int roomId);
+        Task<RoomListResponseDto> GetRoomById(int roomId);
         Task UpdateRoom(int roomId, RoomRequestDto updateRoomRequestDto);
         Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId);
         Task<RoomDetailResponseDto> GetRoomDetailById(int roomId);

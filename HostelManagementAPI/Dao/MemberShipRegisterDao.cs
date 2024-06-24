@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Models;
 using DTOs.Dashboard;
+using DTOs.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAO
@@ -92,6 +93,15 @@ namespace DAO
             var membersRegister = await context.MembershipsRegisterTransaction.FirstOrDefaultAsync(m => m.TnxRef == tnxRef);
 
             return membersRegister;
+        }
+
+        public async Task<IEnumerable<MemberShipRegisterTransaction>> GetAllActiveMembership()
+        {
+            var context = new DataContext();
+
+            return await context.MembershipsRegisterTransaction
+                .Where(mb => mb.Status == (int)MembershipRegisterEnum.current)
+                .ToListAsync();
         }
     }
 }

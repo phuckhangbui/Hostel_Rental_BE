@@ -5,6 +5,7 @@ using DTOs.BillPayment;
 using DTOs.Contract;
 using DTOs.Enum;
 using DTOs.Room;
+using DTOs.Service;
 using Repository.Interface;
 using System.Net.WebSockets;
 
@@ -33,12 +34,6 @@ namespace Repository.Implement
             double dailyRoomFee = (double)currentContractDto.RoomFee / daysInMonth;
             totalAmount += dailyRoomFee * daysStayed;
 
-            totalAmount -= currentContractDto.DepositFee;
-            if (totalAmount < 0)
-            {
-                totalAmount = 0;
-            }
-
             var billPayment = new BillPayment
             {
                 ContractId = currentContractDto.ContractID,
@@ -57,7 +52,7 @@ namespace Repository.Implement
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
             foreach (var service in selectedServices)
             {
-                if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
+                if (service.TypeService.Unit.Equals("mÂ³") && service.TypeService.TypeName.Equals("Water"))
                 {
                     var initWaterService = new BillPaymentDetail
                     {
@@ -106,6 +101,12 @@ namespace Repository.Implement
                     totalAmount += proratedServicePrice;
                     continue;
                 }
+            }
+
+            totalAmount -= currentContractDto.DepositFee;
+            if (totalAmount < 0)
+            {
+                totalAmount = 0;
             }
 
             billPayment.TotalAmount = totalAmount;
@@ -208,8 +209,8 @@ namespace Repository.Implement
 
             var billPaymentDtos = _mapper.Map<IEnumerable<BillPaymentDto>>(lastBillPayments).ToList();
 
-            var currentDate = DateTime.Now;
-            //var currentDate = new DateTime(2024, 8, 1);
+            //var currentDate = DateTime.Now;
+            var currentDate = new DateTime(2024, 7, 1);
             var existingBills = new List<BillPaymentDto>();
 
             foreach (var billPaymentDto in billPaymentDtos)
@@ -240,6 +241,7 @@ namespace Repository.Implement
                     billPaymentDto.Month = billingMonth.Month;
                     billPaymentDto.StartDate = billingMonth;
                     billPaymentDto.EndDate = billingMonth.AddMonths(1).AddDays(-1);
+                    billPaymentDto.IsFirstBill = false;
                 }
 
                 var existingBillPayment = await BillPaymentDao.Instance.GetCurrentBillPayment(contract.ContractID, currentDate.Month, currentDate.Year);
@@ -292,11 +294,12 @@ namespace Repository.Implement
                         BillPaymentDetails = new List<BillPaymentDetailResponseDto>(),
                         StartDate = startDate,
                         EndDate = endDate,
+                        IsFirstBill = true,
                     };
 
                     foreach (var service in selectedServices)
                     {
-                        if (service.TypeService.Unit.Equals("m³") && service.TypeService.TypeName.Equals("Water"))
+                        if (service.TypeService.Unit.Equals("mÂ³") && service.TypeService.TypeName.Equals("Water"))
                         {
                             var initWaterService = new BillPaymentDetailResponseDto
                             {
@@ -489,6 +492,29 @@ namespace Repository.Implement
 
             result = result.OrderBy(x => x.PaidDate);
             return result.ToList();
+        }
+        
+        public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
+        {
+            var contractNewest = ContractDao.Instance.GetContractsAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.RoomID == roomID);
+            if(contractNewest == null)
+            {
+                return new NumberService
+                {
+                    ElectricNumber = 0,
+                    WaterNumber = 0
+                };
+            }
+            var typeElectric = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 1 && x.Status == 0).RoomServiceId;
+            var typeWater = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 2 && x.Status == 0).RoomServiceId;
+            var billNewsest = BillPaymentDao.Instance.GetAllAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.ContractId == contractNewest.ContractID);
+            var electricNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeElectric).NewNumberService;
+            var waterNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeWater).NewNumberService;
+            return new NumberService
+            {
+                ElectricNumber = (double)electricNumber,
+                WaterNumber = (double)waterNumber
+            };
         }
     }
 }
