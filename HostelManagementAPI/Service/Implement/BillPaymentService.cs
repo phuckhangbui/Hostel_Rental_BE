@@ -199,5 +199,10 @@ namespace Service.Implement
         {
             return await _billPaymentRepository.GetOldNumberServiceElectricAndWater(roomID);
         }
+
+        public async Task<IEnumerable<BillMonthlyPaymentMember>> GetMonthlyBillPaymentForMember(int memberId)
+        {
+            return await _billPaymentRepository.GetMonthlyBillPaymentForMember(memberId);
+        }
     }
 }
