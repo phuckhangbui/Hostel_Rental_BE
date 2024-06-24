@@ -1,5 +1,6 @@
 ﻿using DTOs.BillPayment;
 using DTOs.Enum;
+using DTOs.Service;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -177,6 +178,33 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Member")]
+        [HttpGet("bill-payment/payment-history")]
+        public async Task<ActionResult> GetPaymentHistory()
+        {
+            int accountId = GetLoginAccountId();
+            try
+            {
+                var result = await _billPaymentService.GetPaymentHistoryByMemberAccount(accountId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(policy: "Owner")]
+        [HttpGet("owner/get-old-number-electric-and-water/{roomID}")]
+        public async Task<ActionResult> GetOldNumberServiceElectricAndWater(int roomID)
+        {
+            var numberService = await _billPaymentService.GetOldNumberServiceElectricAndWater(roomID);
+            return Ok(numberService);
+        }
 
         //[Authorize(Policy = "Member")]
         //[HttpPost("bill-payment/confirm-payment")]

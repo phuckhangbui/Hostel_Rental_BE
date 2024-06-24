@@ -60,6 +60,7 @@ namespace DAO
                 return await context.Room
                 .Where(r => r.HostelID == hostelId)
                 .Include(r => r.RoomImages)
+                .Include(x => x.Hostel).ThenInclude(h => h.OwnerAccount)
                 .ToListAsync();
             }
         }
@@ -72,6 +73,7 @@ namespace DAO
                     .Include(r => r.RoomImages)
                     .Include(r => r.RoomServices)
                         .ThenInclude(rs => rs.TypeService)
+                    .Include(x => x.Hostel).ThenInclude(h => h.OwnerAccount)
                     .FirstOrDefaultAsync(r => r.RoomID == roomId);
             }
         }

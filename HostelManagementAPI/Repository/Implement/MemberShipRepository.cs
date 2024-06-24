@@ -39,7 +39,7 @@ namespace Repository.Implement
                 Month = x.Month,
                 MemberShipFee = x.MemberShipFee,
                 Status = x.Status
-            }); ;
+            });
 
             result = result.OrderBy(x => x.MemberShipFee);
             return result.ToList();

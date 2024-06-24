@@ -1,4 +1,5 @@
-﻿using DTOs.Enum;
+﻿using BusinessObject.Models;
+using DTOs.Enum;
 using DTOs.Hostel;
 using DTOs.Room;
 using DTOs.RoomAppointment;
@@ -49,7 +50,7 @@ namespace Service.Implement
 
         public async Task ChangeRoomStatus(int roomId, int status)
         {
-            var room = await _roomRepository.GetRoomById(roomId);
+            var room = await _roomRepository.GetRoomDetailById(roomId);
             if (room == null)
             {
                 throw new ServiceException("Room not found with this ID");
@@ -60,12 +61,18 @@ namespace Service.Implement
                 throw new ServiceException("Invalid status value");
             }
 
+            var currentContract = await _contractRepository.GetCurrentContractByRoom(roomId);
+            if (currentContract != null && status != (int)RoomEnum.Hiring)
+            {
+                throw new ServiceException("This room is hiring, can not change status");
+            }
+
             await _roomRepository.UpdateRoomStatus(roomId, status);
         }
 
         public async Task<RoomDetailResponseDto> GetRoomDetailByRoomId(int roomId)
         {
-            var room = await _roomRepository.GetRoomById(roomId);
+            var room = await _roomRepository.GetRoomDetailById(roomId);
             if (room == null)
             {
                 throw new ServiceException("Room not found with this ID");
@@ -227,7 +234,9 @@ namespace Service.Implement
             var account = await _roomRepository.GetAppointmentById(appointmentID);
 
             var room = await _roomRepository.GetAppointmentById(appointmentID);
-            var hostel = _roomRepository.GetRoomById(room.RoomId).Result.Hostel;
+            //var hostel = _roomRepository.GetRoomById(room.RoomId);
+            var currentHostel = await _roomRepository.GetRoomDetailById(room.RoomId);
+            var hostel = await _hostelRepository.GetHostelDetailById((int)currentHostel.HostelID);
             var inf = new InformationHouse()
             {
                 HostelName = hostel.HostelName,
@@ -254,9 +263,9 @@ namespace Service.Implement
                     RoomID = room.RoomID,
                     RoomName = room.RoomName,
                     HostelID = room.HostelID,
-                    HostelName = room.Hostel.HostelName,
-                    OwnerId = room.Hostel.AccountID,
-                    OwnerName = room.Hostel.OwnerAccount.Name,
+                    HostelName = room.HostelName,
+                    OwnerId = room.OwnerID,
+                    OwnerName = room.OwnerName,
                     Status = contract.Status,
                     RoomThumbnail = roomDetail.RoomThumbnail,
                     StudentAccountId = accountId,
@@ -270,6 +279,16 @@ namespace Service.Implement
             }
 
             return rooms;
+        }
+
+        public async Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request)
+        {
+            await _roomRepository.UpdateRoomServicePrice(request);
+        }
+
+        public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
+        {
+            return await _roomRepository.GetRoomAppointmentListByMember(accountID);
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)

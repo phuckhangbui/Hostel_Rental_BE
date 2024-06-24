@@ -29,7 +29,9 @@ namespace Service.Interface
         Task<bool> UpdateRoomStatus(int roomId, int status);
         Task<IEnumerable<RentingRoomResponseDto>> GetHiringRoomsForOwner(int ownerId);
         Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int accountID);
+        Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID);
         Task CancelAppointmentRoom(int appointmentID);
         Task<List<MemberRoomRentedResponse>> GetRentedRoomList(int accountId);
+        Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request);
     }
 }

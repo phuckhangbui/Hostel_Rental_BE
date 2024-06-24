@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.BillPayment;
 using DTOs.Enum;
+using DTOs.Service;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -63,9 +64,6 @@ namespace Service.Implement
 
                 var currentDate = DateTime.Now;
                 //var currentDate = new DateTime(2024, 7, 1);
-                var nextMonthDate = currentDate.AddMonths(1);
-                var nextMonth = nextMonthDate.Month;
-                var nextMonthYear = nextMonthDate.Year;
 
                 var firstBillingMonth = new DateTime(currentContract.DateStart.Value.Year, currentContract.DateStart.Value.Month, 1);
                 var contractStartDate = currentContract.DateStart.Value;
@@ -190,6 +188,16 @@ namespace Service.Implement
         public async Task<MonthlyBillPaymentResponseDto> GetLastMonthBillPaymentsByOwnerId(int ownerId)
         {
             return await _billPaymentRepository.GetLastMonthBillPaymentsByOwnerId(ownerId);
+        }
+
+        public Task<IEnumerable<BillPaymentHistoryMember>> GetPaymentHistoryByMemberAccount(int memberId)
+        {
+            return _billPaymentRepository.GetBillPaymentHistoryMembers(memberId);
+        }
+        
+        public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
+        {
+            return await _billPaymentRepository.GetOldNumberServiceElectricAndWater(roomID);
         }
     }
 }

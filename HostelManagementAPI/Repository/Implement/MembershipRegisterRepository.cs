@@ -69,5 +69,21 @@ namespace Repository.Implement
             var membershipTransaction = transaction.FirstOrDefault(m => m.Status == (int)MembershipRegisterEnum.current);
             return _mapper.Map<MemberShipRegisterTransactionDto>(membershipTransaction);
         }
+
+        public async Task<IEnumerable<MemberShipRegisterTransactionDto>> GetAllActiveMembership()
+        {
+            var membershipTransactions = await MemberShipRegisterDao.Instance.GetAllActiveMembership();
+
+            return _mapper.Map<IEnumerable<MemberShipRegisterTransactionDto>>(membershipTransactions);
+        }
+
+        public async Task<MemberShipRegisterTransactionDto> GetMemberShipRegisterTransactionById(int memberShipTransactionID)
+        {
+            var membershipTransactions = await MemberShipRegisterDao.Instance.GetAllActiveMembership();
+
+            var membershipTransaction = membershipTransactions.FirstOrDefault(m => m.MemberShipTransactionID == memberShipTransactionID);
+
+            return _mapper.Map<MemberShipRegisterTransactionDto>(membershipTransaction);
+        }
     }
 }
