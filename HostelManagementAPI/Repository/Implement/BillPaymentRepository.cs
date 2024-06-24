@@ -516,5 +516,24 @@ namespace Repository.Implement
                 WaterNumber = (double)waterNumber
             };
         }
+
+        public async Task<IEnumerable<BillMonthlyPaymentMember>> GetMonthlyBillPaymentForMember(int accountId)
+        {
+            var billPayment = await BillPaymentDao.Instance.GetBillMonthlyPaymentForMember(accountId);
+            var result = billPayment.Select(x => new BillMonthlyPaymentMember
+            {
+                BillPaymentID = x.BillPaymentID,
+                ContractId = x.ContractId,
+                BillAmount = x.BillAmount,
+                TotalAmount = x.TotalAmount,
+                CreatedDate = x.CreatedDate,
+                Month = x.Month,
+                Year = x.Year,
+                BillPaymentStatus = x.BillPaymentStatus,
+                RoomID = x.Contract.RoomID,
+                RoomName = x.Contract.Room.RoomName
+            });
+            return result.ToList();
+        }
     }
 }

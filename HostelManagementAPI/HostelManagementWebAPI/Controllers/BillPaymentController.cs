@@ -198,6 +198,26 @@ namespace HostelManagementWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "Member")]
+        [HttpGet("bill-payment/monthly")]
+        public async Task<ActionResult> GetBillMonthlyPayment()
+        {
+            int accountId = GetLoginAccountId();
+            try
+            {
+                var result = await _billPaymentService.GetMonthlyBillPaymentForMember(accountId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
         [Authorize(policy: "Owner")]
         [HttpGet("owner/get-old-number-electric-and-water/{roomID}")]
         public async Task<ActionResult> GetOldNumberServiceElectricAndWater(int roomID)
