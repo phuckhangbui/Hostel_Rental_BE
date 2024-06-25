@@ -471,5 +471,16 @@ namespace Service.Implement
                 }
             }
         }
+
+        public async Task DeleteAcount(int accountID)
+        {
+            try
+            {
+                await _accountRepository.RemoveAccountInDB(accountID);
+            }catch(Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+        }
     }
 }
