@@ -395,10 +395,10 @@ namespace Service.Implement
                 return null;
 
             var newAccessToken = _tokenService.CreateToken(principal.Claims);
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            //var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             accountDto.Token = newAccessToken;
-            accountDto.RefreshToken = newRefreshToken;
+            //accountDto.RefreshToken = newRefreshToken;
 
             await _accountRepository.UpdateAccount(accountDto);
 

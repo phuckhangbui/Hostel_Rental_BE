@@ -31,5 +31,20 @@ namespace DAO
         //{
         //    Notification response = new Notification()
         //}
+
+        public async Task UpdateNotificationToRead(int id)
+        {
+            var dataContext = new DataContext();
+
+            var notification = await dataContext.Notifications.FindAsync(id);
+
+            if (notification != null)
+            {
+
+                notification.IsRead = true;
+
+                await this.UpdateAsync(notification);
+            }
+        }
     }
 }
