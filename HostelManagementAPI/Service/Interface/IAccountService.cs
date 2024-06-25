@@ -30,5 +30,6 @@ namespace Service.Interface
         Task UpdateOwnerProfile(AccountUpdate accountUpdate);
         Task UpdateOwnerPassword(ChangePassword newPassword);
         Task GetOldPassword(ChangePassword oldPassword);
+        Task DeleteAcount(int accountID);
     }
 }

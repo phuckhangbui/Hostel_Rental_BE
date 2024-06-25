@@ -83,5 +83,20 @@ namespace HostelManagementWebAPI.Controllers.Admin
                 return StatusCode(500, new ApiResponseStatus(500, ex.Message));
             }
         }
+
+        [Authorize(policy: "Admin")]
+        [HttpDelete("admin/accounts/detail/delete/{accountID}")]
+        public async Task<ActionResult> DeleteAcount(int accountID)
+        {
+            try
+            {
+                await _accountService.DeleteAcount(accountID);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(404, new ApiResponseStatus(404, ex.Message));
+            }
+        }
     }
 }
