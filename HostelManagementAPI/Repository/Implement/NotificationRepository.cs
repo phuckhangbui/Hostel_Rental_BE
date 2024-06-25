@@ -21,11 +21,18 @@ namespace Repository.Implement
             return _mapper.Map<List<NotificationDto>>(list);
         }
 
-        public async Task CreateNotification(NotificationDto notificationDto)
+        public async Task<NotificationDto> CreateNotification(NotificationDto notificationDto)
         {
             var notification = _mapper.Map<Notification>(notificationDto);
 
             await NotificationDao.Instance.CreateAsync(notification);
+
+            return _mapper.Map<NotificationDto>(notification);
+        }
+
+        public async Task UpdateNotificationStatus(int id)
+        {
+            NotificationDao.Instance.UpdateNotificationToRead(id);
         }
     }
 }

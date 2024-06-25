@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DTOs.Hostel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Repository.Interface;
 using Service.Interface;
@@ -17,14 +18,16 @@ namespace HostelManagementWebAPI.Controllers
         private readonly IVnpayService _vnpayService;
         private readonly IFirebaseMessagingService _firebaseMessagingService;
         private readonly IMembershipRegisterRepository _membershipRegisterRepository;
+        private readonly INotificationService _notificationService;
 
-        public TestController(ILogger<TestController> logger, 
-            IAccountService accountService, 
-            IAccountRepository accountRepository, 
-            IOptions<VnPayProperties> vnPayProperties, 
-            IVnpayService vnpayService, 
+        public TestController(ILogger<TestController> logger,
+            IAccountService accountService,
+            IAccountRepository accountRepository,
+            IOptions<VnPayProperties> vnPayProperties,
+            IVnpayService vnpayService,
             IFirebaseMessagingService firebaseMessagingService,
-            IMembershipRegisterRepository membershipRegisterRepository)
+            IMembershipRegisterRepository membershipRegisterRepository,
+            INotificationService notificationService)
         {
             _logger = logger;
             _accountService = accountService;
@@ -33,6 +36,7 @@ namespace HostelManagementWebAPI.Controllers
             _vnpayService = vnpayService;
             _firebaseMessagingService = firebaseMessagingService;
             _membershipRegisterRepository = membershipRegisterRepository;
+            _notificationService = notificationService;
         }
 
         [HttpGet("vnpayUrl/{TnxRef}")]
@@ -91,6 +95,26 @@ namespace HostelManagementWebAPI.Controllers
             public string Title { get; set; }
             public string Body { get; set; }
             public Dictionary<string, string> Data { get; set; }
+        }
+
+        [HttpGet("/sendContractNotification")]
+        public async Task<IActionResult> SendContractNotification()
+        {
+            try
+            {
+                var inf = new InformationHouse
+                {
+                    HostelName = "test hostel name",
+                    RoomName = "tets room name",
+                    Address = "test address",
+                };
+                _notificationService.SendMemberWhoGetNewContract(5, null, "khang", inf);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
     }

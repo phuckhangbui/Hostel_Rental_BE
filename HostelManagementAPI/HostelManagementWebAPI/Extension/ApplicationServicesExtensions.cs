@@ -56,6 +56,9 @@ public static class ApplicationServicesExtensions
 
         services.AddScoped<IPaymentService, PaymentService>();
 
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<INotificationService, NotificationService>();
+
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //the current position of the mapping profile
 
         services.AddCors(opt =>

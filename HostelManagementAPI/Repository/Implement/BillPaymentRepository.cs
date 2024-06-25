@@ -7,7 +7,6 @@ using DTOs.Enum;
 using DTOs.Room;
 using DTOs.Service;
 using Repository.Interface;
-using System.Net.WebSockets;
 
 namespace Repository.Implement
 {
@@ -103,13 +102,23 @@ namespace Repository.Implement
                 }
             }
 
-            totalAmount -= currentContractDto.DepositFee;
-            if (totalAmount < 0)
+            double remainingDeposit = (double)(currentContractDto.DepositFee - totalAmount);
+            if (remainingDeposit >= 0)
             {
-                totalAmount = 0;
+                billPayment.TotalAmount = 0;
+                billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+            }
+            else
+            {
+                billPayment.TotalAmount = -remainingDeposit;
             }
 
-            billPayment.TotalAmount = totalAmount;
+            var currentContract = await ContractDao.Instance.GetContractById(currentContractDto.ContractID);
+            if (currentContract != null)
+            {
+                currentContract.DepositFee = Math.Max(remainingDeposit, 0);
+                await ContractDao.Instance.UpdateAsync(currentContract);
+            }
 
             await BillPaymentDao.Instance.CreateAsync(billPayment);
         }
@@ -124,6 +133,20 @@ namespace Repository.Implement
             double? totalAmount = 0;
 
             totalAmount += (double)currentContractDto.RoomFee;
+
+            if (currentContractDto.DepositFee >= 0)
+            {
+                double remainingDeposit = (double)(currentContractDto.DepositFee - totalAmount);
+
+                var currentContract = await ContractDao.Instance.GetContractById(currentContractDto.ContractID);
+                if (currentContract != null)
+                {
+                    currentContract.DepositFee = Math.Max(remainingDeposit, 0);
+                    await ContractDao.Instance.UpdateAsync(currentContract);
+                }
+
+                totalAmount -= currentContractDto.DepositFee;
+            }
 
             var billPaymentDetails = new List<BillPaymentDetail>();
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
@@ -209,8 +232,8 @@ namespace Repository.Implement
 
             var billPaymentDtos = _mapper.Map<IEnumerable<BillPaymentDto>>(lastBillPayments).ToList();
 
-            //var currentDate = DateTime.Now;
-            var currentDate = new DateTime(2024, 7, 1);
+            var currentDate = DateTime.Now;
+            //var currentDate = new DateTime(2024, 7, 1);
             var existingBills = new List<BillPaymentDto>();
 
             foreach (var billPaymentDto in billPaymentDtos)
