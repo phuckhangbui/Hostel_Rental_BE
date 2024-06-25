@@ -20,6 +20,20 @@ namespace HostelManagementWebAPI.Controllers
             _accountService = accountService;
         }
 
+        [Authorize]
+        [HttpGet("check/token/expire")]
+        public async Task<ActionResult> CheckIsTokenExpire()
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult<AccountLoginDto>> Login(EmailLoginDto login)
         {

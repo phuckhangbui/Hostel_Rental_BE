@@ -328,6 +328,88 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendOwnerWhenMemberMakeAppointment(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse)
+        {
+            string title = $"Your have a new appointment";
+            string body = $"Your room {informationHouse.RoomName} in {informationHouse.HostelName} at {informationHouse.Address} has a new appointment. Check it out!";
+
+            int type = (int)NotificationTypeEnum.member_make_appointment;
+            var noti = new NotificationDto
+            {
+                ReceiveAccountId = accountReceivedId,
+                Title = title,
+                NotificationText = body,
+                CreateDate = DateTime.Now,
+                NotificationType = type,
+                IsRead = false
+            };
+
+            noti.ForwardToPath = NotificationDto.GetForwardPath(type);
+
+            try
+            {
+                noti = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                {
+                    { "type", type.ToString() },
+                    { "accountId", accountReceivedId.ToString() },
+                    { "forwardToPath", noti.ForwardToPath },
+                    {"notificationId", noti.NotificationId?.ToString() }
+
+                };
+
+                if (!firebaseToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(firebaseToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async Task SendOwnerWhenMemberRentRoom(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse)
+        {
+            string title = $"Your room has been rent";
+            string body = $"Your room {informationHouse.RoomName} in {informationHouse.HostelName} at {informationHouse.Address} has been rented. Please make a contract for the room!";
+
+            int type = (int)NotificationTypeEnum.member_make_appointment;
+            var noti = new NotificationDto
+            {
+                ReceiveAccountId = accountReceivedId,
+                Title = title,
+                NotificationText = body,
+                CreateDate = DateTime.Now,
+                NotificationType = type,
+                IsRead = false
+            };
+
+            noti.ForwardToPath = NotificationDto.GetForwardPath(type);
+
+            try
+            {
+                noti = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                {
+                    { "type", type.ToString() },
+                    { "accountId", accountReceivedId.ToString() },
+                    { "forwardToPath", noti.ForwardToPath },
+                    {"notificationId", noti.NotificationId?.ToString() }
+
+                };
+
+                if (!firebaseToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(firebaseToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         //public async Task SendOwnerWhenMemberDeclineContract()
         //{
 

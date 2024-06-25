@@ -21,6 +21,7 @@ namespace HostelManagementWebAPI.Controllers
 
         [HttpGet]
         [EnableQuery]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ComplainDto>>> Get()
         {
             try

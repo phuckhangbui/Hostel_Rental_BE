@@ -20,28 +20,28 @@ namespace DTOs
             switch (notificationType)
             {
                 case (int)NotificationTypeEnum.owner_create_contract:
-                    return "/owner/contracts";
+                    return "/contracts";
 
                 case (int)NotificationTypeEnum.owner_create_bill:
-                    return "/owner/bills";
+                    return "/payments";
 
                 case (int)NotificationTypeEnum.member_sign_contract:
-                    return "/member/contracts";
+                    return "/owner/contracts";
 
                 case (int)NotificationTypeEnum.member_pay_bill:
-                    return "/member/bills";
+                    return "/owner/payments";
 
                 case (int)NotificationTypeEnum.member_make_appointment:
-                    return "/member/appointments";
+                    return "/owner/appointments";
 
                 case (int)NotificationTypeEnum.member_rent_room:
-                    return "/member/rooms";
+                    return "/owner/contracts";
 
                 case (int)NotificationTypeEnum.member_send_complain:
-                    return "/member/complains";
+                    return "/owner/complains";
 
                 case (int)NotificationTypeEnum.owner_reply_complain:
-                    return "/owner/complains";
+                    return "/complains";
 
                 case (int)NotificationTypeEnum.owner_package_expire:
                     return "/owner/packages";
