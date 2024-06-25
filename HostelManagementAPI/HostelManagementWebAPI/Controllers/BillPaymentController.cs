@@ -1,6 +1,5 @@
 ﻿using DTOs.BillPayment;
 using DTOs.Enum;
-using DTOs.Service;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

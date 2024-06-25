@@ -2,6 +2,7 @@
 using BusinessObject.Models;
 using DTOs.Complain;
 using DTOs.Enum;
+using DTOs.Hostel;
 using Repository.Interface;
 using Service.Exceptions;
 using Service.Interface;
@@ -11,22 +12,40 @@ namespace Service.Implement
     public class ComplainService : IComplainService
     {
         private readonly IComplainRepository _complainRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
 
-        public ComplainService(IMapper mapper, IComplainRepository complainRepository)
+        public ComplainService(IMapper mapper, IComplainRepository complainRepository, INotificationService notificationService, IRoomRepository roomRepository, IAccountRepository accountRepository)
         {
             _mapper = mapper;
             _complainRepository = complainRepository;
+            _notificationService = notificationService;
+            _roomRepository = roomRepository;
+            _accountRepository = accountRepository;
         }
 
-        public Task CreateComplain(CreateComplainDto complainDto)
+        public async Task CreateComplain(CreateComplainDto complainDto)
         {
             var complain = _mapper.Map<Complain>(complainDto);
             complain.AccountID = complainDto.AccountID;
             complain.DateComplain = DateTime.Now;
             complain.Status = (int)ComplainEnum.sent;
 
-            return _complainRepository.CreateComplain(complain);
+            var room = await _roomRepository.GetRoomById((int)complain.RoomID);
+            var inf = new InformationHouse
+            {
+                HostelName = room.HostelName,
+                Address = room.HostelAddress,
+                RoomName = room.RoomName
+            };
+
+            var owner = await _accountRepository.GetAccountById((int)room.OwnerID);
+
+            _notificationService.SendOwnerWhenMemberComplain(owner.AccountId, owner.FirebaseToken, owner.Name, inf, complain.ComplainText);
+
+            await _complainRepository.CreateComplain(complain);
         }
 
         public async Task<ComplainDto> GetComplainById(int id)
@@ -73,6 +92,18 @@ namespace Service.Implement
             complain.DateUpdate = DateTime.Now;
             complain.ComplainResponse = updateComplainRequest.ComplainResponse;
             await _complainRepository.UpdateComplain(complain);
+
+            var room = await _roomRepository.GetRoomById((int)complain.RoomID);
+            var inf = new InformationHouse
+            {
+                HostelName = room.HostelName,
+                Address = room.HostelAddress,
+                RoomName = room.RoomName
+            };
+
+            var member = await _accountRepository.GetAccountById((int)complain.AccountID);
+
+            _notificationService.SendMemberWhenOwnerReplyComplain(member.AccountId, member.FirebaseToken, member.Name, inf, complain.ComplainResponse);
         }
     }
 }

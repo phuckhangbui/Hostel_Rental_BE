@@ -40,7 +40,9 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
             .ForMember(dest => dest.OwnerID, opt => opt.MapFrom(src => src.Hostel.OwnerAccount.AccountID))
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Hostel.OwnerAccount.Name))
-            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName));
+            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName))
+            .ForMember(dest => dest.HostelAddress, opt => opt.MapFrom(src => src.Hostel.HostelAddress));
+
         CreateMap<MemberShipRegisterTransaction, ViewTransactionMembership>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount.Name))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount.Email));

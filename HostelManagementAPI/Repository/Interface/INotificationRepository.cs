@@ -5,6 +5,7 @@ namespace Repository.Interface
     public interface INotificationRepository
     {
         Task<List<NotificationDto>> GetAllNotifications();
-        Task CreateNotification(NotificationDto notificationDto);
+        Task<NotificationDto> CreateNotification(NotificationDto notificationDto);
+        Task UpdateNotificationStatus(int id);
     }
 }
