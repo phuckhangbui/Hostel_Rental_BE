@@ -201,6 +201,35 @@ namespace Service.Implement
             _notificationService.SendOwnerWhenMemberMakeAppointment(owner.AccountId, owner?.FirebaseToken, owner.Name, inf);
         }
 
+        public async Task CreateRoomHiringRequestAsync(HireRequestSendEmailDto createAppointmentSendEmailDto)
+        {
+            CreateRoomAppointmentDto createRoomAppointmentDto = new CreateRoomAppointmentDto
+            {
+                RoomId = createAppointmentSendEmailDto.RoomId,
+                ViewerId = createAppointmentSendEmailDto.ViewerId,
+                AppointmentTime = DateTime.Now
+            };
+            await _roomRepository.CreateRoomHiringRequestAsync(createRoomAppointmentDto);
+            var ownerInfo = await _roomRepository.GetOwnerInfoByRoomId(createAppointmentSendEmailDto.RoomId);
+            _mailService.SendMail(SendRoomAppointment.SendViewingHiringDirectlyNotification(
+                ownerInfo.Email,
+                ownerInfo.Name,
+                createAppointmentSendEmailDto.RoomName,
+                DateTime.Now.ToString()));
+
+            var room = await _roomRepository.GetRoomById(createAppointmentSendEmailDto.RoomId);
+            var inf = new InformationHouse
+            {
+                HostelName = room.HostelName,
+                Address = room.HostelAddress,
+                RoomName = room.RoomName
+            };
+
+            var owner = await _accountRepository.GetAccountById((int)room.OwnerID);
+
+            _notificationService.SendOwnerWhenMemberMakeHiringRequest(owner.AccountId, owner?.FirebaseToken, owner.Name, inf);
+        }
+
         public async Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates)
         {
             await _roomRepository.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
@@ -303,6 +332,11 @@ namespace Service.Implement
         public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
         {
             return await _roomRepository.GetRoomAppointmentListByMember(accountID);
+        }
+
+        public async Task<bool> CancelAllAppointmentViewing(int roomId)
+        {
+               return await _roomRepository.CancelAllAppointmentViewing(roomId);
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)

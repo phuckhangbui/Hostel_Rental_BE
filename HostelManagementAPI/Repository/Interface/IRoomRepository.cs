@@ -18,6 +18,7 @@ namespace Repository.Interface
         Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync();
         Task<GetAppointmentDto> GetAppointmentById(int id);
         Task CreateRoomAppointmentAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
+        Task CreateRoomHiringRequestAsync(CreateRoomAppointmentDto createRoomAppointmentDto);
         Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
         Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesIsSelected(int roomId);
         Task<OwnerInfoDto> GetOwnerInfoByRoomId(int roomId);
@@ -29,6 +30,7 @@ namespace Repository.Interface
         Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID);
         Task CancelAppointmentRoom(int appointmentID);
         Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request);
+        Task<bool> CancelAllAppointmentViewing(int roomId);
         //Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto);
         //   Task RemoveRoomServiceAsync(int roomId, int serviceId);
         //      Task<IEnumerable<RoomServiceResponseDto>> GetRoomServicesByRoomIdAsync(int roomId);

@@ -19,6 +19,7 @@ namespace Service.Interface
         Task<IEnumerable<GetAppointmentDto>> GetRoomAppointmentsAsync();
         Task<GetAppointmentDto> GetAppointmentById(int id);
         Task CreateRoomAppointmentAsync(CreateAppointmentSendEmailDto createAppointmentSendEmailDto);
+        Task CreateRoomHiringRequestAsync(HireRequestSendEmailDto createAppointmentSendEmailDto);
         Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates);
         Task<GetAppointmentContract> GetApppointmentToCreateContract(int roomID);
         Task<IEnumerable<RoomServiceView>> GetRoomServicesByRoom(int roomId);
@@ -33,5 +34,6 @@ namespace Service.Interface
         Task CancelAppointmentRoom(int appointmentID);
         Task<List<MemberRoomRentedResponse>> GetRentedRoomList(int accountId);
         Task UpdateRoomServicePrice(UpdateRoomServicesPriceRequest request);
+        Task<bool> CancelAllAppointmentViewing(int roomId);
     }
 }

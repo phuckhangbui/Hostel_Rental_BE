@@ -369,6 +369,47 @@ namespace Service.Implement
             }
         }
 
+        public async Task SendOwnerWhenMemberMakeHiringRequest(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse)
+        {
+            string title = $"Your have a new hiring request";
+            string body = $"Your room {informationHouse.RoomName} in {informationHouse.HostelName} at {informationHouse.Address} has a new hiring request. Check it out!";
+
+            int type = (int)NotificationTypeEnum.member_make_hiring_request;
+            var noti = new NotificationDto
+            {
+                ReceiveAccountId = accountReceivedId,
+                Title = title,
+                NotificationText = body,
+                CreateDate = DateTime.Now,
+                NotificationType = type,
+                IsRead = false
+            };
+
+            noti.ForwardToPath = NotificationDto.GetForwardPath(type);
+
+            try
+            {
+                noti = await _notificationRepository.CreateNotification(noti);
+                Dictionary<string, string> data = new Dictionary<string, string>
+                {
+                    { "type", type.ToString() },
+                    { "accountId", accountReceivedId.ToString() },
+                    { "forwardToPath", noti.ForwardToPath },
+                    {"notificationId", noti.NotificationId?.ToString() }
+
+                };
+
+                if (!firebaseToken.IsNullOrEmpty())
+                {
+                    _messagingService.SendPushNotification(firebaseToken, title, body, data);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         public async Task SendOwnerWhenMemberRentRoom(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse)
         {
             string title = $"Your room has been rent";
