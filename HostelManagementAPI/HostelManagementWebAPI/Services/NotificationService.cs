@@ -45,5 +45,18 @@ namespace HostelManagementWebAPI.Services
             }
 
         }
+
+        public override async Task<Empty> UpdateNotificationStatus(UpdateNotification requestData, ServerCallContext context)
+        {
+            try
+            {
+                await _notificationRepository.UpdateNotificationStatus(requestData.NotificationId);
+                return new Empty();
+            }
+            catch
+            {
+                return new Empty();
+            }
+        }
     }
 }
