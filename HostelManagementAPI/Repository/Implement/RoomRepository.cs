@@ -186,6 +186,20 @@ namespace Repository.Implement
 			await RoomAppointmentDao.Instance.CreateAsync(roomAppointment);
         }
 
+        public async Task CreateRoomHiringRequestAsync(CreateRoomAppointmentDto createRoomAppointmentDto)
+        {
+            RoomAppointment room = new RoomAppointment
+            {
+                RoomId = createRoomAppointmentDto.RoomId,
+                ViewerId = createRoomAppointmentDto.ViewerId,
+                AppointmentTime = DateTime.Now,
+                Status = (int)AppointmentStatus.Hire_Directly,
+            };
+            var roomAppointment = _mapper.Map<RoomAppointment>(room);
+
+            await RoomAppointmentDao.Instance.CreateAsync(roomAppointment);
+        }
+
         public async Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates)
         {
             await RoomServiceDao.Instance.UpdateRoomServicesIsSelectStatusAsync(roomId, roomServiceUpdates);
@@ -243,6 +257,11 @@ namespace Repository.Implement
         public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
         {
             return await RoomAppointmentDao.Instance.GetRoomAppointmentMemberAsync(accountID);
+        }
+
+        public async Task<bool> CancelAllAppointmentViewing(int roomId)
+        {
+            return await RoomAppointmentDao.Instance.CancelAllAppointmentViewing(roomId);
         }
 
         //public async Task AddRoomServicesAsync(AddRoomServicesDto roomServicesDto)

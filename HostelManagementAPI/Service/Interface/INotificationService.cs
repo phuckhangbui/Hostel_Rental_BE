@@ -16,6 +16,7 @@ namespace Service.Interface
         Task SendOwnerWhenMemberComplain(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse, string complain);
         Task SendMemberWhenOwnerReplyComplain(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse, string complainResponse);
         Task SendOwnerWhenMemberMakeAppointment(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse);
+        Task SendOwnerWhenMemberMakeHiringRequest(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse);
         Task SendOwnerWhenMemberRentRoom(int accountReceivedId, string? firebaseToken, string name, InformationHouse informationHouse);
 
     }

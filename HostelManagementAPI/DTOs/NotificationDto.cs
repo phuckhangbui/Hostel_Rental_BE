@@ -55,6 +55,9 @@ namespace DTOs
                 case (int)NotificationTypeEnum.member_decline_contract:
                     return null;
 
+                case (int)NotificationTypeEnum.member_make_hiring_request:
+                    return "/owner/appointments";
+
                 default:
                     return null;
             }

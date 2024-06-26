@@ -77,7 +77,10 @@ namespace DAO
         {
             DataContext context = new DataContext();
 
-            return await context.BillPayment.FirstOrDefaultAsync(b => b.TnxRef == tnxRef);
+            return await context.BillPayment
+                .Include(x => x.Contract)
+                .ThenInclude(y => y.Room)
+                .FirstOrDefaultAsync(b => b.TnxRef == tnxRef);
         }
 
         public async Task<IEnumerable<BillPayment>> GetBillPaymentByContractId(int contractId)
