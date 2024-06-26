@@ -531,6 +531,14 @@ namespace Repository.Implement
             var typeElectric = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 1 && x.Status == 0).RoomServiceId;
             var typeWater = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 2 && x.Status == 0).RoomServiceId;
             var billNewsest = BillPaymentDao.Instance.GetAllAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.ContractId == contractNewest.ContractID);
+            if (billNewsest == null)
+            {
+                return new NumberService
+                {
+                    ElectricNumber = 0,
+                    WaterNumber = 0
+                };
+            }
             var electricNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeElectric).NewNumberService;
             var waterNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeWater).NewNumberService;
             return new NumberService

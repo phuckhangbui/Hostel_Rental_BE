@@ -100,5 +100,17 @@ namespace Repository.Implement
             account.Phone = accountUpdate.Phone;
             await AccountDAO.Instance.UpdateAsync(account);
         }
+
+        public async Task RemoveAccountInDB(int accountID)
+        {
+            var account = await AccountDAO.Instance.GetAccountById(accountID);
+            try
+            {
+                await AccountDAO.Instance.RemoveAsync(account);
+            }catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
