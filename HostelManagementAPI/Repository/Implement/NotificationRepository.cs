@@ -32,7 +32,7 @@ namespace Repository.Implement
 
         public async Task UpdateNotificationStatus(int id)
         {
-            NotificationDao.Instance.UpdateNotificationToRead(id);
+            await NotificationDao.Instance.UpdateNotificationToRead(id);
         }
     }
 }

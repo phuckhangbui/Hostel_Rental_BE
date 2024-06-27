@@ -7,6 +7,7 @@ package notification;
 
 service NotificationGRPCService {
 	rpc GetNotifications (NotificationFilter) returns (Notifications);
+	rpc UpdateNotificationStatus (UpdateNotification) returns (Empty);
 }
 
 message Notification {
@@ -28,6 +29,10 @@ message Notifications {
 
 message NotificationFilter{
   int32 accountId = 1;
+}
+
+message UpdateNotification {
+	int32 notification_id = 1;
 }
 
 message Empty {
