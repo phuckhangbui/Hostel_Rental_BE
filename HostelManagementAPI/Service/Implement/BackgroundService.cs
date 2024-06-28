@@ -11,14 +11,23 @@ namespace Service.Implement
         private readonly ILogger<IBackgroundService> _logger;
         private readonly IMembershipRegisterRepository _membershipRegisterRepository;
         private readonly IContractRepository _contractRepository;
+        private readonly IHostelRepository _hostelRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IAccountRepository _accountRepository;
 
         public BackgroundService(ILogger<IBackgroundService> logger, 
             IMembershipRegisterRepository membershipRegisterRepository,
-            IContractRepository contractRepository)
+            IContractRepository contractRepository,
+            IHostelRepository hostelRepository,
+            INotificationService notificationService,
+            IAccountRepository accountRepository)
         {
             _logger = logger;
             _membershipRegisterRepository = membershipRegisterRepository;
             _contractRepository = contractRepository;
+            _hostelRepository = hostelRepository;
+            _notificationService = notificationService;
+            _accountRepository = accountRepository;
         }
 
         public async Task ScheduleContractWhenExpire()
@@ -51,12 +60,17 @@ namespace Service.Implement
         public async Task UpdateContractToExpired(int contractId)
         {
             var contract = await _contractRepository.GetContractById(contractId);
+            var hostel = await _hostelRepository.GetHostelInformation((int)contract.RoomID);
+            var accountHiring = await _accountRepository.GetAccountById((int)contract.StudentAccountID);
+
             if (contract != null && contract.Status == (int)ContractStatusEnum.signed)
             {
                 contract.Status = (int)ContractStatusEnum.expired;
 
                 await _contractRepository.UpdateContract(contract);
                 _logger.LogInformation($"Contract id: {contractId} updated to 'expired' successfully at {DateTime.Now}.");
+
+                await _notificationService.SendMemberWhenContractExpired(accountHiring.AccountId, accountHiring.FirebaseToken, accountHiring.Name, hostel);
             }
         }
 
