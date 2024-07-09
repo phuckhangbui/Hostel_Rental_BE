@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using DTOs.Contract;
+﻿using DTOs.Contract;
 using DTOs.Enum;
 using DTOs.RoomService;
 using Repository.Interface;
@@ -16,19 +15,22 @@ namespace Service.Implement
         private readonly IRoomRepository _roomRepository;
         private readonly IHostelRepository _hostelRepository;
         private readonly IMailService _mailService;
+        private readonly INotificationService _notificationService;
 
         public ContractService(
             IContractRepository contractRepository,
             IAccountRepository accountRepository,
             IRoomRepository roomRepository,
             IHostelRepository hostelRepository,
-            IMailService mailService)
+            IMailService mailService,
+            INotificationService notificationService)
         {
             _contractRepository = contractRepository;
             _accountRepository = accountRepository;
             _roomRepository = roomRepository;
             _hostelRepository = hostelRepository;
             _mailService = mailService;
+            _notificationService = notificationService;
         }
 
         public async Task ChangeContractStatus(int contractId, int status, DateTime datesigned)
@@ -70,17 +72,29 @@ namespace Service.Implement
                 }
                 var listAccount = await _roomRepository.UpdateAppointmentRoom(contractDto.RoomID, (int)contractDto.StudentAccountID);
                 await _contractRepository.AddContractMember(memberDto);
-                var accountEmailHiring = _accountRepository.GetAccountById((int)contractDto.StudentAccountID).Result.Email;
-                var accountNameHiring = _accountRepository.GetAccountById((int)contractDto.StudentAccountID).Result.Name;
+                var accountHiring = await _accountRepository.GetAccountById((int)contractDto.StudentAccountID);
+                var accountEmailHiring = accountHiring.Email;
+                var accountNameHiring = accountHiring.Name;
                 var inf = await _hostelRepository.GetHostelInformation((int)contractDto.RoomID);
+
+
                 _mailService.SendMail(SendMailUserHiring.SendMailWithUserHiringSuccess(accountEmailHiring, accountNameHiring, inf));
-                foreach(var accountID in listAccount)
+
+                _notificationService.SendMemberWhoGetNewContract(accountHiring.AccountId, accountHiring.FirebaseToken, accountHiring.Name, inf);
+
+                foreach (var accountID in listAccount)
                 {
-                    var EmailHiring = _accountRepository.GetAccountById((int)contractDto.StudentAccountID).Result.Email;
-                    var NameHiring = _accountRepository.GetAccountById((int)contractDto.StudentAccountID).Result.Name;
+                    var declineHiring = await _accountRepository.GetAccountById(accountID);
+
+                    var EmailHiring = declineHiring.Email;
+                    var NameHiring = declineHiring.Name;
                     _mailService.SendMail(SendMailUserHiring.SendEmailDeclineAppointment(EmailHiring, NameHiring, inf));
+
+                    _notificationService.SendMembersWhoGetDeclineContract(declineHiring.AccountId, declineHiring.FirebaseToken, declineHiring.Name, inf);
                 }
                 await _roomRepository.UpdateRoomStatus((int)contractDto.RoomID, (int)RoomEnum.Hiring);
+
+
 
                 var serviceSelected = new List<RoomServiceUpdateDto>();
                 foreach (var item in contractDto.RoomService)
@@ -93,7 +107,10 @@ namespace Service.Implement
                     serviceSelected.Add(service);
                 }
                 await _roomRepository.UpdateRoomServicesIsSelectStatusAsync((int)contractDto.RoomID, serviceSelected);
-            }catch(Exception ex)
+
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }

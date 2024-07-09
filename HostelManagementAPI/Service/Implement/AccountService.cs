@@ -395,10 +395,10 @@ namespace Service.Implement
                 return null;
 
             var newAccessToken = _tokenService.CreateToken(principal.Claims);
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            //var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             accountDto.Token = newAccessToken;
-            accountDto.RefreshToken = newRefreshToken;
+            //accountDto.RefreshToken = newRefreshToken;
 
             await _accountRepository.UpdateAccount(accountDto);
 
@@ -469,6 +469,17 @@ namespace Service.Implement
                 {
                     throw new Exception("Old password do not equal your password!");
                 }
+            }
+        }
+
+        public async Task DeleteAcount(int accountID)
+        {
+            try
+            {
+                await _accountRepository.RemoveAccountInDB(accountID);
+            }catch(Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
             }
         }
     }

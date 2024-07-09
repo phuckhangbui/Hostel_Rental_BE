@@ -26,5 +26,25 @@ namespace DAO
 
             }
         }
+
+        //public static Task<Notification> GetNotificationsBaseOnReceiveId(int accountId)
+        //{
+        //    Notification response = new Notification()
+        //}
+
+        public async Task UpdateNotificationToRead(int id)
+        {
+            var dataContext = new DataContext();
+
+            var notification = await dataContext.Notifications.FindAsync(id);
+
+            if (notification != null)
+            {
+
+                notification.IsRead = true;
+
+                await this.UpdateAsync(notification);
+            }
+        }
     }
 }

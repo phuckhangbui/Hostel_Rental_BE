@@ -1,0 +1,40 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "HostelManagementWebAPI";
+
+package notification;
+
+service NotificationGRPCService {
+	rpc GetNotifications (NotificationFilter) returns (Notifications);
+	rpc UpdateNotificationStatus (UpdateNotification) returns (Empty);
+}
+
+message Notification {
+  int32 notification_id = 1;
+  // Optional fields for nullable values
+  int32 account_notice_id = 2; // Use int32 for foreign key reference
+  int32 receive_account_id = 3; // Use int32 for foreign key reference
+  string notification_text = 4;
+  google.protobuf.Timestamp create_date = 5; // Use Timestamp for date/time
+  int32 notification_type = 6;
+  string title = 7;
+  string forward_to_path = 8;
+  bool is_read = 9;
+}
+
+message Notifications {
+  repeated Notification items = 1;
+}
+
+message NotificationFilter{
+  int32 accountId = 1;
+}
+
+message UpdateNotification {
+	int32 notification_id = 1;
+}
+
+message Empty {
+
+}

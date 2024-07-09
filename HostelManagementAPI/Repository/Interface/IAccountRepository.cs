@@ -18,5 +18,6 @@ namespace Repository.Interface
         Task<AccountMemberShipInformationDtos> GetDetailMemberShipRegisterInformation(int accountid);
         Task<ProfileDto> GetProfileAccount(int accountID);
         Task UpdateOwnerProfile(AccountUpdate accountUpdate);
+        Task RemoveAccountInDB(int accountID);
     }
 }

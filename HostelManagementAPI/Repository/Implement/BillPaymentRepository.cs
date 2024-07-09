@@ -7,7 +7,6 @@ using DTOs.Enum;
 using DTOs.Room;
 using DTOs.Service;
 using Repository.Interface;
-using System.Net.WebSockets;
 
 namespace Repository.Implement
 {
@@ -103,13 +102,24 @@ namespace Repository.Implement
                 }
             }
 
-            totalAmount -= currentContractDto.DepositFee;
-            if (totalAmount < 0)
+            double remainingDeposit = (double)(currentContractDto.DepositFee - totalAmount);
+            if (remainingDeposit >= 0)
             {
-                totalAmount = 0;
+                billPayment.TotalAmount = 0;
+                billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+                billPayment.PaidDate = DateTime.Now;
+            }
+            else
+            {
+                billPayment.TotalAmount = -remainingDeposit;
             }
 
-            billPayment.TotalAmount = totalAmount;
+            var currentContract = await ContractDao.Instance.GetContractById(currentContractDto.ContractID);
+            if (currentContract != null)
+            {
+                currentContract.DepositFee = Math.Max(remainingDeposit, 0);
+                await ContractDao.Instance.UpdateAsync(currentContract);
+            }
 
             await BillPaymentDao.Instance.CreateAsync(billPayment);
         }
@@ -124,6 +134,20 @@ namespace Repository.Implement
             double? totalAmount = 0;
 
             totalAmount += (double)currentContractDto.RoomFee;
+
+            if (currentContractDto.DepositFee >= 0)
+            {
+                double remainingDeposit = (double)(currentContractDto.DepositFee - totalAmount);
+
+                var currentContract = await ContractDao.Instance.GetContractById(currentContractDto.ContractID);
+                if (currentContract != null)
+                {
+                    currentContract.DepositFee = Math.Max(remainingDeposit, 0);
+                    await ContractDao.Instance.UpdateAsync(currentContract);
+                }
+
+                totalAmount -= currentContractDto.DepositFee;
+            }
 
             var billPaymentDetails = new List<BillPaymentDetail>();
             var selectedServices = await RoomServiceDao.Instance.GetRoomServicesIsSelected((int)currentContractDto.RoomID);
@@ -209,8 +233,8 @@ namespace Repository.Implement
 
             var billPaymentDtos = _mapper.Map<IEnumerable<BillPaymentDto>>(lastBillPayments).ToList();
 
-            //var currentDate = DateTime.Now;
-            var currentDate = new DateTime(2024, 7, 1);
+            var currentDate = DateTime.Now;
+            //var currentDate = new DateTime(2024, 7, 1);
             var existingBills = new List<BillPaymentDto>();
 
             foreach (var billPaymentDto in billPaymentDtos)
@@ -508,6 +532,14 @@ namespace Repository.Implement
             var typeElectric = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 1 && x.Status == 0).RoomServiceId;
             var typeWater = RoomServiceDao.Instance.GetRoomServicesByRoom(roomID).Result.FirstOrDefault(x => x.TypeServiceId == 2 && x.Status == 0).RoomServiceId;
             var billNewsest = BillPaymentDao.Instance.GetAllAsync().Result.OrderByDescending(x => x.CreatedDate).FirstOrDefault(x => x.ContractId == contractNewest.ContractID);
+            if (billNewsest == null)
+            {
+                return new NumberService
+                {
+                    ElectricNumber = 0,
+                    WaterNumber = 0
+                };
+            }
             var electricNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeElectric).NewNumberService;
             var waterNumber = BillPaymentDetailDao.Instance.GetAllAsync().Result.FirstOrDefault(x => x.BillPaymentID == billNewsest.BillPaymentID && x.RoomServiceID == typeWater).NewNumberService;
             return new NumberService
@@ -515,6 +547,25 @@ namespace Repository.Implement
                 ElectricNumber = (double)electricNumber,
                 WaterNumber = (double)waterNumber
             };
+        }
+
+        public async Task<IEnumerable<BillMonthlyPaymentMember>> GetMonthlyBillPaymentForMember(int accountId)
+        {
+            var billPayment = await BillPaymentDao.Instance.GetBillMonthlyPaymentForMember(accountId);
+            var result = billPayment.Select(x => new BillMonthlyPaymentMember
+            {
+                BillPaymentID = x.BillPaymentID,
+                ContractId = x.ContractId,
+                BillAmount = x.BillAmount,
+                TotalAmount = x.TotalAmount,
+                CreatedDate = x.CreatedDate,
+                Month = x.Month,
+                Year = x.Year,
+                BillPaymentStatus = x.BillPaymentStatus,
+                RoomID = x.Contract.RoomID,
+                RoomName = x.Contract.Room.RoomName
+            });
+            return result.ToList();
         }
     }
 }

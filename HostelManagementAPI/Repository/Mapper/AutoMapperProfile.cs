@@ -40,7 +40,9 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault().RoomUrl))
             .ForMember(dest => dest.OwnerID, opt => opt.MapFrom(src => src.Hostel.OwnerAccount.AccountID))
             .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Hostel.OwnerAccount.Name))
-            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName));
+            .ForMember(dest => dest.HostelName, opt => opt.MapFrom(src => src.Hostel.HostelName))
+            .ForMember(dest => dest.HostelAddress, opt => opt.MapFrom(src => src.Hostel.HostelAddress));
+
         CreateMap<MemberShipRegisterTransaction, ViewTransactionMembership>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.OwnerAccount.Name))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.OwnerAccount.Email));
@@ -184,7 +186,17 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.StudentAccountId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().StudentLeadAccount.AccountID : (int?)null))
             .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.RoomContract.FirstOrDefault() != null ? src.RoomContract.FirstOrDefault().ContractID : (int?)null));
 
-        CreateMap<Notification, NotificationDto>().ReverseMap();
+        CreateMap<Notification, NotificationDto>()
+            .ForMember(dest => dest.NotificationId, opt => opt.MapFrom(src => src.NotificationID))
+            .ForMember(dest => dest.AccountNoticeId, opt => opt.MapFrom(src => src.AccountNoticeId))
+            .ForMember(dest => dest.ReceiveAccountId, opt => opt.MapFrom(src => src.ReceiveAccountId))
+            .ForMember(dest => dest.NotificationText, opt => opt.MapFrom(src => src.NotificationText))
+            .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
+            .ForMember(dest => dest.NotificationType, opt => opt.MapFrom(src => src.NotificationType))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.ForwardToPath, opt => opt.MapFrom(src => src.ForwardToPath))
+            .ForMember(dest => dest.IsRead, opt => opt.MapFrom(src => src.IsRead))
+            .ReverseMap();
 
         //CreateMap<Room, MemberRoomRentedResponse>()
         //     .ForMember(dest => dest.RoomThumbnail, opt => opt.MapFrom(src => src.RoomImages.FirstOrDefault() != null ? src.RoomImages.FirstOrDefault().RoomUrl : null))

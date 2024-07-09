@@ -160,6 +160,23 @@ namespace DAO
             return accouuntList;
         }
 
+        public Task<bool> CancelAllAppointmentViewing(int? roomId)
+        {
+            using (var context = new DataContext())
+            {
+                   var appointments = context.RoomAppointments
+                    .Where(ra => ra.RoomId == roomId && ra.Status == (int)AppointmentStatus.View)
+                    .ToList();
+                foreach (var item in appointments)
+                {
+                    item.Status = (int)AppointmentStatus.Cancel;
+                    context.RoomAppointments.Update(item);
+                }
+                context.SaveChanges();
+                return Task.FromResult(true);
+            }
+        }
+
         public async Task<IEnumerable<GetAppointmentOwner>> GetRoomAppointmentListByOwner(int hostelID)
         {
             var context = new DataContext();

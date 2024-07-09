@@ -225,13 +225,39 @@ namespace HostelManagementWebAPI.Controllers
                 {
                     return BadRequest(new ApiResponseStatus(400, "Room is not available"));
                 }
-                var isUpdatedStatus = await _roomService.UpdateRoomStatus(createRoomAppointmentDto.RoomId, 1);
-                if (isUpdatedStatus)
-                {
                     await _roomService.CreateRoomAppointmentAsync(createRoomAppointmentDto);
-                    return Ok(new ApiResponseStatus(200, "Create appoiment success"));
+                return Ok(new ApiResponseStatus(200, "Create appoiment success"));
+
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [HttpPost("rooms/hire")]
+        [Authorize(policy: "Member")]
+        public async Task<ActionResult> HireRoom([FromBody] HireRequestSendEmailDto createRoomAppointmentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var roomStatus = await _roomService.GetRoomDetailByRoomId(createRoomAppointmentDto.RoomId);
+                if (roomStatus.Status != 0)
+                {
+                    return BadRequest(new ApiResponseStatus(400, "Room is not available"));
                 }
-                return BadRequest(new ApiResponseStatus(400, "Fail to create appoitment"));
+                await _roomService.CancelAllAppointmentViewing(createRoomAppointmentDto.RoomId);
+                await _roomService.CreateRoomHiringRequestAsync(createRoomAppointmentDto);
+                return Ok(new ApiResponseStatus(200, "Create hiring request success"));
 
             }
             catch (ServiceException ex)

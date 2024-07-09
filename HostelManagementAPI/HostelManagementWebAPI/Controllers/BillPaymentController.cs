@@ -1,6 +1,5 @@
 ﻿using DTOs.BillPayment;
 using DTOs.Enum;
-using DTOs.Service;
 using HostelManagementWebAPI.MessageStatusResponse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -186,6 +185,26 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 var result = await _billPaymentService.GetPaymentHistoryByMemberAccount(accountId);
+                return Ok(result);
+            }
+            catch (ServiceException ex)
+            {
+                return BadRequest(new ApiResponseStatus(400, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseStatus(500, ex.Message));
+            }
+        }
+
+        [Authorize(Policy = "Member")]
+        [HttpGet("bill-payment/monthly")]
+        public async Task<ActionResult> GetBillMonthlyPayment()
+        {
+            int accountId = GetLoginAccountId();
+            try
+            {
+                var result = await _billPaymentService.GetMonthlyBillPaymentForMember(accountId);
                 return Ok(result);
             }
             catch (ServiceException ex)

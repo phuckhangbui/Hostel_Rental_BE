@@ -1,5 +1,4 @@
-﻿using BusinessObject.Models;
-using DTOs.Enum;
+﻿using DTOs.Enum;
 using DTOs.Hostel;
 using DTOs.Room;
 using DTOs.RoomAppointment;
@@ -20,6 +19,7 @@ namespace Service.Implement
         private readonly IContractRepository _contractRepository;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IMailService _mailService;
+        private readonly INotificationService _notificationService;
 
         public RoomService(
             IRoomRepository roomRepository,
@@ -27,7 +27,8 @@ namespace Service.Implement
             IAccountRepository accountRepository,
             IContractRepository contractRepository,
             ICloudinaryService cloudinaryService,
-            IMailService mailService)
+            IMailService mailService,
+            INotificationService notificationService)
         {
             _roomRepository = roomRepository;
             _hostelRepository = hostelRepository;
@@ -35,6 +36,7 @@ namespace Service.Implement
             _contractRepository = contractRepository;
             _cloudinaryService = cloudinaryService;
             _mailService = mailService;
+            _notificationService = notificationService;
         }
 
         public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
@@ -185,6 +187,47 @@ namespace Service.Implement
                 ownerInfo.Name,
                 createAppointmentSendEmailDto.RoomName,
                 createAppointmentSendEmailDto.AppointmentTime.ToString()));
+
+            var room = await _roomRepository.GetRoomById(createAppointmentSendEmailDto.RoomId);
+            var inf = new InformationHouse
+            {
+                HostelName = room.HostelName,
+                Address = room.HostelAddress,
+                RoomName = room.RoomName
+            };
+
+            var owner = await _accountRepository.GetAccountById((int)room.OwnerID);
+
+            _notificationService.SendOwnerWhenMemberMakeAppointment(owner.AccountId, owner?.FirebaseToken, owner.Name, inf);
+        }
+
+        public async Task CreateRoomHiringRequestAsync(HireRequestSendEmailDto createAppointmentSendEmailDto)
+        {
+            CreateRoomAppointmentDto createRoomAppointmentDto = new CreateRoomAppointmentDto
+            {
+                RoomId = createAppointmentSendEmailDto.RoomId,
+                ViewerId = createAppointmentSendEmailDto.ViewerId,
+                AppointmentTime = DateTime.Now
+            };
+            await _roomRepository.CreateRoomHiringRequestAsync(createRoomAppointmentDto);
+            var ownerInfo = await _roomRepository.GetOwnerInfoByRoomId(createAppointmentSendEmailDto.RoomId);
+            _mailService.SendMail(SendRoomAppointment.SendViewingHiringDirectlyNotification(
+                ownerInfo.Email,
+                ownerInfo.Name,
+                createAppointmentSendEmailDto.RoomName,
+                DateTime.Now.ToString()));
+
+            var room = await _roomRepository.GetRoomById(createAppointmentSendEmailDto.RoomId);
+            var inf = new InformationHouse
+            {
+                HostelName = room.HostelName,
+                Address = room.HostelAddress,
+                RoomName = room.RoomName
+            };
+
+            var owner = await _accountRepository.GetAccountById((int)room.OwnerID);
+
+            _notificationService.SendOwnerWhenMemberMakeHiringRequest(owner.AccountId, owner?.FirebaseToken, owner.Name, inf);
         }
 
         public async Task UpdateRoomServicesIsSelectStatusAsync(int roomId, List<RoomServiceUpdateDto> roomServiceUpdates)
@@ -289,6 +332,11 @@ namespace Service.Implement
         public async Task<IEnumerable<GetAppointmentMember>> GetRoomAppointmentListByMember(int accountID)
         {
             return await _roomRepository.GetRoomAppointmentListByMember(accountID);
+        }
+
+        public async Task<bool> CancelAllAppointmentViewing(int roomId)
+        {
+               return await _roomRepository.CancelAllAppointmentViewing(roomId);
         }
 
         //     public Task AddRoomService(AddRoomServicesDto addRoomServicesDto)

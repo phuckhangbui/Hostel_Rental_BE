@@ -1,6 +1,7 @@
 ﻿using DTOs;
 using DTOs.BillPayment;
 using DTOs.Enum;
+using DTOs.Hostel;
 using DTOs.Service;
 using Repository.Interface;
 using Service.Exceptions;
@@ -13,15 +14,21 @@ namespace Service.Implement
         private readonly IBillPaymentRepository _billPaymentRepository;
         private readonly IContractRepository _contractRepository;
         private readonly IRoomRepository _roomRepository;
+        private readonly INotificationService _notificationService;
+        private readonly IAccountRepository _accountRepository;
 
         public BillPaymentService(
             IBillPaymentRepository billPaymentRepository,
             IContractRepository contractRepository,
-            IRoomRepository roomRepository)
+            IRoomRepository roomRepository,
+            INotificationService notificationService,
+            IAccountRepository accountRepository)
         {
             _billPaymentRepository = billPaymentRepository;
             _contractRepository = contractRepository;
             _roomRepository = roomRepository;
+            _notificationService = notificationService;
+            _accountRepository = accountRepository;
         }
 
         public async Task<IEnumerable<BillPaymentDto>> GetBillPaymentsByContractId(int contractId)
@@ -91,6 +98,8 @@ namespace Service.Implement
                         await _billPaymentRepository.CreateBillPaymentMonthly(hiredRoom, currentContract, roomBillPayment, billingMonth);
                     }
                 }
+
+
             }
         }
 
@@ -182,6 +191,25 @@ namespace Service.Implement
 
             await _billPaymentRepository.UpdateBillPayment(billPayment);
 
+            var ownerAccount = await _accountRepository.GetAccountById((int)billPayment.AccountReceiveId);
+            var room = await _roomRepository.GetRoomById((int)billPayment.RoomId);
+
+            var inf = new InformationHouse
+            {
+                HostelName = room.HostelName,
+                Address = room.HostelAddress,
+                RoomName = room.RoomName
+            };
+
+            if (billPayment.BillType == (int)BillType.Deposit)
+            {
+                _notificationService.SendOwnerWhenMemberDepositContract(ownerAccount.AccountId, ownerAccount.FirebaseToken, ownerAccount.Name, inf);
+            }
+            else
+            {
+                _notificationService.SendOwnerWhenMemberPayMonthlyFee(ownerAccount.AccountId, ownerAccount.FirebaseToken, ownerAccount.Name, inf);
+            }
+
             return billPayment;
         }
 
@@ -194,10 +222,15 @@ namespace Service.Implement
         {
             return _billPaymentRepository.GetBillPaymentHistoryMembers(memberId);
         }
-        
+
         public async Task<NumberService> GetOldNumberServiceElectricAndWater(int roomID)
         {
             return await _billPaymentRepository.GetOldNumberServiceElectricAndWater(roomID);
+        }
+
+        public async Task<IEnumerable<BillMonthlyPaymentMember>> GetMonthlyBillPaymentForMember(int memberId)
+        {
+            return await _billPaymentRepository.GetMonthlyBillPaymentForMember(memberId);
         }
     }
 }
