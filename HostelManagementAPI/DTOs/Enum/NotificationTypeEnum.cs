@@ -15,6 +15,7 @@
         owner_create_contract_but_this_is_for_decline_member = 11,
         member_decline_contract = 12,
         member_make_hiring_request = 13,
+        member_contract_expired = 14,
     }
 
 }
