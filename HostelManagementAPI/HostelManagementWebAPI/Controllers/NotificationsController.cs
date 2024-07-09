@@ -65,7 +65,6 @@ namespace HostelManagementWebAPI.Controllers
         }
 
         // PUT api/<NotificationController>/5
-        [Authorize]
         [HttpPut("notification")]
         public async Task<ActionResult> Put([FromODataUri] int key)
         {
