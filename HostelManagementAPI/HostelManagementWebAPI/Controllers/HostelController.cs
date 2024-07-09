@@ -130,7 +130,7 @@ namespace HostelManagementWebAPI.Controllers
             try
             {
                 await _hostelService.UpdateHostel(hostelId, updateHostelRequestDto);
-                return Ok();
+                return Ok(new ApiResponseStatus(Ok().StatusCode, "Update hostel information successfully"));
             }
             catch (ServiceException ex)
             {

@@ -107,6 +107,7 @@ namespace Repository.Implement
             {
                 billPayment.TotalAmount = 0;
                 billPayment.BillPaymentStatus = (int)BillPaymentStatus.Paid;
+                billPayment.PaidDate = DateTime.Now;
             }
             else
             {
