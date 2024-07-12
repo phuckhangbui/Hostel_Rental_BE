@@ -65,7 +65,7 @@ namespace Repository.Implement
 
 		public async Task<IEnumerable<RoomListResponseDto>> GetListRoomsByHostelId(int hostelId)
 		{
-			var rooms = RoomDao.Instance.GetRoomListByHostelId(hostelId).Result.Where(x => x.Status == (int)RoomEnum.Available || x.Status == (int)RoomEnum.Viewing);
+			var rooms = await RoomDao.Instance.GetRoomListByHostelId(hostelId);
 
 			return _mapper.Map<IEnumerable<RoomListResponseDto>>(rooms);
 		}
