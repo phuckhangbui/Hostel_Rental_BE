@@ -257,6 +257,7 @@ namespace HostelManagementWebAPI.Controllers
                 }
                 await _roomService.CancelAllAppointmentViewing(createRoomAppointmentDto.RoomId);
                 await _roomService.CreateRoomHiringRequestAsync(createRoomAppointmentDto);
+                await _roomService.ChangeRoomStatus(createRoomAppointmentDto.RoomId, 4);
                 return Ok(new ApiResponseStatus(200, "Create hiring request success"));
 
             }
